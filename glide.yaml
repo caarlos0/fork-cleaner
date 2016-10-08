@@ -1,0 +1,5 @@
+package: github.com/caarlos0/fork-cleaner
+import:
+- package: github.com/google/go-github
+  subpackages:
+  - '...'

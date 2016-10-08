@@ -1,0 +1,8 @@
+hash: 9a00ec7f6278ba1da7e7bcf15ce272d076d1aec497659fe93da817a27d574b09
+updated: 2016-10-08T19:23:56.661576332-03:00
+imports:
+- name: github.com/google/go-github
+  version: 3e246d29992beb5a5d2fc253adebea86997c45b0
+  subpackages:
+  - '...'
+testImports: []

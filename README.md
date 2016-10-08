@@ -1,4 +1,4 @@
-# fork-cleaner
+# fork-cleaner [![Build Status](https://travis-ci.org/caarlos0/fork-cleaner.svg?branch=master)](https://travis-ci.org/caarlos0/fork-cleaner)
 
 Cleans up old and inactive forks on your github account.
 

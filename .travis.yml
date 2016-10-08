@@ -1,0 +1,11 @@
+language: go
+go: 1.7.1
+install:
+  - go get github.com/Masterminds/glide
+  - glide install
+script: go test -cover `glide nv`
+after_success:
+  test ! -z "$TRAVIS_TAG" && \
+    curl -o /tmp/release https://raw.githubusercontent.com/caarlos0/go-releaser/master/release \
+    chmod +x /tmp/release \
+    /tmp/release -u caarlos0 -r fork-cleaner -b fork-cleaner -m .

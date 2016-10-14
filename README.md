@@ -2,9 +2,17 @@
 
 Cleans up old and inactive forks on your github account.
 
-Create a personal access token with `repo` and `delete_repo`
-permission, then export it as `GITHUB_TOKEN`, then, simply run then
-binary. It will show you all repos that:
+You'll need to create a personal access token with `repo` and `delete_repo`
+permissions.
+
+Then, [download the latest release](https://github.com/caarlos0/fork-cleaner/releases)
+and execute the binary as in:
+
+```console
+GITHUB_TOKEN="my github token" ./fork-cleaner
+```
+
+Fork-Cleaner will show you repos that:
 
 - are forks
 - are not private

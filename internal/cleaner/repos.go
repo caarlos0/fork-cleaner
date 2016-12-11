@@ -7,6 +7,7 @@ import (
 	"github.com/google/go-github/github"
 )
 
+// DeleteForks delete the given list of forks
 func DeleteForks(deletions []*github.Repository, client *github.Client) error {
 	for _, repo := range deletions {
 		fmt.Println("Deleting fork", *repo.FullName+"...")
@@ -18,40 +19,30 @@ func DeleteForks(deletions []*github.Repository, client *github.Client) error {
 	return nil
 }
 
+// Repos list the forks from a given owner that could be deleted
 func Repos(owner string, client *github.Client) ([]*github.Repository, error) {
-	repos, err := allRepos(owner, client)
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println("Repos that could be deleted:")
-	var deletions []*github.Repository
-	for _, repo := range repos {
-		if shouldDelete(repo) {
-			deletions = append(deletions, repo)
-			fmt.Println(*repo.HTMLURL)
-		}
-	}
-	return deletions, err
-}
-
-func allRepos(owner string, client *github.Client) ([]*github.Repository, error) {
 	opt := &github.RepositoryListOptions{
 		ListOptions: github.ListOptions{PerPage: 50},
 	}
-
-	var allRepos []*github.Repository
+	fmt.Println("Repos that could be deleted:")
+	var deletions []*github.Repository
 	for {
 		repos, resp, err := client.Repositories.List(owner, opt)
 		if err != nil {
-			return allRepos, err
+			return deletions, err
 		}
-		allRepos = append(allRepos, repos...)
+		for _, repo := range repos {
+			if shouldDelete(repo) {
+				deletions = append(deletions, repo)
+				fmt.Println(*repo.HTMLURL)
+			}
+		}
 		if resp.NextPage == 0 {
 			break
 		}
 		opt.ListOptions.Page = resp.NextPage
 	}
-	return allRepos, nil
+	return deletions, nil
 }
 
 func shouldDelete(repo *github.Repository) bool {

@@ -7,35 +7,63 @@ import (
 
 	"github.com/caarlos0/fork-cleaner/internal/cleaner"
 	"github.com/google/go-github/github"
+	"github.com/urfave/cli"
 	"golang.org/x/oauth2"
 )
 
+var version = "master"
+
 func main() {
-	ts := oauth2.StaticTokenSource(
-		&oauth2.Token{AccessToken: os.Getenv("GITHUB_TOKEN")},
-	)
-	tc := oauth2.NewClient(oauth2.NoContext, ts)
-	client := github.NewClient(tc)
-	user, _, err := client.Users.Get("")
-	if err != nil {
-		panic(err)
+	app := cli.NewApp()
+	app.Name = "fork-cleaner"
+	app.Version = version
+	app.Author = "Carlos Alexandro Becker (caarlos0@gmail.com)"
+	app.Usage = "Delete old, unused forks"
+	app.Flags = []cli.Flag{
+		cli.StringFlag{
+			EnvVar: "GITHUB_TOKEN",
+			Name:   "token",
+			Usage:  "Your GitHub token",
+		},
+		cli.StringFlag{
+			Name:  "owner",
+			Usage: "GitHub user or organization to clean up.",
+		},
 	}
-
-	deletions, err := cleaner.Repos(*user.Login, client)
-	if err != nil {
-		panic(err)
-	}
-
-	fmt.Print("\nDelete all ", len(deletions), " listed forks? [y/n] ")
-	reply, err := bufio.NewReader(os.Stdin).ReadString('\n')
-	if err != nil {
-		panic(err)
-	}
-	if reply == "y\n" || reply == "Y\n" {
-		if err := cleaner.DeleteForks(deletions, client); err != nil {
-			panic(err)
+	app.Action = func(c *cli.Context) error {
+		ts := oauth2.StaticTokenSource(
+			&oauth2.Token{AccessToken: c.String("token")},
+		)
+		tc := oauth2.NewClient(oauth2.NoContext, ts)
+		client := github.NewClient(tc)
+		owner := c.String("owner")
+		if owner == "" {
+			user, _, err := client.Users.Get("")
+			if err != nil {
+				return err
+			}
+			owner = *user.Login
 		}
-	} else {
-		fmt.Println("OK, exiting.")
+
+		deletions, err := cleaner.Repos(owner, client)
+		if err != nil {
+			return err
+		}
+
+		fmt.Print("\nDelete all ", len(deletions), " listed forks? [y/n] ")
+		reply, err := bufio.NewReader(os.Stdin).ReadString('\n')
+		if err != nil {
+			return err
+		}
+		if reply == "y\n" || reply == "Y\n" {
+			if err := cleaner.DeleteForks(deletions, client); err != nil {
+				return err
+			}
+		} else {
+			fmt.Println("OK, exiting.")
+		}
+		return nil
 	}
+
+	app.Run(os.Args)
 }

@@ -6,3 +6,5 @@ import:
 - package: golang.org/x/oauth2
 - package: github.com/urfave/cli
   version: ~1.19.1
+- package: github.com/tj/go-spin
+  version: ~1.0.0

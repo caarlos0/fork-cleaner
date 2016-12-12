@@ -1,6 +1,8 @@
-hash: 4c5826593dfc8ff0b0fb917366eef3249ac334e4143491e11170f3411bb0aedf
-updated: 2016-12-11T11:57:02.088647778-02:00
+hash: a753e463a70364e915943c16ea3a318938f9342595742fc96ab589917ba4fa2b
+updated: 2016-12-12T10:35:35.694684437-02:00
 imports:
+- name: github.com/caarlos0/spin
+  version: f1f63cceace559408b09577f25210edb9b2215c3
 - name: github.com/golang/protobuf
   version: df1d3ca07d2d07bba352d5b73c4313b4e2a6203e
   subpackages:

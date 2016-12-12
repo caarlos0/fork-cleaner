@@ -4,11 +4,10 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	"time"
 
 	"github.com/caarlos0/fork-cleaner/internal/cleaner"
+	"github.com/caarlos0/spin"
 	"github.com/google/go-github/github"
-	spin "github.com/tj/go-spin"
 	"github.com/urfave/cli"
 	"golang.org/x/oauth2"
 )
@@ -47,18 +46,11 @@ func main() {
 			owner = *user.Login
 		}
 
-		active := true
-		s := spin.New()
-		s.Set(`⦾⦿`)
-		go func() {
-			for active {
-				fmt.Printf("\r  \033[36m%s Gathering data for '%s'...\033[m", s.Next(), owner)
-				time.Sleep(100 * time.Millisecond)
-			}
-		}()
+		sg := spin.New("\033[36m %s Gathering data for '" + owner + "'...\033[m")
+		sg.Start()
 		deletions, err := cleaner.Repos(owner, client)
-		active = false
-		fmt.Printf("\r")
+		sg.Stop()
+
 		if err != nil {
 			return err
 		}
@@ -72,16 +64,12 @@ func main() {
 			return err
 		}
 		if reply == "y\n" || reply == "Y\n" {
-			active = true
-			go func() {
-				for active {
-					fmt.Printf("\r  \033[36m%s Removing forks...\033[m", s.Next())
-					time.Sleep(100 * time.Millisecond)
-				}
-			}()
+			sd := spin.New(fmt.Sprintf(
+				"\033[36m %s Deleting %d forks...\033[m", "%s", len(deletions),
+			))
+			sd.Start()
 			err = cleaner.DeleteForks(deletions, client)
-			active = false
-			fmt.Printf("\r")
+			sd.Stop()
 			if err != nil {
 				return err
 			}

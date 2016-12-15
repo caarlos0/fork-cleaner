@@ -15,8 +15,6 @@ imports:
   version: 9235644dd9e52eeae6fa48efd539fdc351a0af53
   subpackages:
   - query
-- name: github.com/tj/go-spin
-  version: d9cf5dfd6d7f5b9d1f62122ace69b7fda90f5793
 - name: github.com/urfave/cli
   version: 0bdeddeeb0f650497d603c4ad7b20cfe685682f6
 - name: golang.org/x/net

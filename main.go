@@ -41,7 +41,7 @@ func main() {
 		if owner == "" {
 			user, _, err := client.Users.Get("")
 			if err != nil {
-				return err
+				return cli.NewExitError(err.Error(), 1)
 			}
 			owner = *user.Login
 		}
@@ -50,9 +50,8 @@ func main() {
 		sg.Start()
 		deletions, err := cleaner.Repos(owner, client)
 		sg.Stop()
-
 		if err != nil {
-			return err
+			return cli.NewExitError(err.Error(), 1)
 		}
 		for _, repo := range deletions {
 			fmt.Println(*repo.HTMLURL)
@@ -61,7 +60,7 @@ func main() {
 		fmt.Print("\nDelete all ", len(deletions), " listed forks? [y/n] ")
 		reply, err := bufio.NewReader(os.Stdin).ReadString('\n')
 		if err != nil {
-			return err
+			return cli.NewExitError(err.Error(), 1)
 		}
 		if reply == "y\n" || reply == "Y\n" {
 			sd := spin.New(fmt.Sprintf(
@@ -71,7 +70,7 @@ func main() {
 			err = cleaner.DeleteForks(deletions, client)
 			sd.Stop()
 			if err != nil {
-				return err
+				return cli.NewExitError(err.Error(), 1)
 			}
 		} else {
 			fmt.Println("OK, exiting.")

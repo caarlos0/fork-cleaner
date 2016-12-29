@@ -1,4 +1,4 @@
-# fork-cleaner [![Build Status](https://travis-ci.org/caarlos0/fork-cleaner.svg?branch=master)](https://travis-ci.org/caarlos0/fork-cleaner)
+# fork-cleaner [![Build Status](https://travis-ci.org/caarlos0/fork-cleaner.svg?branch=master)](https://travis-ci.org/caarlos0/fork-cleaner) [![Powered By: GoReleaser](https://img.shields.io/badge/powered%20by-goreleaser-green.svg?style=flat-square)](https://github.com/goreleaser)
 
 Cleans up old and inactive forks on your github account.
 

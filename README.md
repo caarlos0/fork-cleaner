@@ -26,3 +26,10 @@ Then, it will ask you if you want to delete them:
 
 Read carefully the list, and, if you agree, type `y` and it will
 finish the job for you.
+
+## Install
+
+```console
+brew tap caarlos0/formulae
+brew install fork-cleaner
+```

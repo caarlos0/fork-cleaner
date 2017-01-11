@@ -5,6 +5,6 @@ install:
   - glide install
 script: go test -cover `glide nv`
 after_success:
-  test ! -z "$TRAVIS_TAG" && curl -s https://raw.githubusercontent.com/goreleaser/get/master/latest | bash
+  test -n "$TRAVIS_TAG" && curl -s https://raw.githubusercontent.com/goreleaser/get/master/latest | bash
 notifications:
   email: false

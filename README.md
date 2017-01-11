@@ -30,6 +30,5 @@ finish the job for you.
 ## Install
 
 ```console
-brew tap caarlos0/formulae
-brew install fork-cleaner
+brew install caarlos0/tap/fork-cleaner
 ```

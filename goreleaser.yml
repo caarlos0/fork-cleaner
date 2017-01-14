@@ -2,4 +2,4 @@ repo: caarlos0/fork-cleaner
 binary_name: fork-cleaner
 brew:
   repo: caarlos0/homebrew-tap
-  folder: Fomula
+  folder: Formula

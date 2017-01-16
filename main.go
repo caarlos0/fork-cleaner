@@ -1,8 +1,8 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
+	"log"
 	"os"
 
 	"github.com/caarlos0/fork-cleaner/internal/cleaner"
@@ -30,6 +30,10 @@ func main() {
 			Name:  "owner",
 			Usage: "GitHub user or organization to clean up.",
 		},
+		cli.BoolFlag{
+			Name:  "dry-run, d",
+			Usage: "Only list forks to be deleted, but don't delete them",
+		},
 	}
 	app.Action = func(c *cli.Context) error {
 		ts := oauth2.StaticTokenSource(
@@ -46,6 +50,7 @@ func main() {
 			owner = *user.Login
 		}
 
+		log.SetFlags(0)
 		sg := spin.New("\033[36m %s Gathering data for '" + owner + "'...\033[m")
 		sg.Start()
 		deletions, err := cleaner.Repos(owner, client)
@@ -53,28 +58,32 @@ func main() {
 		if err != nil {
 			return cli.NewExitError(err.Error(), 1)
 		}
-		for _, repo := range deletions {
-			fmt.Println(*repo.HTMLURL)
+		if len(deletions) == 0 {
+			log.Println("0 repos to delete!")
+			return nil
 		}
+		log.Println(len(deletions), "repos to be deleted:")
+		log.SetPrefix(" --> ")
+		for _, repo := range deletions {
+			log.Println(*repo.HTMLURL)
+		}
+		log.SetPrefix("")
 
-		fmt.Print("\nDelete all ", len(deletions), " listed forks? [y/n] ")
-		reply, err := bufio.NewReader(os.Stdin).ReadString('\n')
+		if c.Bool("dry-run") {
+			log.Println("\nDry-Run (-d) is set! No action taken.")
+			return nil
+		}
+		fmt.Println("\n")
+		sd := spin.New(fmt.Sprintf(
+			"\033[36m %s Deleting %d forks...\033[m", "%s", len(deletions),
+		))
+		sd.Start()
+		err = cleaner.DeleteForks(deletions, client)
+		sd.Stop()
 		if err != nil {
 			return cli.NewExitError(err.Error(), 1)
 		}
-		if reply == "y\n" || reply == "Y\n" {
-			sd := spin.New(fmt.Sprintf(
-				"\033[36m %s Deleting %d forks...\033[m", "%s", len(deletions),
-			))
-			sd.Start()
-			err = cleaner.DeleteForks(deletions, client)
-			sd.Stop()
-			if err != nil {
-				return cli.NewExitError(err.Error(), 1)
-			}
-		} else {
-			fmt.Println("OK, exiting.")
-		}
+
 		return nil
 	}
 

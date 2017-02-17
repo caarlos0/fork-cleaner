@@ -36,6 +36,7 @@ func main() {
 		},
 	}
 	app.Action = func(c *cli.Context) error {
+		log.SetFlags(0)
 		ts := oauth2.StaticTokenSource(
 			&oauth2.Token{AccessToken: c.String("token")},
 		)
@@ -50,7 +51,6 @@ func main() {
 			owner = *user.Login
 		}
 
-		log.SetFlags(0)
 		sg := spin.New("\033[36m %s Gathering data for '" + owner + "'...\033[m")
 		sg.Start()
 		deletions, err := cleaner.Repos(owner, client)
@@ -59,10 +59,10 @@ func main() {
 			return cli.NewExitError(err.Error(), 1)
 		}
 		if len(deletions) == 0 {
-			log.Println("0 repos to delete!")
+			log.Println("0 forks to delete!")
 			return nil
 		}
-		log.Println(len(deletions), "repos to be deleted:")
+		log.Println(len(deletions), "forks to be deleted:")
 		log.SetPrefix(" --> ")
 		for _, repo := range deletions {
 			log.Println(*repo.HTMLURL)
@@ -73,7 +73,7 @@ func main() {
 			log.Println("\nDry-Run (-d) is set! No action taken.")
 			return nil
 		}
-		fmt.Println("\n")
+		fmt.Printf("\n\n")
 		sd := spin.New(fmt.Sprintf(
 			"\033[36m %s Deleting %d forks...\033[m", "%s", len(deletions),
 		))

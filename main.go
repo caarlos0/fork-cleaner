@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"os"
@@ -37,14 +38,15 @@ func main() {
 	}
 	app.Action = func(c *cli.Context) error {
 		log.SetFlags(0)
+		ctx := context.Background()
 		ts := oauth2.StaticTokenSource(
 			&oauth2.Token{AccessToken: c.String("token")},
 		)
-		tc := oauth2.NewClient(oauth2.NoContext, ts)
+		tc := oauth2.NewClient(ctx, ts)
 		client := github.NewClient(tc)
 		owner := c.String("owner")
 		if owner == "" {
-			user, _, err := client.Users.Get("")
+			user, _, err := client.Users.Get(ctx, "")
 			if err != nil {
 				return cli.NewExitError(err.Error(), 1)
 			}
@@ -53,7 +55,7 @@ func main() {
 
 		sg := spin.New("\033[36m %s Gathering data for '" + owner + "'...\033[m")
 		sg.Start()
-		deletions, err := cleaner.Repos(owner, client)
+		deletions, err := cleaner.Repos(ctx, owner, client)
 		sg.Stop()
 		if err != nil {
 			return cli.NewExitError(err.Error(), 1)
@@ -62,7 +64,7 @@ func main() {
 			log.Println("0 forks to delete!")
 			return nil
 		}
-		log.Println(len(deletions), "forks to be deleted:")
+		log.Println(len(deletions), "forks to delete:")
 		log.SetPrefix(" --> ")
 		for _, repo := range deletions {
 			log.Println(*repo.HTMLURL)
@@ -78,7 +80,7 @@ func main() {
 			"\033[36m %s Deleting %d forks...\033[m", "%s", len(deletions),
 		))
 		sd.Start()
-		err = cleaner.DeleteForks(deletions, client)
+		err = cleaner.DeleteForks(ctx, deletions, client)
 		sd.Stop()
 		if err != nil {
 			return cli.NewExitError(err.Error(), 1)

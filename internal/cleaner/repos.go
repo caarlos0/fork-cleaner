@@ -1,15 +1,20 @@
 package cleaner
 
 import (
+	"context"
 	"time"
 
 	"github.com/google/go-github/github"
 )
 
 // DeleteForks delete the given list of forks
-func DeleteForks(deletions []*github.Repository, client *github.Client) error {
+func DeleteForks(
+	ctx context.Context,
+	deletions []*github.Repository,
+	client *github.Client,
+) error {
 	for _, repo := range deletions {
-		_, err := client.Repositories.Delete(*repo.Owner.Login, *repo.Name)
+		_, err := client.Repositories.Delete(ctx, *repo.Owner.Login, *repo.Name)
 		if err != nil {
 			return err
 		}
@@ -18,13 +23,17 @@ func DeleteForks(deletions []*github.Repository, client *github.Client) error {
 }
 
 // Repos list the forks from a given owner that could be deleted
-func Repos(owner string, client *github.Client) ([]*github.Repository, error) {
+func Repos(
+	ctx context.Context,
+	owner string,
+	client *github.Client,
+) ([]*github.Repository, error) {
 	opt := &github.RepositoryListOptions{
 		ListOptions: github.ListOptions{PerPage: 50},
 	}
 	var deletions []*github.Repository
 	for {
-		repos, resp, err := client.Repositories.List(owner, opt)
+		repos, resp, err := client.Repositories.List(ctx, owner, opt)
 		if err != nil {
 			return deletions, err
 		}

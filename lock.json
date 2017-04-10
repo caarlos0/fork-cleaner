@@ -1,6 +1,14 @@
 {
-    "memo": "a1e436d5dd32e1ea1ae17c69f248460de8e7f7d7997e0b9dbe8abb574797b841",
+    "memo": "002698763d131722ab251a2d2edea0e3d6349757acac97bc707fcb595f220a56",
     "projects": [
+        {
+            "name": "github.com/Songmu/prompter",
+            "branch": "master",
+            "revision": "f49666b0047d12850875d771340e1d862d9e7a0c",
+            "packages": [
+                "."
+            ]
+        },
         {
             "name": "github.com/caarlos0/spin",
             "version": "v1.0.0",
@@ -34,11 +42,27 @@
             ]
         },
         {
+            "name": "github.com/mattn/go-isatty",
+            "version": "v0.0.2",
+            "revision": "fc9e8d8ef48496124e79ae0df75490096eccf6fe",
+            "packages": [
+                "."
+            ]
+        },
+        {
             "name": "github.com/urfave/cli",
             "version": "v1.19.1",
             "revision": "0bdeddeeb0f650497d603c4ad7b20cfe685682f6",
             "packages": [
                 "."
+            ]
+        },
+        {
+            "name": "golang.org/x/crypto",
+            "branch": "master",
+            "revision": "9ef620b9ca2f82b55030ffd4f41327fa9e77a92c",
+            "packages": [
+                "ssh/terminal"
             ]
         },
         {
@@ -56,6 +80,14 @@
             "packages": [
                 ".",
                 "internal"
+            ]
+        },
+        {
+            "name": "golang.org/x/sys",
+            "branch": "master",
+            "revision": "f3918c30c5c2cb527c0b071a27c35120a6c0719a",
+            "packages": [
+                "unix"
             ]
         },
         {

@@ -20,9 +20,7 @@ Fork-Cleaner will show you repos that:
 - have no stars
 - had no activity in the last 1 month
 
-It'll list and delete them for you!
-
-If you want to check what it will do first, run it with `-d` or `--dry-run`.
+fork-cleaner will list them and ask if you want to remove them! Simple as that.
 
 ## Install
 

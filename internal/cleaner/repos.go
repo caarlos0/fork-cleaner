@@ -10,8 +10,8 @@ import (
 // DeleteForks delete the given list of forks
 func DeleteForks(
 	ctx context.Context,
-	deletions []*github.Repository,
 	client *github.Client,
+	deletions []*github.Repository,
 ) error {
 	for _, repo := range deletions {
 		_, err := client.Repositories.Delete(ctx, *repo.Owner.Login, *repo.Name)
@@ -25,8 +25,9 @@ func DeleteForks(
 // Repos list the forks from a given owner that could be deleted
 func Repos(
 	ctx context.Context,
-	owner string,
 	client *github.Client,
+	owner string,
+	blacklist []string,
 ) ([]*github.Repository, error) {
 	opt := &github.RepositoryListOptions{
 		ListOptions: github.ListOptions{PerPage: 50},
@@ -38,7 +39,7 @@ func Repos(
 			return deletions, err
 		}
 		for _, repo := range repos {
-			if shouldDelete(repo) {
+			if shouldDelete(repo, blacklist) {
 				deletions = append(deletions, repo)
 			}
 		}
@@ -50,7 +51,12 @@ func Repos(
 	return deletions, nil
 }
 
-func shouldDelete(repo *github.Repository) bool {
+func shouldDelete(repo *github.Repository, blacklist []string) bool {
+	for _, r := range blacklist {
+		if r == *repo.Name {
+			return false
+		}
+	}
 	return *repo.Fork &&
 		*repo.ForksCount == 0 &&
 		*repo.StargazersCount == 0 &&

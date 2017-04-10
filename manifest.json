@@ -1,5 +1,8 @@
 {
     "dependencies": {
+        "github.com/Songmu/prompter": {
+            "branch": "master"
+        },
         "github.com/caarlos0/spin": {
             "version": "^1.0.0"
         },

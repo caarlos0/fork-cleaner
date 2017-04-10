@@ -27,6 +27,7 @@ func Repos(
 	ctx context.Context,
 	client *github.Client,
 	owner string,
+	blacklist []string,
 ) ([]*github.Repository, error) {
 	opt := &github.RepositoryListOptions{
 		ListOptions: github.ListOptions{PerPage: 50},
@@ -38,7 +39,7 @@ func Repos(
 			return deletions, err
 		}
 		for _, repo := range repos {
-			if shouldDelete(repo) {
+			if shouldDelete(repo, blacklist) {
 				deletions = append(deletions, repo)
 			}
 		}
@@ -50,7 +51,12 @@ func Repos(
 	return deletions, nil
 }
 
-func shouldDelete(repo *github.Repository) bool {
+func shouldDelete(repo *github.Repository, blacklist []string) bool {
+	for _, r := range blacklist {
+		if r == *repo.Name {
+			return false
+		}
+	}
 	return *repo.Fork &&
 		*repo.ForksCount == 0 &&
 		*repo.StargazersCount == 0 &&

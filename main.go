@@ -89,5 +89,5 @@ func main() {
 		return nil
 	}
 
-	app.Run(os.Args)
+	log.Fatalln(app.Run(os.Args))
 }

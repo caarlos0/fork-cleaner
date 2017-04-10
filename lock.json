@@ -1,9 +1,9 @@
 {
-    "memo": "91ca2095b81fab140e343591be532fed00fc7676da4f7a9f133f1f75de808003",
+    "memo": "a1e436d5dd32e1ea1ae17c69f248460de8e7f7d7997e0b9dbe8abb574797b841",
     "projects": [
         {
             "name": "github.com/caarlos0/spin",
-            "branch": "master",
+            "version": "v1.0.0",
             "revision": "f1f63cceace559408b09577f25210edb9b2215c3",
             "packages": [
                 "."
@@ -12,7 +12,7 @@
         {
             "name": "github.com/golang/protobuf",
             "branch": "master",
-            "revision": "c9c7427a2a70d2eb3bafa0ab2dc163e45f143317",
+            "revision": "2bba0603135d7d7f5cb73b2125beeda19c09f4ef",
             "packages": [
                 "proto"
             ]
@@ -20,7 +20,7 @@
         {
             "name": "github.com/google/go-github",
             "branch": "master",
-            "revision": "b59d3a6479bd00374a1523ad032da4621d9dd84a",
+            "revision": "6896997c7c9fe603fb9d2e8e92303bb18481e60a",
             "packages": [
                 "github"
             ]
@@ -35,8 +35,8 @@
         },
         {
             "name": "github.com/urfave/cli",
-            "branch": "master",
-            "revision": "2526b57c56f30b50466c96c4133b1a4ad0f0191f",
+            "version": "v1.19.1",
+            "revision": "0bdeddeeb0f650497d603c4ad7b20cfe685682f6",
             "packages": [
                 "."
             ]
@@ -44,7 +44,7 @@
         {
             "name": "golang.org/x/net",
             "branch": "master",
-            "revision": "a6577fac2d73be281a500b310739095313165611",
+            "revision": "d1e1b351919c6738fdeb9893d5c998b161464f0c",
             "packages": [
                 "context"
             ]
@@ -52,7 +52,7 @@
         {
             "name": "golang.org/x/oauth2",
             "branch": "master",
-            "revision": "b9780ec78894ab900c062d58ee3076cd9b2a4501",
+            "revision": "7fdf09982454086d5570c7db3e11f360194830ca",
             "packages": [
                 ".",
                 "internal"
@@ -63,10 +63,13 @@
             "version": "v1.0.0",
             "revision": "150dc57a1b433e64154302bdc40b6bb8aefa313a",
             "packages": [
+                ".",
                 "internal",
+                "internal/app_identity",
                 "internal/base",
                 "internal/datastore",
                 "internal/log",
+                "internal/modules",
                 "internal/remote_api",
                 "internal/urlfetch",
                 "urlfetch"

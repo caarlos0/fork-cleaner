@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/Songmu/prompter"
 	"github.com/caarlos0/fork-cleaner/internal/cleaner"
 	"github.com/caarlos0/spin"
 	"github.com/google/go-github/github"
@@ -29,22 +30,24 @@ func main() {
 		},
 		cli.StringFlag{
 			Name:  "owner",
-			Usage: "GitHub user or organization to clean up.",
+			Usage: "GitHub user or organization to clean up",
 		},
 		cli.BoolFlag{
-			Name:  "dry-run, d",
-			Usage: "Only list forks to be deleted, but don't delete them",
+			Name:  "force, f",
+			Usage: "Don't ask to remove the forks",
 		},
 	}
 	app.Action = func(c *cli.Context) error {
 		log.SetFlags(0)
-		ctx := context.Background()
-		ts := oauth2.StaticTokenSource(
-			&oauth2.Token{AccessToken: c.String("token")},
-		)
-		tc := oauth2.NewClient(ctx, ts)
-		client := github.NewClient(tc)
-		owner := c.String("owner")
+		var token = c.String("token")
+		var owner = c.String("owner")
+		var ctx = context.Background()
+		var ts = oauth2.StaticTokenSource(&oauth2.Token{AccessToken: token})
+		var tc = oauth2.NewClient(ctx, ts)
+		var client = github.NewClient(tc)
+		if token == "" {
+			return cli.NewExitError("missing github token", 1)
+		}
 		if owner == "" {
 			user, _, err := client.Users.Get(ctx, "")
 			if err != nil {
@@ -55,7 +58,7 @@ func main() {
 
 		sg := spin.New("\033[36m %s Gathering data for '" + owner + "'...\033[m")
 		sg.Start()
-		deletions, err := cleaner.Repos(ctx, owner, client)
+		deletions, err := cleaner.Repos(ctx, client, owner)
 		sg.Stop()
 		if err != nil {
 			return cli.NewExitError(err.Error(), 1)
@@ -71,8 +74,12 @@ func main() {
 		}
 		log.SetPrefix("")
 
-		if c.Bool("dry-run") {
-			log.Println("\nDry-Run (-d) is set! No action taken.")
+		var remove = true
+		if !c.Bool("force") {
+			remove = prompter.YN("Remove the above listed forks?", false)
+		}
+		if !remove {
+			log.Println("OK, exiting")
 			return nil
 		}
 		fmt.Printf("\n\n")
@@ -80,7 +87,7 @@ func main() {
 			"\033[36m %s Deleting %d forks...\033[m", "%s", len(deletions),
 		))
 		sd.Start()
-		err = cleaner.DeleteForks(ctx, deletions, client)
+		err = cleaner.DeleteForks(ctx, client, deletions)
 		sd.Stop()
 		if err != nil {
 			return cli.NewExitError(err.Error(), 1)
@@ -89,5 +96,7 @@ func main() {
 		return nil
 	}
 
-	log.Fatalln(app.Run(os.Args))
+	if err := app.Run(os.Args); err != nil {
+		log.Fatalln(err)
+	}
 }

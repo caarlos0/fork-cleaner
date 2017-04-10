@@ -10,8 +10,8 @@ import (
 // DeleteForks delete the given list of forks
 func DeleteForks(
 	ctx context.Context,
-	deletions []*github.Repository,
 	client *github.Client,
+	deletions []*github.Repository,
 ) error {
 	for _, repo := range deletions {
 		_, err := client.Repositories.Delete(ctx, *repo.Owner.Login, *repo.Name)
@@ -25,8 +25,8 @@ func DeleteForks(
 // Repos list the forks from a given owner that could be deleted
 func Repos(
 	ctx context.Context,
-	owner string,
 	client *github.Client,
+	owner string,
 ) ([]*github.Repository, error) {
 	opt := &github.RepositoryListOptions{
 		ListOptions: github.ListOptions{PerPage: 50},

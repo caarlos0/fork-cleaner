@@ -1,13 +1,13 @@
 {
     "dependencies": {
         "github.com/caarlos0/spin": {
-            "branch": "master"
+            "version": "^1.0.0"
         },
         "github.com/google/go-github": {
             "branch": "master"
         },
         "github.com/urfave/cli": {
-            "branch": "master"
+            "version": "^1.19.1"
         },
         "golang.org/x/oauth2": {
             "branch": "master"

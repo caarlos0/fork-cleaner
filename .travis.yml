@@ -1,10 +1,7 @@
 language: go
-go: 1.7.4
-install:
-  - go get -u github.com/golang/dep/...
-  - dep ensure
-script: go test -cover $(go list ./... | grep -v /vendor/)
-after_success:
-  test -n "$TRAVIS_TAG" && curl -sL https://git.io/goreleaser | bash
+go: 1.8
+install: make setup
+script: make ci
+after_success: test -n "$TRAVIS_TAG" && curl -sL https://git.io/goreleaser | bash
 notifications:
   email: false

@@ -1,4 +1,5 @@
-package cleaner
+// Package forkcleaner provides functions to find and remove unused forks.
+package forkcleaner
 
 import (
 	"context"
@@ -7,8 +8,8 @@ import (
 	"github.com/google/go-github/github"
 )
 
-// DeleteForks delete the given list of forks
-func DeleteForks(
+// Delete delete the given list of forks
+func Delete(
 	ctx context.Context,
 	client *github.Client,
 	deletions []*github.Repository,
@@ -22,8 +23,8 @@ func DeleteForks(
 	return nil
 }
 
-// Repos list the forks from a given owner that could be deleted
-func Repos(
+// Find list the forks from a given owner that could be deleted
+func Find(
 	ctx context.Context,
 	client *github.Client,
 	owner string,

@@ -7,7 +7,7 @@ import (
 	"os"
 
 	"github.com/Songmu/prompter"
-	"github.com/caarlos0/fork-cleaner/internal/cleaner"
+	forkcleaner "github.com/caarlos0/fork-cleaner"
 	"github.com/caarlos0/spin"
 	"github.com/google/go-github/github"
 	"github.com/urfave/cli"
@@ -25,11 +25,11 @@ func main() {
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
 			EnvVar: "GITHUB_TOKEN",
-			Name:   "token",
+			Name:   "token, t",
 			Usage:  "Your GitHub token",
 		},
 		cli.StringFlag{
-			Name:  "owner",
+			Name:  "owner, o",
 			Usage: "GitHub user or organization to clean up",
 		},
 		cli.BoolFlag{
@@ -37,7 +37,7 @@ func main() {
 			Usage: "Don't ask to remove the forks",
 		},
 		cli.StringSliceFlag{
-			Name:  "blacklist, exclude",
+			Name:  "blacklist, exclude, b",
 			Usage: "Blacklist of repos that shouldn't be removed",
 		},
 	}
@@ -63,18 +63,18 @@ func main() {
 
 		var sg = spin.New("\033[36m %s Gathering data for '" + owner + "'...\033[m")
 		sg.Start()
-		deletions, err := cleaner.Repos(ctx, client, owner, blacklist)
+		forks, err := forkcleaner.Find(ctx, client, owner, blacklist)
 		sg.Stop()
 		if err != nil {
 			return cli.NewExitError(err.Error(), 1)
 		}
-		if len(deletions) == 0 {
+		if len(forks) == 0 {
 			log.Println("0 forks to delete!")
 			return nil
 		}
-		log.Println(len(deletions), "forks to delete:")
+		log.Println(len(forks), "forks to delete:")
 		log.SetPrefix(" --> ")
-		for _, repo := range deletions {
+		for _, repo := range forks {
 			log.Println(*repo.HTMLURL)
 		}
 		log.SetPrefix("")
@@ -89,10 +89,10 @@ func main() {
 		}
 		fmt.Printf("\n\n")
 		var sd = spin.New(fmt.Sprintf(
-			"\033[36m %s Deleting %d forks...\033[m", "%s", len(deletions),
+			"\033[36m %s Deleting %d forks...\033[m", "%s", len(forks),
 		))
 		sd.Start()
-		err = cleaner.DeleteForks(ctx, client, deletions)
+		err = forkcleaner.Delete(ctx, client, forks)
 		sd.Stop()
 		if err == nil {
 			log.Println("Forks removed!")

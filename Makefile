@@ -35,7 +35,7 @@ lint: ## Run all the linters
 ci: lint test ## Run all the tests and code checks
 
 build: ## Build
-	go build -o fork-cleaner ./cmd/main/main.go
+	go build -o fork-cleaner ./cmd/fork-cleaner/main.go
 
 # Absolutely awesome: http://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
 help:

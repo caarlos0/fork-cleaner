@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"time"
 
 	"github.com/Songmu/prompter"
 	forkcleaner "github.com/caarlos0/fork-cleaner"
@@ -40,6 +41,11 @@ func main() {
 			Name:  "blacklist, exclude, b",
 			Usage: "Blacklist of repos that shouldn't be removed",
 		},
+		cli.DurationFlag{
+			Name:  "no-activity-since, since",
+			Usage: "Time to check for activity",
+			Value: 30 * 24 * time.Hour,
+		},
 	}
 	app.Action = func(c *cli.Context) error {
 		log.SetFlags(0)
@@ -63,7 +69,7 @@ func main() {
 
 		var sg = spin.New("\033[36m %s Gathering data for '" + owner + "'...\033[m")
 		sg.Start()
-		forks, err := forkcleaner.Find(ctx, client, owner, blacklist)
+		forks, err := forkcleaner.Find(ctx, client, owner, blacklist, c.Duration("since"))
 		sg.Stop()
 		if err != nil {
 			return cli.NewExitError(err.Error(), 1)

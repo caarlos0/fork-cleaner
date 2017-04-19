@@ -29,6 +29,7 @@ func Find(
 	client *github.Client,
 	owner string,
 	blacklist []string,
+	since time.Duration,
 ) ([]*github.Repository, error) {
 	opt := &github.RepositoryListOptions{
 		ListOptions: github.ListOptions{PerPage: 50},
@@ -40,7 +41,7 @@ func Find(
 			return deletions, err
 		}
 		for _, repo := range repos {
-			if shouldDelete(repo, blacklist) {
+			if shouldDelete(repo, blacklist, since) {
 				deletions = append(deletions, repo)
 			}
 		}
@@ -52,7 +53,7 @@ func Find(
 	return deletions, nil
 }
 
-func shouldDelete(repo *github.Repository, blacklist []string) bool {
+func shouldDelete(repo *github.Repository, blacklist []string, since time.Duration) bool {
 	for _, r := range blacklist {
 		if r == *repo.Name {
 			return false
@@ -62,5 +63,5 @@ func shouldDelete(repo *github.Repository, blacklist []string) bool {
 		*repo.ForksCount == 0 &&
 		*repo.StargazersCount == 0 &&
 		!*repo.Private &&
-		time.Now().AddDate(0, -1, 0).After((*repo.UpdatedAt).Time)
+		time.Now().Add(-since).After((*repo.UpdatedAt).Time)
 }

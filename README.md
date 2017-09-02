@@ -24,10 +24,11 @@ and execute the binary as in:
 Fork-Cleaner will show you repos that:
 
 - are forks
-- are not private
+- are not private (customizable via `--include-private,`)
 - have no forks
 - have no stars
 - had no activity in the last 1 month (customizable via `--since`)
+- are not blacklisted (customizable via `--blacklist`)
 
 fork-cleaner will list them and ask if you want to remove them! Simple as that.
 

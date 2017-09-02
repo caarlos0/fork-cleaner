@@ -37,6 +37,10 @@ func main() {
 			Name:  "force, f",
 			Usage: "Don't ask to remove the forks",
 		},
+		cli.BoolFlag{
+			Name:  "include-private, p",
+			Usage: "Include private repositories",
+		},
 		cli.StringSliceFlag{
 			Name:  "blacklist, exclude, b",
 			Usage: "Blacklist of repos that shouldn't be removed",
@@ -50,7 +54,6 @@ func main() {
 	app.Action = func(c *cli.Context) error {
 		log.SetFlags(0)
 		var token = c.String("token")
-		var owner = c.String("owner")
 		var blacklist = c.StringSlice("blacklist")
 		var ctx = context.Background()
 		var ts = oauth2.StaticTokenSource(&oauth2.Token{AccessToken: token})
@@ -59,17 +62,15 @@ func main() {
 		if token == "" {
 			return cli.NewExitError("missing github token", 1)
 		}
-		if owner == "" {
-			user, _, err := client.Users.Get(ctx, "")
-			if err != nil {
-				return cli.NewExitError(err.Error(), 1)
-			}
-			owner = *user.Login
-		}
 
-		var sg = spin.New("\033[36m %s Gathering data for '" + owner + "'...\033[m")
+		var sg = spin.New("\033[36m %s Gathering data...\033[m")
 		sg.Start()
-		forks, err := forkcleaner.Find(ctx, client, owner, blacklist, c.Duration("since"))
+		var filter = forkcleaner.Filter{
+			Blacklist:      blacklist,
+			IncludePrivate: c.Bool("include-private"),
+			Since:          c.Duration("since"),
+		}
+		forks, err := forkcleaner.Find(ctx, client, filter)
 		sg.Stop()
 		if err != nil {
 			return cli.NewExitError(err.Error(), 1)

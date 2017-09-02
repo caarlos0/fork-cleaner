@@ -8,6 +8,13 @@ import (
 	"github.com/google/go-github/github"
 )
 
+// Filter applied to the repositories list
+type Filter struct {
+	Blacklist      []string
+	IncludePrivate bool
+	Since          time.Duration
+}
+
 // Delete delete the given list of forks
 func Delete(
 	ctx context.Context,
@@ -27,21 +34,20 @@ func Delete(
 func Find(
 	ctx context.Context,
 	client *github.Client,
-	owner string,
-	blacklist []string,
-	since time.Duration,
+	filter Filter,
 ) ([]*github.Repository, error) {
 	opt := &github.RepositoryListOptions{
-		ListOptions: github.ListOptions{PerPage: 50},
+		ListOptions: github.ListOptions{PerPage: 100},
+		Affiliation: "owner",
 	}
 	var deletions []*github.Repository
 	for {
-		repos, resp, err := client.Repositories.List(ctx, owner, opt)
+		repos, resp, err := client.Repositories.List(ctx, "", opt)
 		if err != nil {
 			return deletions, err
 		}
 		for _, repo := range repos {
-			if shouldDelete(repo, blacklist, since) {
+			if shouldDelete(repo, filter) {
 				deletions = append(deletions, repo)
 			}
 		}
@@ -53,15 +59,17 @@ func Find(
 	return deletions, nil
 }
 
-func shouldDelete(repo *github.Repository, blacklist []string, since time.Duration) bool {
-	for _, r := range blacklist {
-		if r == *repo.Name {
+func shouldDelete(repo *github.Repository, filter Filter) bool {
+	for _, r := range filter.Blacklist {
+		if r == repo.GetName() {
 			return false
 		}
 	}
-	return *repo.Fork &&
-		*repo.ForksCount == 0 &&
-		*repo.StargazersCount == 0 &&
-		!*repo.Private &&
-		time.Now().Add(-since).After((*repo.UpdatedAt).Time)
+	if !filter.IncludePrivate && repo.GetPrivate() {
+		return false
+	}
+	return repo.GetFork() &&
+		repo.GetForksCount() == 0 &&
+		repo.GetStargazersCount() == 0 &&
+		time.Now().Add(-filter.Since).After((repo.GetUpdatedAt()).Time)
 }

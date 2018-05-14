@@ -35,5 +35,5 @@ fork-cleaner will list them and ask if you want to remove them! Simple as that.
 ## Install
 
 ```console
-brew install caarlos0/tap/fork-cleaner
+brew install fork-cleaner
 ```

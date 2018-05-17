@@ -20,10 +20,10 @@
   revision = "2bba0603135d7d7f5cb73b2125beeda19c09f4ef"
 
 [[projects]]
-  branch = "master"
   name = "github.com/google/go-github"
   packages = ["github"]
-  revision = "de33c46a823d3f723514fc5333b75ef2e937b7df"
+  revision = "e48060a28fac52d0f1cb758bc8b87c07bac4a87d"
+  branch = "v15.0.0"
 
 [[projects]]
   branch = "master"

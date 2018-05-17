@@ -36,30 +36,59 @@ func Find(
 	client *github.Client,
 	filter Filter,
 ) ([]*github.Repository, error) {
-	opt := &github.RepositoryListOptions{
-		ListOptions: github.ListOptions{PerPage: 100},
+	lopt := github.ListOptions{PerPage: 100}
+	ropt := &github.RepositoryListOptions{
+		ListOptions: lopt,
 		Affiliation: "owner",
 	}
+	iopt := &github.IssueListByRepoOptions{
+		ListOptions: lopt,
+	}
 	var deletions []*github.Repository
+	var login string
 	for {
-		repos, resp, err := client.Repositories.List(ctx, "", opt)
+		repos, resp, err := client.Repositories.List(ctx, "", ropt)
 		if err != nil {
 			return deletions, err
 		}
 		for _, repo := range repos {
-			if shouldDelete(repo, filter) {
+			if login == "" {
+				login = repo.GetOwner().GetLogin()
+				iopt.Creator = login
+			}
+			if !repo.GetFork() {
+				continue
+			}
+			rn := repo.GetName()
+			// Get repository as List omits parent information.
+			repo, _, err = client.Repositories.Get(ctx, login, rn)
+			if err != nil {
+				return deletions, err
+			}
+			parent := repo.GetParent()
+			po := parent.GetOwner().GetLogin()
+			pn := parent.GetName()
+			issues, _, err := client.Issues.ListByRepo(ctx, po, pn, iopt)
+			if err != nil {
+				return deletions, err
+			}
+			if shouldDelete(repo, filter, issues) {
 				deletions = append(deletions, repo)
 			}
 		}
 		if resp.NextPage == 0 {
 			break
 		}
-		opt.ListOptions.Page = resp.NextPage
+		ropt.ListOptions.Page = resp.NextPage
 	}
 	return deletions, nil
 }
 
-func shouldDelete(repo *github.Repository, filter Filter) bool {
+func shouldDelete(
+	repo *github.Repository,
+	filter Filter,
+	issues []*github.Issue,
+) bool {
 	for _, r := range filter.Blacklist {
 		if r == repo.GetName() {
 			return false
@@ -68,8 +97,15 @@ func shouldDelete(repo *github.Repository, filter Filter) bool {
 	if !filter.IncludePrivate && repo.GetPrivate() {
 		return false
 	}
-	return repo.GetFork() &&
-		repo.GetForksCount() == 0 &&
-		repo.GetStargazersCount() == 0 &&
-		time.Now().Add(-filter.Since).After((repo.GetUpdatedAt()).Time)
+	if repo.GetForksCount() > 0 ||
+		repo.GetStargazersCount() > 0 ||
+		!time.Now().Add(-filter.Since).After((repo.GetUpdatedAt()).Time) {
+		return false
+	}
+	for _, issue := range issues {
+		if issue.IsPullRequest() {
+			return false
+		}
+	}
+	return true
 }

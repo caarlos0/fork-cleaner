@@ -11,7 +11,7 @@
 
 Cleans up old and inactive forks on your GitHub account.
 
-You'll need to create a personal access token with `repo` and `delete_repo`
+You'll need to [create a personal access token](https://github.com/settings/tokens/new?scopes=repo,delete_repo&description=fork-cleaner) with `repo` and `delete_repo`
 permissions.
 
 Then, [download the latest release](https://github.com/caarlos0/fork-cleaner/releases)

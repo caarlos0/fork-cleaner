@@ -6,4 +6,11 @@ brew:
   github:
     owner: caarlos0
     name: homebrew-tap
+  homepage:  https://github.com/caarlos0/fork-cleaner
+  description: Cleans up old and inactive forks on your github account.
   folder: Formula
+snapcraft:
+  summary: Cleans up old and inactive forks on your github account.
+  description: |
+    Cleans up old and inactive forks on your GitHub account.
+  grade: stable

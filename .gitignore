@@ -1,3 +1,4 @@
 vendor
 .env
 fork-cleaner
+dist

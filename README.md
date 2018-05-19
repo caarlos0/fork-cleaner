@@ -34,6 +34,16 @@ fork-cleaner will list them and ask if you want to remove them! Simple as that.
 
 ## Install
 
+On macOS:
+
 ```console
 brew install fork-cleaner
 ```
+
+On Linux:
+
+```console
+snap install fork-cleaner
+```
+
+Or download one of the archives from the releases page.

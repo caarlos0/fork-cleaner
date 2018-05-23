@@ -29,11 +29,6 @@ func main() {
 			Name:   "token, t",
 			Usage:  "Your GitHub token",
 		},
-		// TODO: this is not being used it seems
-		cli.StringFlag{
-			Name:  "owner, o",
-			Usage: "GitHub user or organization to clean up",
-		},
 		cli.BoolFlag{
 			Name:  "force, f",
 			Usage: "Don't ask to remove the forks",

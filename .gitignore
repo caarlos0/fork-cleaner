@@ -2,3 +2,5 @@ vendor
 .env
 fork-cleaner
 dist
+bin
+coverage.out

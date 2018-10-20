@@ -1,12 +1,13 @@
 SOURCE_FILES?=./...
 TEST_PATTERN?=.
 TEST_OPTIONS?=
-OS=$(shell uname -s)
+
+export PATH := ./bin:$(PATH)
 
 # Install all the build and lint dependencies
 setup:
 	curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh
-	curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
+	curl -sfL https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
 	dep ensure -vendor-only
 .PHONY: setup
 

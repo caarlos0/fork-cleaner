@@ -12,7 +12,9 @@ install:
   - make setup
   - sudo snap install snapcraft --classic
 script: make ci
-after_success: bash <(curl -s https://codecov.io/bash)
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
+  - test -n "$TRAVIS_TAG" && snapcraft login --with snap.login
 notifications:
   email: false
 deploy:

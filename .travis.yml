@@ -1,6 +1,16 @@
 language: go
 go: '1.10'
-install: make setup
+addons:
+  apt:
+    packages:
+    - snapd
+env:
+  - PATH=/snap/bin:$PATH
+before_install:
+  - openssl aes-256-cbc -K $encrypted_3cc1e036da7d_key -iv $encrypted_3cc1e036da7d_iv -in snap.login.enc -out snap.login -d
+install:
+  - make setup
+  - sudo snap install snapcraft --classic
 script: make ci
 after_success: bash <(curl -s https://codecov.io/bash)
 notifications:

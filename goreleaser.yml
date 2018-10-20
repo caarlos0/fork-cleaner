@@ -10,6 +10,7 @@ brew:
   description: Cleans up old and inactive forks on your github account.
   folder: Formula
 snapcraft:
+  publish: true
   summary: Cleans up old and inactive forks on your github account.
   description: |
     Cleans up old and inactive forks on your GitHub account.

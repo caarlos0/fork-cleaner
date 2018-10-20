@@ -3,16 +3,10 @@ TEST_PATTERN?=.
 TEST_OPTIONS?=
 OS=$(shell uname -s)
 
-export PATH := ./bin:$(PATH)
-
 # Install all the build and lint dependencies
 setup:
 	curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh
-ifeq ($(OS), Darwin)
-	brew install dep
-else
 	curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
-endif
 	dep ensure -vendor-only
 .PHONY: setup
 

@@ -4,3 +4,4 @@ fork-cleaner
 dist
 bin
 coverage.out
+snap.login

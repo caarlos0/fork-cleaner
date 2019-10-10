@@ -1,8 +1,6 @@
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/Songmu/prompter v0.0.0-20150727040349-f49666b0047d h1:a9oloKxNctx+VQcRNXnUhNi3unECNRpQPsu4Cn+kiBg=
 github.com/Songmu/prompter v0.0.0-20150727040349-f49666b0047d/go.mod h1:fNhSFBGC+sg+dZ7AqDHgq+xYiom23TeTESzUbO7PIrE=
-github.com/caarlos0/spin v1.0.0 h1:dwHW7DWuwbb+JN5HxqD9x8VhIsaXgyphYZO2uB+lqW0=
-github.com/caarlos0/spin v1.0.0/go.mod h1:HOC4pUvfhjXR2yDt+sEY9dRc2m4CCaK5z5oQYAbzXSA=
 github.com/caarlos0/spin v1.1.0 h1:EjsfGbZJejib25BPnDqf7iL2z9RUna7refvUf+AN9UE=
 github.com/caarlos0/spin v1.1.0/go.mod h1:HOC4pUvfhjXR2yDt+sEY9dRc2m4CCaK5z5oQYAbzXSA=
 github.com/cpuguy83/go-md2man/v2 v2.0.0-20190314233015-f79a8a8ca69d h1:U+s90UTSYgptZMwQh2aRr3LuazLJIa+Pg3Kc1ylSYVY=
@@ -15,13 +13,12 @@ github.com/google/go-querystring v0.0.0-20170111101155-53e6ce116135 h1:zLTLjkaOF
 github.com/google/go-querystring v0.0.0-20170111101155-53e6ce116135/go.mod h1:odCYkC5MyYFN7vkCjXpyrEuKhc/BUO6wN/zVPAxq5ck=
 github.com/mattn/go-isatty v0.0.2 h1:F+DnWktyadxnOrohKLNUC9/GjFii5RJgY4GFG6ilggw=
 github.com/mattn/go-isatty v0.0.2/go.mod h1:M+lRXTBqGeGNdLjl/ufCoiOlB5xdOkqRJdNxMWT7Zi4=
+github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/russross/blackfriday/v2 v2.0.1 h1:lPqVAte+HuHNfhJ/0LC98ESWRz8afy9tM/0RK8m9o+Q=
 github.com/russross/blackfriday/v2 v2.0.1/go.mod h1:+Rmxgy9KzJVeS9/2gXHxylqXiyQDYRxCVz55jmeOWTM=
 github.com/shurcooL/sanitized_anchor_name v1.0.0 h1:PdmoCO6wvbs+7yrJyMORt4/BmY5IYyJwS/kOiWx8mHo=
 github.com/shurcooL/sanitized_anchor_name v1.0.0/go.mod h1:1NzhyTcUVG4SuEtjjoZeVRXNmyL/1OwPU0+IJeTBvfc=
-github.com/urfave/cli v1.19.1 h1:0mKm4ZoB74PxYmZVua162y1dGt1qc10MyymYRBf3lb8=
-github.com/urfave/cli v1.19.1/go.mod h1:70zkFmudgCuE/ngEzBv17Jvp/497gISqfk5gWijbERA=
 github.com/urfave/cli v1.22.1 h1:+mkCCcOFKPnCmVYVcURKps1Xe+3zP90gSYGNfRkjoIY=
 github.com/urfave/cli v1.22.1/go.mod h1:Gos4lmkARVdJ6EkW0WaNv/tZAAMe9V7XWyB60NtXRu0=
 golang.org/x/crypto v0.0.0-20170404161947-c78caca803c9 h1:rPnURWKICR4bkjK+GABNWICXj6KLDa1jbj0IoVaQODw=

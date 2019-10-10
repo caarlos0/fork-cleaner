@@ -2,13 +2,14 @@ SOURCE_FILES?=./...
 TEST_PATTERN?=.
 TEST_OPTIONS?=
 
-export PATH := ./bin:$(PATH)
+export GOPROXY 		:= https://proxy.golang.org,https://gocenter.io,direct
+export PATH 		:= ./bin:$(PATH)
+export GO111MODULE 	:= on
 
 # Install all the build and lint dependencies
 setup:
 	curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh
-	curl -sfL https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
-	dep ensure -vendor-only
+	go mod tidy
 .PHONY: setup
 
 test:
@@ -21,7 +22,7 @@ fmt:
 	find . -name '*.go' -not -wholename './vendor/*' | while read -r file; do gofmt -w -s "$$file"; goimports -w "$$file"; done
 
 lint:
-	golangci-lint run --enable-all ./...
+	./bin/golangci-lint run ./...
 
 ci: lint test
 

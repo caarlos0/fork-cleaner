@@ -9,7 +9,7 @@ require (
 	github.com/google/go-github v15.0.0+incompatible
 	github.com/google/go-querystring v0.0.0-20170111101155-53e6ce116135 // indirect
 	github.com/mattn/go-isatty v0.0.2 // indirect
-	github.com/urfave/cli v1.19.1
+	github.com/urfave/cli v1.22.1
 	golang.org/x/crypto v0.0.0-20170404161947-c78caca803c9 // indirect
 	golang.org/x/net v0.0.0-20170413175226-5602c733f70a // indirect
 	golang.org/x/oauth2 v0.0.0-20170412232759-a6bd8cefa181

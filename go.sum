@@ -3,6 +3,8 @@ github.com/Songmu/prompter v0.0.0-20150727040349-f49666b0047d h1:a9oloKxNctx+VQc
 github.com/Songmu/prompter v0.0.0-20150727040349-f49666b0047d/go.mod h1:fNhSFBGC+sg+dZ7AqDHgq+xYiom23TeTESzUbO7PIrE=
 github.com/caarlos0/spin v1.0.0 h1:dwHW7DWuwbb+JN5HxqD9x8VhIsaXgyphYZO2uB+lqW0=
 github.com/caarlos0/spin v1.0.0/go.mod h1:HOC4pUvfhjXR2yDt+sEY9dRc2m4CCaK5z5oQYAbzXSA=
+github.com/caarlos0/spin v1.1.0 h1:EjsfGbZJejib25BPnDqf7iL2z9RUna7refvUf+AN9UE=
+github.com/caarlos0/spin v1.1.0/go.mod h1:HOC4pUvfhjXR2yDt+sEY9dRc2m4CCaK5z5oQYAbzXSA=
 github.com/cpuguy83/go-md2man/v2 v2.0.0-20190314233015-f79a8a8ca69d h1:U+s90UTSYgptZMwQh2aRr3LuazLJIa+Pg3Kc1ylSYVY=
 github.com/cpuguy83/go-md2man/v2 v2.0.0-20190314233015-f79a8a8ca69d/go.mod h1:maD7wRr/U5Z6m/iR4s+kqSMx2CaBsrgA7czyZG/E6dU=
 github.com/golang/protobuf v0.0.0-20170331031902-2bba0603135d h1:KmiEmEGA5sqizMpKnexwioxj8zEUSBc7p9UTQu36lpQ=

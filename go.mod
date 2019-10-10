@@ -4,7 +4,7 @@ go 1.13
 
 require (
 	github.com/Songmu/prompter v0.0.0-20150727040349-f49666b0047d
-	github.com/caarlos0/spin v1.0.0
+	github.com/caarlos0/spin v1.1.0
 	github.com/golang/protobuf v0.0.0-20170331031902-2bba0603135d // indirect
 	github.com/google/go-github v15.0.0+incompatible
 	github.com/google/go-querystring v0.0.0-20170111101155-53e6ce116135 // indirect

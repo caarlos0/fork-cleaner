@@ -39,7 +39,7 @@ func main() {
 		},
 		cli.StringSliceFlag{
 			Name:  "blacklist, exclude, b",
-			Usage: "Blacklist of repos that shouldn't be removed",
+			Usage: "Blacklist of repos that shouldn't be removed (names only)",
 		},
 		cli.DurationFlag{
 			Name:  "no-activity-since, since",

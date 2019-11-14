@@ -30,6 +30,7 @@ Fork-Cleaner will show you repos that:
 - had no activity in the last 1 month (customizable via `--since`);
 - are not private (customizable via `--include-private,`);
 - are not blacklisted (customizable via `--blacklist`).
+- are even with or behind the upstream repo (customizable via `--exclude-commits-ahead`).
 
 fork-cleaner will list them and ask if you want to remove them! Simple as that.
 

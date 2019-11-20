@@ -37,6 +37,10 @@ func main() {
 			Name:  "include-private, p",
 			Usage: "Include private repositories",
 		},
+		cli.BoolFlag{
+			Name:  "exclude-commits-ahead, a",
+			Usage: "Exclude repositories with commits ahead of parent",
+		},
 		cli.StringSliceFlag{
 			Name:  "blacklist, exclude, b",
 			Usage: "Blacklist of repos that shouldn't be removed (names only)",
@@ -62,9 +66,10 @@ func main() {
 		var sg = spin.New("\033[36m %s Gathering data...\033[m")
 		sg.Start()
 		var filter = forkcleaner.Filter{
-			Blacklist:      blacklist,
-			IncludePrivate: c.Bool("include-private"),
-			Since:          c.Duration("since"),
+			Blacklist:           blacklist,
+			IncludePrivate:      c.Bool("include-private"),
+			Since:               c.Duration("since"),
+			ExcludeCommitsAhead: c.Bool("exclude-commits-ahead"),
 		}
 		forks, err := forkcleaner.Find(ctx, client, filter)
 		sg.Stop()

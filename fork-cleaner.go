@@ -3,6 +3,7 @@ package forkcleaner
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/google/go-github/github"
@@ -10,9 +11,10 @@ import (
 
 // Filter applied to the repositories list
 type Filter struct {
-	Blacklist      []string
-	IncludePrivate bool
-	Since          time.Duration
+	Blacklist           []string
+	IncludePrivate      bool
+	Since               time.Duration
+	ExcludeCommitsAhead bool
 }
 
 // Delete delete the given list of forks
@@ -72,7 +74,12 @@ func Find(
 			if err != nil {
 				return deletions, err
 			}
-			if shouldDelete(repo, filter, issues) {
+			commits, _, compareErr := client.Repositories.CompareCommits(ctx, po, rn, *parent.DefaultBranch, fmt.Sprintf("%s:%s", login, *repo.DefaultBranch))
+			if compareErr != nil {
+				return deletions, compareErr
+			}
+
+			if shouldDelete(repo, filter, issues, commits) {
 				deletions = append(deletions, repo)
 			}
 		}
@@ -88,6 +95,7 @@ func shouldDelete(
 	repo *github.Repository,
 	filter Filter,
 	issues []*github.Issue,
+	commitComparison *github.CommitsComparison,
 ) bool {
 	for _, r := range filter.Blacklist {
 		if r == repo.GetName() {
@@ -107,5 +115,13 @@ func shouldDelete(
 			return false
 		}
 	}
+
+	// check if the fork has commits ahead of the parent repo
+	if filter.ExcludeCommitsAhead {
+		if *commitComparison.AheadBy > 0 {
+			return false
+		}
+	}
+
 	return true
 }

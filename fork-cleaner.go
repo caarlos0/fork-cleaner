@@ -12,8 +12,8 @@ import (
 // Filter applied to the repositories list
 type Filter struct {
 	Blacklist           []string
-	IncludePrivate      bool
 	Since               time.Duration
+	IncludePrivate      bool
 	ExcludeCommitsAhead bool
 	ShowExcludeReason   bool
 }

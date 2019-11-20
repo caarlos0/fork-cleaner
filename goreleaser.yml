@@ -1,17 +1,24 @@
-build:
-  main: ./cmd/fork-cleaner/main.go
+builds:
+- main: ./cmd/fork-cleaner/main.go
   goarch:
-    - amd64
-brew:
-  github:
+  - amd64
+brews:
+- github:
     owner: caarlos0
     name: homebrew-tap
   homepage:  https://github.com/caarlos0/fork-cleaner
   description: Cleans up old and inactive forks on your github account.
   folder: Formula
-snapcraft:
-  publish: true
+snapcrafts:
+- publish: true
   summary: Cleans up old and inactive forks on your github account.
   description: |
     Cleans up old and inactive forks on your GitHub account.
   grade: stable
+nfpms:
+- maintainer: Carlos A Becker <pkg@carlosbecker.com>
+  description: Cleans up old and inactive forks on your GitHub account.
+  license: MIT
+  formats:
+  - deb
+  - rpm

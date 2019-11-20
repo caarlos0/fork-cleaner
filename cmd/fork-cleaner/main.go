@@ -41,6 +41,10 @@ func main() {
 			Name:  "exclude-commits-ahead, a",
 			Usage: "Exclude repositories with commits ahead of parent",
 		},
+		cli.BoolFlag{
+			Name:  "show-exclusion-reason",
+			Usage: "Show the reason a fork is excluded",
+		},
 		cli.StringSliceFlag{
 			Name:  "blacklist, exclude, b",
 			Usage: "Blacklist of repos that shouldn't be removed (names only)",
@@ -70,11 +74,19 @@ func main() {
 			IncludePrivate:      c.Bool("include-private"),
 			Since:               c.Duration("since"),
 			ExcludeCommitsAhead: c.Bool("exclude-commits-ahead"),
+			ShowExcludeReason:   c.Bool("show-exclusion-reason"),
 		}
-		forks, err := forkcleaner.Find(ctx, client, filter)
+		forks, excludedForks, err := forkcleaner.Find(ctx, client, filter)
 		sg.Stop()
 		if err != nil {
 			return cli.NewExitError(err.Error(), 1)
+		}
+		if filter.ShowExcludeReason && len(excludedForks) > 0 {
+			log.Println(len(excludedForks), "forks excluded from deletion:")
+			for _, f := range excludedForks {
+				log.Print(f)
+			}
+			log.Println()
 		}
 		if len(forks) == 0 {
 			log.Println("0 forks to delete!")

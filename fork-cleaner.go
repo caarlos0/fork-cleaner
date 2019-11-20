@@ -15,6 +15,7 @@ type Filter struct {
 	IncludePrivate      bool
 	Since               time.Duration
 	ExcludeCommitsAhead bool
+	ShowExcludeReason   bool
 }
 
 // Delete delete the given list of forks
@@ -37,7 +38,7 @@ func Find(
 	ctx context.Context,
 	client *github.Client,
 	filter Filter,
-) ([]*github.Repository, error) {
+) ([]*github.Repository, []string, error) {
 	lopt := github.ListOptions{PerPage: 100}
 	ropt := &github.RepositoryListOptions{
 		ListOptions: lopt,
@@ -48,10 +49,11 @@ func Find(
 	}
 	var deletions []*github.Repository
 	var login string
+	exclusionReasons := make([]string, 0)
 	for {
 		repos, resp, err := client.Repositories.List(ctx, "", ropt)
 		if err != nil {
-			return deletions, err
+			return deletions, exclusionReasons, err
 		}
 		for _, repo := range repos {
 			if login == "" {
@@ -65,22 +67,25 @@ func Find(
 			// Get repository as List omits parent information.
 			repo, _, err = client.Repositories.Get(ctx, login, rn)
 			if err != nil {
-				return deletions, err
+				return deletions, exclusionReasons, err
 			}
 			parent := repo.GetParent()
 			po := parent.GetOwner().GetLogin()
 			pn := parent.GetName()
 			issues, _, err := client.Issues.ListByRepo(ctx, po, pn, iopt)
 			if err != nil {
-				return deletions, err
+				return deletions, exclusionReasons, err
 			}
 			commits, _, compareErr := client.Repositories.CompareCommits(ctx, po, rn, *parent.DefaultBranch, fmt.Sprintf("%s:%s", login, *repo.DefaultBranch))
 			if compareErr != nil {
-				return deletions, compareErr
+				return deletions, exclusionReasons, compareErr
 			}
 
-			if shouldDelete(repo, filter, issues, commits) {
+			ok, reason := shouldDelete(repo, filter, issues, commits)
+			if ok {
 				deletions = append(deletions, repo)
+			} else {
+				exclusionReasons = append(exclusionReasons, reason)
 			}
 		}
 		if resp.NextPage == 0 {
@@ -88,7 +93,7 @@ func Find(
 		}
 		ropt.ListOptions.Page = resp.NextPage
 	}
-	return deletions, nil
+	return deletions, exclusionReasons, nil
 }
 
 func shouldDelete(
@@ -96,32 +101,58 @@ func shouldDelete(
 	filter Filter,
 	issues []*github.Issue,
 	commitComparison *github.CommitsComparison,
-) bool {
+) (bool, string) {
+	var reason string
 	for _, r := range filter.Blacklist {
 		if r == repo.GetName() {
-			return false
+			if filter.ShowExcludeReason {
+				reason = fmt.Sprintf("%s excluded because: repo is blacklisted\n", *repo.HTMLURL)
+			}
+			return false, reason
 		}
 	}
 	if !filter.IncludePrivate && repo.GetPrivate() {
-		return false
+		if filter.ShowExcludeReason {
+			reason = fmt.Sprintf("%s excluded because: repo is private\n", *repo.HTMLURL)
+		}
+		return false, reason
 	}
-	if repo.GetForksCount() > 0 ||
-		repo.GetStargazersCount() > 0 ||
-		!time.Now().Add(-filter.Since).After((repo.GetUpdatedAt()).Time) {
-		return false
+	if repo.GetForksCount() > 0 {
+		if filter.ShowExcludeReason {
+			reason = fmt.Sprintf("%s excluded because: repo has %d forks\n", *repo.HTMLURL, *repo.ForksCount)
+		}
+		return false, reason
+	}
+	if repo.GetStargazersCount() > 0 {
+		if filter.ShowExcludeReason {
+			reason = fmt.Sprintf("%s excluded because: repo has %d stars\n", *repo.HTMLURL, *repo.StargazersCount)
+		}
+		return false, reason
+	}
+	if !time.Now().Add(-filter.Since).After((repo.GetUpdatedAt()).Time) {
+		if filter.ShowExcludeReason {
+			reason = fmt.Sprintf("%s excluded because: repo has recent activity (last update on %s)\n", *repo.HTMLURL, repo.GetUpdatedAt().Format("1/2/2006"))
+		}
+		return false, reason
 	}
 	for _, issue := range issues {
 		if issue.IsPullRequest() {
-			return false
+			if filter.ShowExcludeReason {
+				reason = fmt.Sprintf("%s excluded because: repo has a pull request\n", *repo.HTMLURL)
+			}
+			return false, reason
 		}
 	}
 
 	// check if the fork has commits ahead of the parent repo
 	if filter.ExcludeCommitsAhead {
 		if *commitComparison.AheadBy > 0 {
-			return false
+			if filter.ShowExcludeReason {
+				reason = fmt.Sprintf("%s excluded because: repo is %d commits ahead of parent\n", *repo.HTMLURL, *commitComparison.AheadBy)
+			}
+			return false, reason
 		}
 	}
 
-	return true
+	return true, reason
 }

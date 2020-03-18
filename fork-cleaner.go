@@ -9,13 +9,14 @@ import (
 	"github.com/google/go-github/github"
 )
 
+const pageSize = 100
+
 // Filter applied to the repositories list
 type Filter struct {
 	Blacklist           []string
 	Since               time.Duration
 	IncludePrivate      bool
 	ExcludeCommitsAhead bool
-	ShowExcludeReason   bool
 }
 
 // Delete delete the given list of forks
@@ -39,7 +40,7 @@ func Find(
 	client *github.Client,
 	filter Filter,
 ) ([]*github.Repository, []string, error) {
-	lopt := github.ListOptions{PerPage: 100}
+	lopt := github.ListOptions{PerPage: pageSize}
 	ropt := &github.RepositoryListOptions{
 		ListOptions: lopt,
 		Affiliation: "owner",
@@ -102,57 +103,33 @@ func shouldDelete(
 	issues []*github.Issue,
 	commitComparison *github.CommitsComparison,
 ) (bool, string) {
-	var reason string
 	for _, r := range filter.Blacklist {
 		if r == repo.GetName() {
-			if filter.ShowExcludeReason {
-				reason = fmt.Sprintf("%s excluded because: repo is blacklisted\n", *repo.HTMLURL)
-			}
-			return false, reason
+			return false, fmt.Sprintf("%s excluded because: repo is blacklisted\n", *repo.HTMLURL)
 		}
 	}
 	if !filter.IncludePrivate && repo.GetPrivate() {
-		if filter.ShowExcludeReason {
-			reason = fmt.Sprintf("%s excluded because: repo is private\n", *repo.HTMLURL)
-		}
-		return false, reason
+		return false, fmt.Sprintf("%s excluded because: repo is private\n", *repo.HTMLURL)
 	}
 	if repo.GetForksCount() > 0 {
-		if filter.ShowExcludeReason {
-			reason = fmt.Sprintf("%s excluded because: repo has %d forks\n", *repo.HTMLURL, *repo.ForksCount)
-		}
-		return false, reason
+		return false, fmt.Sprintf("%s excluded because: repo has %d forks\n", *repo.HTMLURL, *repo.ForksCount)
 	}
 	if repo.GetStargazersCount() > 0 {
-		if filter.ShowExcludeReason {
-			reason = fmt.Sprintf("%s excluded because: repo has %d stars\n", *repo.HTMLURL, *repo.StargazersCount)
-		}
-		return false, reason
+		return false, fmt.Sprintf("%s excluded because: repo has %d stars\n", *repo.HTMLURL, *repo.StargazersCount)
 	}
 	if !time.Now().Add(-filter.Since).After((repo.GetUpdatedAt()).Time) {
-		if filter.ShowExcludeReason {
-			reason = fmt.Sprintf("%s excluded because: repo has recent activity (last update on %s)\n", *repo.HTMLURL, repo.GetUpdatedAt().Format("1/2/2006"))
-		}
-		return false, reason
+		return false, fmt.Sprintf("%s excluded because: repo has recent activity (last update on %s)\n", *repo.HTMLURL, repo.GetUpdatedAt().Format("1/2/2006"))
 	}
 	for _, issue := range issues {
 		if issue.IsPullRequest() {
-			if filter.ShowExcludeReason {
-				reason = fmt.Sprintf("%s excluded because: repo has a pull request\n", *repo.HTMLURL)
-			}
-			return false, reason
+			return false, fmt.Sprintf("%s excluded because: repo has a pull request\n", *repo.HTMLURL)
 		}
 	}
 
 	// check if the fork has commits ahead of the parent repo
-	if filter.ExcludeCommitsAhead {
-		if *commitComparison.AheadBy > 0 {
-			if filter.ShowExcludeReason {
-				reason = fmt.Sprintf("%s excluded because: repo is %d commits ahead of parent\n", *repo.HTMLURL, *commitComparison.AheadBy)
-			}
-			return false, reason
-		}
+	if filter.ExcludeCommitsAhead && *commitComparison.AheadBy > 0 {
+		return false, fmt.Sprintf("%s excluded because: repo is %d commits ahead of parent\n", *repo.HTMLURL, *commitComparison.AheadBy)
 	}
 
-	return true, reason
+	return true, ""
 }

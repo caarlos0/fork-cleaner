@@ -74,14 +74,13 @@ func main() {
 			IncludePrivate:      c.Bool("include-private"),
 			Since:               c.Duration("since"),
 			ExcludeCommitsAhead: c.Bool("exclude-commits-ahead"),
-			ShowExcludeReason:   c.Bool("show-exclusion-reason"),
 		}
 		forks, excludedForks, err := forkcleaner.Find(ctx, client, filter)
 		sg.Stop()
 		if err != nil {
 			return cli.NewExitError(err.Error(), 1)
 		}
-		if filter.ShowExcludeReason && len(excludedForks) > 0 {
+		if c.Bool("show-exclusion-reason") && len(excludedForks) > 0 {
 			log.Println(len(excludedForks), "forks excluded from deletion:")
 			for _, f := range excludedForks {
 				log.Print(f)

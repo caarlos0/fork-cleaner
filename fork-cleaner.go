@@ -76,7 +76,7 @@ func Find(
 			if err != nil {
 				return deletions, exclusionReasons, err
 			}
-			commits, _, compareErr := client.Repositories.CompareCommits(ctx, po, rn, *parent.DefaultBranch, fmt.Sprintf("%s:%s", login, *repo.DefaultBranch))
+			commits, _, compareErr := client.Repositories.CompareCommits(ctx, po, pn, *parent.DefaultBranch, fmt.Sprintf("%s:%s", login, *repo.DefaultBranch))
 			if compareErr != nil {
 				return deletions, exclusionReasons, compareErr
 			}

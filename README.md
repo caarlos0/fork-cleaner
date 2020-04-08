@@ -17,7 +17,7 @@ permissions.
 Then, [download the latest release](https://github.com/caarlos0/fork-cleaner/releases)
 and execute the binary as in:
 
-```console
+```sh
 ./fork-cleaner --token "my github token"
 ```
 
@@ -38,13 +38,13 @@ fork-cleaner will list them and ask if you want to remove them! Simple as that.
 
 On macOS:
 
-```console
+```sh
 brew install fork-cleaner
 ```
 
 On Linux:
 
-```console
+```sh
 snap install fork-cleaner
 ```
 

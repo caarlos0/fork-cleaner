@@ -3,7 +3,7 @@ builds:
   goarch:
   - amd64
 brews:
-- github:
+- tap:
     owner: caarlos0
     name: homebrew-tap
   homepage:  https://github.com/caarlos0/fork-cleaner

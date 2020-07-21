@@ -11,7 +11,7 @@ import (
 
 const pageSize = 100
 
-// Filter applied to the repositories list
+// Filter applied to the repositories list.
 type Filter struct {
 	Blacklist           []string
 	Since               time.Duration
@@ -19,7 +19,7 @@ type Filter struct {
 	ExcludeCommitsAhead bool
 }
 
-// Delete delete the given list of forks
+// Delete delete the given list of forks.
 func Delete(
 	ctx context.Context,
 	client *github.Client,
@@ -34,7 +34,7 @@ func Delete(
 	return nil
 }
 
-// Find list the forks from a given owner that could be deleted
+// Find list the forks from a given owner that could be deleted.
 func Find(
 	ctx context.Context,
 	client *github.Client,

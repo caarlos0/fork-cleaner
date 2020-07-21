@@ -57,19 +57,19 @@ func main() {
 	}
 	app.Action = func(c *cli.Context) error {
 		log.SetFlags(0)
-		var token = c.String("token")
-		var blacklist = c.StringSlice("blacklist")
-		var ctx = context.Background()
-		var ts = oauth2.StaticTokenSource(&oauth2.Token{AccessToken: token})
-		var tc = oauth2.NewClient(ctx, ts)
-		var client = github.NewClient(tc)
+		token := c.String("token")
+		blacklist := c.StringSlice("blacklist")
+		ctx := context.Background()
+		ts := oauth2.StaticTokenSource(&oauth2.Token{AccessToken: token})
+		tc := oauth2.NewClient(ctx, ts)
+		client := github.NewClient(tc)
 		if token == "" {
 			return cli.NewExitError("missing github token", 1)
 		}
 
-		var sg = spin.New("\033[36m %s Gathering data...\033[m")
+		sg := spin.New("\033[36m %s Gathering data...\033[m")
 		sg.Start()
-		var filter = forkcleaner.Filter{
+		filter := forkcleaner.Filter{
 			Blacklist:           blacklist,
 			IncludePrivate:      c.Bool("include-private"),
 			Since:               c.Duration("since"),
@@ -98,7 +98,7 @@ func main() {
 		}
 		log.SetPrefix("")
 
-		var remove = true
+		remove := true
 		if !c.Bool("force") {
 			remove = prompter.YN("Remove the above listed forks?", false)
 		}
@@ -107,7 +107,7 @@ func main() {
 			return nil
 		}
 		fmt.Printf("\n\n")
-		var sd = spin.New(fmt.Sprintf(
+		sd := spin.New(fmt.Sprintf(
 			"\033[36m %s Deleting %d forks...\033[m", "%s", len(forks),
 		))
 		sd.Start()

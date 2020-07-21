@@ -22,7 +22,7 @@ fmt:
 	find . -name '*.go' -not -wholename './vendor/*' | while read -r file; do gofmt -w -s "$$file"; goimports -w "$$file"; done
 
 lint:
-	./bin/golangci-lint run ./...
+	./bin/golangci-lint run --fix ./...
 
 ci: lint test
 

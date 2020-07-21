@@ -15,6 +15,10 @@ snapcrafts:
   description: |
     Cleans up old and inactive forks on your GitHub account.
   grade: stable
+  apps:
+    fork-cleaner:
+      plugs: ["home", "network", "personal-files"]
+      command: fork-cleaner
 nfpms:
 - maintainer: Carlos A Becker <pkg@carlosbecker.com>
   description: Cleans up old and inactive forks on your GitHub account.
@@ -22,3 +26,4 @@ nfpms:
   formats:
   - deb
   - rpm
+

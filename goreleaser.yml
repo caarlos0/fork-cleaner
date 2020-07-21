@@ -17,7 +17,7 @@ snapcrafts:
   grade: stable
   apps:
     fork-cleaner:
-      plugs: ["home", "network", "personal-files"]
+      plugs: ["network"]
       command: fork-cleaner
 nfpms:
 - maintainer: Carlos A Becker <pkg@carlosbecker.com>

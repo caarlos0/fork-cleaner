@@ -1,6 +1,6 @@
 module github.com/caarlos0/fork-cleaner
 
-go 1.13
+go 1.14
 
 require (
 	github.com/Songmu/prompter v0.3.0

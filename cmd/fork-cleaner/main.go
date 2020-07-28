@@ -38,6 +38,14 @@ func main() {
 			Usage: "Include private repositories",
 		},
 		cli.BoolFlag{
+			Name:  "include-forked",
+			Usage: "Include forked repositories",
+		},
+		cli.BoolFlag{
+			Name:  "include-starred",
+			Usage: "Include starred repositories",
+		},
+		cli.BoolFlag{
 			Name:  "exclude-commits-ahead, a",
 			Usage: "Exclude repositories with commits ahead of parent",
 		},
@@ -72,6 +80,8 @@ func main() {
 		filter := forkcleaner.Filter{
 			Blacklist:           blacklist,
 			IncludePrivate:      c.Bool("include-private"),
+			IncludeForked:       c.Bool("include-forked"),
+			IncludeStarred:      c.Bool("include-starred"),
 			Since:               c.Duration("since"),
 			ExcludeCommitsAhead: c.Bool("exclude-commits-ahead"),
 		}

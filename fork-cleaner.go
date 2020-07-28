@@ -16,6 +16,8 @@ type Filter struct {
 	Blacklist           []string
 	Since               time.Duration
 	IncludePrivate      bool
+	IncludeStarred      bool
+	IncludeForked       bool
 	ExcludeCommitsAhead bool
 }
 
@@ -111,10 +113,10 @@ func shouldDelete(
 	if !filter.IncludePrivate && repo.GetPrivate() {
 		return false, fmt.Sprintf("%s excluded because: repo is private\n", *repo.HTMLURL)
 	}
-	if repo.GetForksCount() > 0 {
+	if !filter.IncludeForked && repo.GetForksCount() > 0 {
 		return false, fmt.Sprintf("%s excluded because: repo has %d forks\n", *repo.HTMLURL, *repo.ForksCount)
 	}
-	if repo.GetStargazersCount() > 0 {
+	if !filter.IncludeStarred && repo.GetStargazersCount() > 0 {
 		return false, fmt.Sprintf("%s excluded because: repo has %d stars\n", *repo.HTMLURL, *repo.StargazersCount)
 	}
 	if !time.Now().Add(-filter.Since).After((repo.GetUpdatedAt()).Time) {

@@ -24,8 +24,8 @@ and execute the binary as in:
 Fork-Cleaner will show you repos that:
 
 - are forks;
-- have no forks;
-- have no stars;
+- have no forks (customizable via `--include-forked`);
+- have no stars (customizable via `--include-starred`);
 - have no open pull requests to upstream;
 - had no activity in the last 1 month (customizable via `--since`);
 - are not private (customizable via `--include-private,`);

@@ -4,6 +4,8 @@ package forkcleaner
 import (
 	"context"
 	"fmt"
+	"log"
+	"net/http"
 	"time"
 
 	"github.com/google/go-github/github"
@@ -79,7 +81,11 @@ func Find(
 			if err != nil {
 				return deletions, exclusionReasons, err
 			}
-			commits, _, compareErr := client.Repositories.CompareCommits(ctx, po, pn, *parent.DefaultBranch, fmt.Sprintf("%s:%s", login, *repo.DefaultBranch))
+			commits, resp, compareErr := client.Repositories.CompareCommits(ctx, po, pn, *parent.DefaultBranch, fmt.Sprintf("%s:%s", login, *repo.DefaultBranch))
+			if resp.StatusCode == http.StatusNotFound {
+				log.Printf("comparing %s/%s with %s result in a 404, ignoring", po, pn, repo.GetFullName())
+				continue
+			}
 			if compareErr != nil {
 				return deletions, exclusionReasons, compareErr
 			}

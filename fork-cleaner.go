@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/google/go-github/github"
+	"github.com/google/go-github/v32/github"
 )
 
 const pageSize = 100

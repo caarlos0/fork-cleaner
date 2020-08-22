@@ -4,7 +4,6 @@ package forkcleaner
 import (
 	"context"
 	"fmt"
-	"log"
 	"net/http"
 	"time"
 
@@ -83,7 +82,11 @@ func Find(
 			}
 			commits, resp, compareErr := client.Repositories.CompareCommits(ctx, po, pn, *parent.DefaultBranch, fmt.Sprintf("%s:%s", login, *repo.DefaultBranch))
 			if resp.StatusCode == http.StatusNotFound {
-				log.Printf("comparing %s/%s with %s result in a 404, ignoring", po, pn, repo.GetFullName())
+				exclusionReasons = append(exclusionReasons, fmt.Sprintf("%s excluded because: parent repo doesn't exist anymore\n", *repo.HTMLURL))
+				continue
+			}
+			if resp.StatusCode == http.StatusUnavailableForLegalReasons {
+				exclusionReasons = append(exclusionReasons, fmt.Sprintf("%s excluded because: DMCA take down\n", *repo.HTMLURL))
 				continue
 			}
 			if compareErr != nil {

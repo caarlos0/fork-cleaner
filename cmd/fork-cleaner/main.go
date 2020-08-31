@@ -29,6 +29,12 @@ func main() {
 			Name:   "token, t",
 			Usage:  "Your GitHub token",
 		},
+		cli.StringFlag{
+			EnvVar: "GITHUB_URL",
+			Name:   "github-url, g",
+			Usage:  "Base GitHub URL",
+			Value:  "https://api.github.com/",
+		},
 		cli.BoolFlag{
 			Name:  "force, f",
 			Usage: "Don't ask to remove the forks",
@@ -66,11 +72,16 @@ func main() {
 	app.Action = func(c *cli.Context) error {
 		log.SetFlags(0)
 		token := c.String("token")
+		ghurl := c.String("github-url")
 		blacklist := c.StringSlice("blacklist")
 		ctx := context.Background()
 		ts := oauth2.StaticTokenSource(&oauth2.Token{AccessToken: token})
 		tc := oauth2.NewClient(ctx, ts)
-		client := github.NewClient(tc)
+		client, err := github.NewEnterpriseClient(ghurl, ghurl, tc)
+		if err != nil {
+			return cli.NewExitError(err.Error(), 1)
+		}
+
 		if token == "" {
 			return cli.NewExitError("missing github token", 1)
 		}

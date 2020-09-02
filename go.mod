@@ -3,7 +3,7 @@ module github.com/caarlos0/fork-cleaner
 go 1.14
 
 require (
-	github.com/Songmu/prompter v0.3.0
+	github.com/Songmu/prompter v0.4.0
 	github.com/caarlos0/spin v1.1.0
 	github.com/cpuguy83/go-md2man/v2 v2.0.0 // indirect
 	github.com/golang/protobuf v1.3.5 // indirect

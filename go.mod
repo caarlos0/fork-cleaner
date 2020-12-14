@@ -7,7 +7,7 @@ require (
 	github.com/caarlos0/spin v1.1.0
 	github.com/cpuguy83/go-md2man/v2 v2.0.0 // indirect
 	github.com/golang/protobuf v1.3.5 // indirect
-	github.com/google/go-github/v32 v32.1.0
+	github.com/google/go-github/v33 v33.0.0
 	github.com/mattn/go-isatty v0.0.12 // indirect
 	github.com/urfave/cli v1.22.5
 	golang.org/x/crypto v0.0.0-20200317142112-1b76d66859c6 // indirect

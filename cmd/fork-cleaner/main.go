@@ -10,7 +10,7 @@ import (
 	"github.com/Songmu/prompter"
 	forkcleaner "github.com/caarlos0/fork-cleaner"
 	"github.com/caarlos0/spin"
-	"github.com/google/go-github/v32/github"
+	"github.com/google/go-github/v33/github"
 	"github.com/urfave/cli"
 	"golang.org/x/oauth2"
 )

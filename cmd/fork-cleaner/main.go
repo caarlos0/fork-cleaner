@@ -35,6 +35,10 @@ func main() {
 			Usage:  "Base GitHub URL",
 			Value:  "https://api.github.com/",
 		},
+		cli.StringFlag{
+			Name:  "user, u",
+			Usage: "User or organization",
+		},
 		cli.BoolFlag{
 			Name:  "force, f",
 			Usage: "Don't ask to remove the forks",
@@ -73,6 +77,7 @@ func main() {
 		log.SetFlags(0)
 		token := c.String("token")
 		ghurl := c.String("github-url")
+		login := c.String("user")
 		blacklist := c.StringSlice("blacklist")
 		ctx := context.Background()
 		ts := oauth2.StaticTokenSource(&oauth2.Token{AccessToken: token})
@@ -96,7 +101,7 @@ func main() {
 			Since:               c.Duration("since"),
 			ExcludeCommitsAhead: c.Bool("exclude-commits-ahead"),
 		}
-		forks, excludedForks, err := forkcleaner.Find(ctx, client, filter)
+		forks, excludedForks, err := forkcleaner.Find(ctx, client, login, filter)
 		sg.Stop()
 		if err != nil {
 			return cli.NewExitError(err.Error(), 1)

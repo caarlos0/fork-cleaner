@@ -41,6 +41,7 @@ func Delete(
 func Find(
 	ctx context.Context,
 	client *github.Client,
+	login string,
 	filter Filter,
 ) ([]*github.Repository, []string, error) {
 	lopt := github.ListOptions{PerPage: pageSize}
@@ -52,10 +53,9 @@ func Find(
 		ListOptions: lopt,
 	}
 	var deletions []*github.Repository
-	var login string
 	exclusionReasons := make([]string, 0)
 	for {
-		repos, resp, err := client.Repositories.List(ctx, "", ropt)
+		repos, resp, err := client.Repositories.List(ctx, login, ropt)
 		if err != nil {
 			return deletions, exclusionReasons, err
 		}

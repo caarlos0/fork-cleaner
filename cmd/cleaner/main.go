@@ -24,7 +24,7 @@ func main() {
 
 	var s = spinner.NewModel()
 	s.Spinner = spinner.MiniDot
-	var p = tea.NewProgram(model{
+	var p = tea.NewProgram(initialModel{
 		client:  client,
 		spinner: s,
 		loading: true,
@@ -112,18 +112,18 @@ func bold(s string) string {
 	return termenv.String(s).Foreground(mainColor).Bold().String()
 }
 
-type model struct {
+type initialModel struct {
 	err     error
 	client  *github.Client
 	spinner spinner.Model
 	loading bool
 }
 
-func (m model) Init() tea.Cmd {
+func (m initialModel) Init() tea.Cmd {
 	return tea.Batch(getRepos(m.client), spinner.Tick)
 }
 
-func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (m initialModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case errMsg:
 		m.loading = false
@@ -149,7 +149,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, nil
 }
 
-func (m model) View() string {
+func (m initialModel) View() string {
 	if m.loading {
 		return termenv.String(m.spinner.View()).Foreground(mainColor).String() + " Loading list of forks..."
 	}

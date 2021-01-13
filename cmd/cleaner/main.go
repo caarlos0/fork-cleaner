@@ -14,6 +14,7 @@ import (
 )
 
 var version = "master"
+var mainColor = termenv.ColorProfile().Color("205")
 
 func main() {
 	ctx := context.Background()
@@ -37,12 +38,85 @@ func main() {
 	}
 }
 
+type listModel struct {
+	err      error
+	client   *github.Client
+	repos    []*forkcleaner.RepositoryWithDetails
+	cursor   int
+	selected map[int]struct{}
+}
+
+func (m listModel) Init() tea.Cmd {
+	return nil
+}
+
+func (m listModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	switch msg := msg.(type) {
+	case tea.KeyMsg:
+		switch msg.String() {
+		case "ctrl+c", "q", "esc":
+			return m, tea.Quit
+		case "up", "k":
+			if m.cursor > 0 {
+				m.cursor--
+			}
+		case "down", "j":
+			if m.cursor < len(m.repos)-1 {
+				m.cursor++
+			}
+		case "a":
+			for i := range m.repos {
+				m.selected[i] = struct{}{}
+			}
+		case "n":
+			for i := range m.selected {
+				delete(m.selected, i)
+			}
+		case " ":
+			_, ok := m.selected[m.cursor]
+			if ok {
+				delete(m.selected, m.cursor)
+			} else {
+				m.selected[m.cursor] = struct{}{}
+			}
+		}
+	}
+	return m, nil
+}
+
+func (m listModel) View() string {
+	var s = termenv.String("Which forks you want to delete?\n\n").Bold().String()
+
+	for i, choice := range m.repos {
+		var line = choice.Repo.GetFullName() + "\n"
+
+		if _, ok := m.selected[i]; ok {
+			line = termenv.String(line).CrossOut().Faint().String()
+		}
+
+		if m.cursor == i {
+			line = termenv.String(line).Foreground(mainColor).Bold().String()
+		}
+
+		s += line
+	}
+
+	return s + "\nPress " + bold("q") + " to quit, " +
+		bold("space") + " to select the current item, " +
+		bold("a") + " to select all items, " +
+		bold("n") + " to deselect all items, " +
+		bold("enter") + " to delete selected.\n"
+}
+
+func bold(s string) string {
+	return termenv.String(s).Foreground(mainColor).Bold().String()
+}
+
 type model struct {
-	repos   []*forkcleaner.RepositoryWithDetails
-	spinner spinner.Model
-	loading bool
 	err     error
 	client  *github.Client
+	spinner spinner.Model
+	loading bool
 }
 
 func (m model) Init() tea.Cmd {
@@ -56,9 +130,12 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.err = msg.error
 		return m, nil
 	case gotRepoListMsg:
-		m.repos = msg.repos
-		m.loading = false
-		return m, nil
+		nm := listModel{
+			repos:    msg.repos,
+			client:   m.client,
+			selected: map[int]struct{}{},
+		}
+		return nm, nm.Init()
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "ctrl+c", "q", "esc":
@@ -74,12 +151,12 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (m model) View() string {
 	if m.loading {
-		return termenv.String(m.spinner.View()).Foreground(termenv.ColorProfile().Color("205")).String() + " Loading..."
+		return termenv.String(m.spinner.View()).Foreground(mainColor).String() + " Loading list of forks..."
 	}
 	if m.err != nil {
 		return fmt.Sprintf("Error: %s", m.err.Error())
 	}
-	return fmt.Sprintf("got %v repos", len(m.repos))
+	return "oops..."
 }
 
 type gotRepoListMsg struct {

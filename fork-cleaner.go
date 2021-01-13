@@ -82,7 +82,7 @@ func Find(
 			}
 			commits, resp, compareErr := client.Repositories.CompareCommits(ctx, po, pn, *parent.DefaultBranch, fmt.Sprintf("%s:%s", login, *repo.DefaultBranch))
 			if resp.StatusCode == http.StatusNotFound {
-				exclusionReasons = append(exclusionReasons, fmt.Sprintf("%s excluded because: parent repo doesn't exist anymore\n", *repo.HTMLURL))
+				exclusionReasons = append(exclusionReasons, fmt.Sprintf("%s excluded because: parent Repo doesn't exist anymore\n", *repo.HTMLURL))
 				continue
 			}
 			if resp.StatusCode == http.StatusUnavailableForLegalReasons {
@@ -116,30 +116,30 @@ func shouldDelete(
 ) (bool, string) {
 	for _, r := range filter.Blacklist {
 		if r == repo.GetName() {
-			return false, fmt.Sprintf("%s excluded because: repo is blacklisted\n", *repo.HTMLURL)
+			return false, fmt.Sprintf("%s excluded because: Repo is blacklisted\n", *repo.HTMLURL)
 		}
 	}
 	if !filter.IncludePrivate && repo.GetPrivate() {
-		return false, fmt.Sprintf("%s excluded because: repo is private\n", *repo.HTMLURL)
+		return false, fmt.Sprintf("%s excluded because: Repo is private\n", *repo.HTMLURL)
 	}
 	if !filter.IncludeForked && repo.GetForksCount() > 0 {
-		return false, fmt.Sprintf("%s excluded because: repo has %d forks\n", *repo.HTMLURL, *repo.ForksCount)
+		return false, fmt.Sprintf("%s excluded because: Repo has %d forks\n", *repo.HTMLURL, *repo.ForksCount)
 	}
 	if !filter.IncludeStarred && repo.GetStargazersCount() > 0 {
-		return false, fmt.Sprintf("%s excluded because: repo has %d stars\n", *repo.HTMLURL, *repo.StargazersCount)
+		return false, fmt.Sprintf("%s excluded because: Repo has %d stars\n", *repo.HTMLURL, *repo.StargazersCount)
 	}
 	if !time.Now().Add(-filter.Since).After((repo.GetUpdatedAt()).Time) {
-		return false, fmt.Sprintf("%s excluded because: repo has recent activity (last update on %s)\n", *repo.HTMLURL, repo.GetUpdatedAt().Format("1/2/2006"))
+		return false, fmt.Sprintf("%s excluded because: Repo has recent activity (last update on %s)\n", *repo.HTMLURL, repo.GetUpdatedAt().Format("1/2/2006"))
 	}
 	for _, issue := range issues {
 		if issue.IsPullRequest() {
-			return false, fmt.Sprintf("%s excluded because: repo has a pull request\n", *repo.HTMLURL)
+			return false, fmt.Sprintf("%s excluded because: Repo has a pull request\n", *repo.HTMLURL)
 		}
 	}
 
-	// check if the fork has commits ahead of the parent repo
+	// check if the fork has Commits ahead of the parent Repo
 	if filter.ExcludeCommitsAhead && *commitComparison.AheadBy > 0 {
-		return false, fmt.Sprintf("%s excluded because: repo is %d commits ahead of parent\n", *repo.HTMLURL, *commitComparison.AheadBy)
+		return false, fmt.Sprintf("%s excluded because: Repo is %d Commits ahead of parent\n", *repo.HTMLURL, *commitComparison.AheadBy)
 	}
 
 	return true, ""

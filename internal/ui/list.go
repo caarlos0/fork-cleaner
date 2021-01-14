@@ -93,12 +93,12 @@ func (m ListModel) View() string {
 	}
 
 	return s + helpView([]helpOption{
-		{"q/esc", "quit", false},
 		{"up/down", "navigate", false},
 		{"space", "toggle selection on current item", false},
+		{"d", "delete selected items", true},
 		{"a", "select all items", false},
 		{"n", "deselect all items", false},
-		{"d", "delete selected items", true},
+		{"q/esc", "quit", false},
 	})
 }
 

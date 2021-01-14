@@ -12,22 +12,29 @@ func singleOptionHelp(k, v string) string {
 	})
 }
 
-func helpView(options []helpOption) string {
-	var s []string
+var separator = midGrayForeground(" • ")
 
+func helpView(options []helpOption) string {
+	var lines []string
+
+	var line []string
 	for i, help := range options {
-		if i % 3 == 0 {
-			s = append(s, "\n")
-		}
 		if help.primary {
-			s = append(s, grayForeground(help.key)+" "+termenv.String(help.help).Foreground(secondary).Faint().String())
-			continue
+			line = append(line, grayForeground(help.key)+" "+termenv.String(help.help).Foreground(secondary).Faint().String())
+		} else {
+			line = append(line, grayForeground(help.key)+" "+midGrayForeground(help.help))
 		}
-		s = append(s, grayForeground(help.key)+" "+midGrayForeground(help.help))
+		// splits in rows of 3 options max
+		if (i+1)%3 == 0 {
+			lines = append(lines, strings.Join(line, separator))
+			line = []string{}
+		}
 	}
 
-	var separator = midGrayForeground(" • ")
-	return "\n\n" + strings.Join(s, separator)
+	// append remainder
+	lines = append(lines, strings.Join(line, separator))
+
+	return "\n\n" + strings.Join(lines, "\n")
 }
 
 type helpOption struct {

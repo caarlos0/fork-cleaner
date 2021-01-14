@@ -5,3 +5,4 @@ dist
 bin
 coverage.out
 snap.login
+fork-cleaner.log

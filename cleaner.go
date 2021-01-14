@@ -1,19 +1,28 @@
+// Package forkcleaner provides functions to find and remove unused forks.
 package forkcleaner
 
 import (
 	"context"
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/google/go-github/v33/github"
 )
 
+const pageSize = 100
+
 type RepositoryWithDetails struct {
-	Repo              *github.Repository
-	Issues            []*github.Issue
-	Commits           *github.CommitsComparison
-	ParentRepoMissing bool
-	ParentRepoDMCA    bool
+	Name               string
+	RepoURL            string
+	Private            bool
+	ParentDeleted      bool
+	ParentDMCATakeDown bool
+	Forks              int
+	Stars              int
+	OpenPRs            int
+	CommitsAhead       int
+	LastUpdate         time.Time
 }
 
 // FindAllForks lists all the forks for the current user.
@@ -26,21 +35,21 @@ func FindAllForks(
 	if err != nil {
 		return forks, nil
 	}
-	for _, repo := range repos {
-		if !repo.GetFork() {
+	for _, r := range repos {
+		if !r.GetFork() {
 			continue
 		}
 
-		var login = repo.GetOwner().GetLogin()
-		var name = repo.GetName()
+		var login = r.GetOwner().GetLogin()
+		var name = r.GetName()
 
 		// Get repository as List omits parent information.
-		frepo, _, err := client.Repositories.Get(ctx, login, name)
+		repo, _, err := client.Repositories.Get(ctx, login, name)
 		if err != nil {
 			return forks, fmt.Errorf("failed to get repository: %s: %w", repo.GetFullName(), err)
 		}
 
-		var parent = frepo.GetParent()
+		var parent = repo.GetParent()
 
 		// get fork's Issues
 		issues, _, err := client.Issues.ListByRepo(
@@ -70,15 +79,30 @@ func FindAllForks(
 			return forks, fmt.Errorf("failed to compare repository with upstream: %s: %w", repo.GetFullName(), err)
 		}
 
-		forks = append(forks, &RepositoryWithDetails{
-			Repo:              frepo,
-			Issues:            issues,
-			Commits:           commits,
-			ParentRepoMissing: resp.StatusCode == http.StatusNotFound,
-			ParentRepoDMCA:    resp.StatusCode == http.StatusUnavailableForLegalReasons,
-		})
+		forks = append(forks, buildDetails(repo, issues, commits, resp.StatusCode))
 	}
 	return forks, nil
+}
+
+func buildDetails(repo *github.Repository, issues []*github.Issue, commits *github.CommitsComparison, code int) *RepositoryWithDetails {
+	var openPrs int
+	for _, issue := range issues {
+		if issue.IsPullRequest() {
+			openPrs++
+		}
+	}
+	return &RepositoryWithDetails{
+		Name:               repo.GetFullName(),
+		RepoURL:            repo.GetURL(),
+		Private:            repo.GetPrivate(),
+		ParentDeleted:      code == http.StatusNotFound,
+		ParentDMCATakeDown: code == http.StatusUnavailableForLegalReasons,
+		Forks:              repo.GetForksCount(),
+		Stars:              repo.GetStargazersCount(),
+		OpenPRs:            openPrs,
+		CommitsAhead:       commits.GetAheadBy(),
+		LastUpdate:         repo.GetUpdatedAt().Time,
+	}
 }
 
 func getAllRepos(

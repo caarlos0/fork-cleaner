@@ -1,6 +1,9 @@
 package ui
 
 import (
+	"fmt"
+	"time"
+
 	forkcleaner "github.com/caarlos0/fork-cleaner"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/google/go-github/v33/github"
@@ -69,8 +72,8 @@ const (
 func (m ListModel) View() string {
 	var s = termenv.String("Which forks you want to delete?\n\n").Foreground(secondaryColor).Bold().String()
 
-	for i, choice := range m.repos {
-		var line = choice.Repo.GetFullName() + "\n"
+	for i, repo := range m.repos {
+		var line = repo.Name + "\n"
 
 		if _, ok := m.selected[i]; ok {
 			line = termenv.String(iconSelected + " " + line).Faint().String()
@@ -79,7 +82,7 @@ func (m ListModel) View() string {
 		}
 
 		if m.cursor == i {
-			line = termenv.String(line).Foreground(primaryColor).Bold().String()
+			line = termenv.String(line).Foreground(primaryColor).Bold().String() + viewRepositoryDetails(repo)
 		}
 
 		s += line
@@ -90,4 +93,43 @@ func (m ListModel) View() string {
 		bold("a") + " to select all items, " +
 		bold("n") + " to deselect all items, " +
 		bold("enter") + " to delete selected.\n"
+}
+
+func viewRepositoryDetails(repo *forkcleaner.RepositoryWithDetails) string {
+	var details []string
+	if repo.ParentDeleted {
+		details = append(details, "Parent repository was deleted")
+	}
+	if repo.ParentDMCATakeDown {
+		details = append(details, "Parent repository was taken down by DMCA")
+	}
+	if repo.Private {
+		details = append(details, "Is private")
+	}
+	if repo.CommitsAhead > 0 {
+		details = append(details, fmt.Sprintf("Has %d commits ahead of upstream", repo.CommitsAhead))
+	}
+	if repo.Forks > 0 {
+		details = append(details, fmt.Sprintf("Has %d forks", repo.Forks))
+	}
+	if repo.Stars > 0 {
+		details = append(details, fmt.Sprintf("Has %d stars", repo.Stars))
+	}
+	if repo.OpenPRs > 0 {
+		details = append(details, fmt.Sprintf("Has %d open PRs to upstream", repo.OpenPRs))
+	}
+	if time.Now().Add(-30 * 24 * time.Hour).Before(repo.LastUpdate) {
+		details = append(details, fmt.Sprintf("Was updated recently (%s)", repo.LastUpdate))
+	}
+
+	if len(details) == 0 {
+		return ""
+	}
+
+	var s string
+	for _, d := range details {
+		s += "    * " + d + "\n"
+	}
+	s += "\n"
+	return termenv.String(s).Faint().Italic().String()
 }

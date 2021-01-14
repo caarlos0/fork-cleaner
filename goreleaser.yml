@@ -2,6 +2,7 @@ builds:
 - main: ./cmd/fork-cleaner/main.go
   goarch:
   - amd64
+  - arm64
 brews:
 - tap:
     owner: caarlos0
@@ -26,4 +27,5 @@ nfpms:
   formats:
   - deb
   - rpm
+  - apk
 

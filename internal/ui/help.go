@@ -22,7 +22,7 @@ func helpView() string {
 		}
 		s = append(s, grayForeground(help.k)+" "+midGrayForeground(help.h))
 	}
-	s = append(s, grayForeground("d")+" "+ termenv.String("delete selected items").Foreground(secondaryColor).Faint().String())
+	s = append(s, grayForeground("d")+" "+ termenv.String("delete selected items").Foreground(secondary).Faint().String())
 
 	var separator = midGrayForeground(" • ")
 	return "\n\n" + strings.Join(s, separator)

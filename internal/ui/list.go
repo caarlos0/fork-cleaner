@@ -59,15 +59,17 @@ func (m ListModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			} else {
 				m.selected[m.cursor] = struct{}{}
 			}
+		case "d":
+			var deleteable []*forkcleaner.RepositoryWithDetails
+			for k := range m.selected {
+				deleteable = append(deleteable, m.repos[k])
+			}
+			var dm = NewDeletingModel(m.client, deleteable)
+			return dm, dm.Init()
 		}
 	}
 	return m, nil
 }
-
-const (
-	iconSelected    = "●"
-	iconNotSelected = "○"
-)
 
 func (m ListModel) View() string {
 	var s = boldSecondaryForeground("Which of these forks you want to delete?\n\n")

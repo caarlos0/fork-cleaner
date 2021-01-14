@@ -8,7 +8,6 @@ import (
 	"github.com/charmbracelet/bubbles/spinner"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/google/go-github/v33/github"
-	"github.com/muesli/termenv"
 )
 
 func NewInitialModel(client *github.Client) InitialModel {
@@ -57,10 +56,10 @@ func (m InitialModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (m InitialModel) View() string {
 	if m.loading {
-		return termenv.String(m.spinner.View()).Foreground(primaryColor).String() + " Loading list of forks..."
+		return boldPrimaryForeground(m.spinner.View()) + " Loading list of forks..."
 	}
 	if m.err != nil {
-		return fmt.Sprintf("Error: %s", m.err.Error())
+		return redForeground(fmt.Sprintf("Error getting the repository list: %s", m.err.Error()))
 	}
 	return "oops..."
 }

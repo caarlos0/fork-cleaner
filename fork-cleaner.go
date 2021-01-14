@@ -4,7 +4,9 @@ package forkcleaner
 import (
 	"context"
 	"fmt"
+	"log"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/google/go-github/v33/github"
@@ -132,12 +134,14 @@ func getAllRepos(
 func Delete(
 	ctx context.Context,
 	client *github.Client,
-	deletions []*github.Repository,
+	deletions []*RepositoryWithDetails,
 ) error {
 	for _, repo := range deletions {
-		_, err := client.Repositories.Delete(ctx, *repo.Owner.Login, *repo.Name)
+		var parts = strings.Split(repo.Name, "/")
+		log.Println("deleting repository:", repo.Name)
+		_, err := client.Repositories.Delete(ctx, parts[0], parts[1])
 		if err != nil {
-			return err
+			return fmt.Errorf("couldn't delete repository: %s: %w", repo.Name, err)
 		}
 	}
 	return nil

@@ -15,7 +15,10 @@ func singleOptionHelp(k, v string) string {
 func helpView(options []helpOption) string {
 	var s []string
 
-	for _, help := range options {
+	for i, help := range options {
+		if i % 3 == 0 {
+			s = append(s, "\n")
+		}
 		if help.primary {
 			s = append(s, grayForeground(help.key)+" "+termenv.String(help.help).Foreground(secondary).Faint().String())
 			continue

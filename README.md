@@ -22,7 +22,7 @@ and execute the binary as in:
 Fork-Cleaner will show you all your forks, you can then check which you want
 to delete or not on a TUI:
 
-<img width="1486" alt="image" src="https://user-images.githubusercontent.com/245435/104636064-8958cc00-5681-11eb-999b-dcde7d3eb300.png">
+![Screen Recording](https://user-images.githubusercontent.com/245435/104655305-4a843f80-569c-11eb-8cd5-7f55b8104375.gif)
 
 ## Install
 

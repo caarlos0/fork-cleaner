@@ -53,7 +53,7 @@ func faint(s string) string {
 
 type errMsg struct{ error }
 
-func (e errMsg) Error() string { return e.Error() }
+func (e errMsg) Error() string { return e.error.Error() }
 
 func errorView(action string, err error) string {
 	return redForeground(fmt.Sprintf(action+": %s.\nCheck the log file for more details.", err.Error())) + singleOptionHelp("q", "quit")

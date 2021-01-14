@@ -22,7 +22,6 @@ func NewListModel(client *github.Client, repos []*forkcleaner.RepositoryWithDeta
 // ListModel is the UI in which the user can select which forks should be
 // deleted if any, and see details on each of them.
 type ListModel struct {
-	err      error
 	client   *github.Client
 	repos    []*forkcleaner.RepositoryWithDetails
 	cursor   int
@@ -81,7 +80,7 @@ func (m ListModel) View() string {
 		var line = repo.Name + "\n"
 
 		if _, ok := m.selected[i]; ok {
-			line = termenv.String(iconSelected + " " + line).Faint().String()
+			line = faint(iconSelected + " " + line)
 		} else {
 			line = iconNotSelected + " " + line
 		}

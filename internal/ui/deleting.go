@@ -7,7 +7,6 @@ import (
 	"github.com/charmbracelet/bubbles/spinner"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/google/go-github/v33/github"
-	"github.com/muesli/termenv"
 )
 
 // NewDeletingModel creates a DeletingModel with required fields.
@@ -79,9 +78,9 @@ func (m DeletingModel) View() string {
 
 	var s = redForeground("Are you sure you want to delete the selected repositories? (y/N)\n\n")
 	for i, repo := range m.repos {
-		var line = termenv.String(iconSelected+" "+repo.Name).Faint().String() + "\n"
+		var line = faint(iconSelected+" "+repo.Name) + "\n"
 		if m.cursor == i {
-			line = "\n" + boldPrimaryForeground(line) + viewRepositoryDetails(repo)
+			line = "\n" + boldRedForeground(line) + viewRepositoryDetails(repo)
 		}
 		s += line
 	}

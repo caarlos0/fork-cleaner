@@ -3,7 +3,7 @@ package ui
 import (
 	"context"
 
-	forkcleaner "github.com/caarlos0/fork-cleaner"
+	forkcleaner "github.com/caarlos0/fork-cleaner/v2"
 	"github.com/charmbracelet/bubbles/spinner"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/google/go-github/v33/github"

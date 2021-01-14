@@ -5,7 +5,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/caarlos0/fork-cleaner/internal/ui"
+	"github.com/caarlos0/fork-cleaner/v2/internal/ui"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/google/go-github/v33/github"
 	"github.com/urfave/cli"

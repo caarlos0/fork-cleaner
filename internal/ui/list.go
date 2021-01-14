@@ -70,7 +70,7 @@ const (
 )
 
 func (m ListModel) View() string {
-	var s = termenv.String("Which forks you want to delete?\n\n").Foreground(secondaryColor).Bold().String()
+	var s = boldSecondaryForeground("Which of these forks you want to delete?\n\n")
 
 	for i, repo := range m.repos {
 		var line = repo.Name + "\n"
@@ -82,17 +82,13 @@ func (m ListModel) View() string {
 		}
 
 		if m.cursor == i {
-			line = termenv.String(line).Foreground(primaryColor).Bold().String() + viewRepositoryDetails(repo)
+			line = boldPrimaryForeground(line) + viewRepositoryDetails(repo)
 		}
 
 		s += line
 	}
 
-	return s + "\nPress " + bold("q") + " to quit, " +
-		bold("space") + " to select the current item, " +
-		bold("a") + " to select all items, " +
-		bold("n") + " to deselect all items, " +
-		bold("enter") + " to delete selected.\n"
+	return s + helpView()
 }
 
 func viewRepositoryDetails(repo *forkcleaner.RepositoryWithDetails) string {

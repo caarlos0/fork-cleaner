@@ -2,7 +2,6 @@ package ui
 
 import (
 	"context"
-	"fmt"
 
 	forkcleaner "github.com/caarlos0/fork-cleaner"
 	"github.com/charmbracelet/bubbles/spinner"
@@ -56,12 +55,12 @@ func (m InitialModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (m InitialModel) View() string {
 	if m.loading {
-		return boldPrimaryForeground(m.spinner.View()) + " Loading list of forks..."
+		return boldPrimaryForeground(m.spinner.View()) + " Gathering repositories..." + singleOptionHelp("q", "quit")
 	}
 	if m.err != nil {
-		return redForeground(fmt.Sprintf("Error getting the repository list: %s", m.err.Error()))
+		return errorView("Error gathering the repository list", m.err)
 	}
-	return "oops..."
+	return ""
 }
 
 type gotRepoListMsg struct {

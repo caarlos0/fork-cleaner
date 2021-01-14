@@ -2,8 +2,6 @@ package ui
 
 import (
 	"context"
-	"fmt"
-	"strconv"
 
 	forkcleaner "github.com/caarlos0/fork-cleaner"
 	"github.com/charmbracelet/bubbles/spinner"
@@ -12,25 +10,25 @@ import (
 	"github.com/muesli/termenv"
 )
 
-func NewDeletingModel(client *github.Client, repos []*forkcleaner.RepositoryWithDetails) DeletingModel {
+func NewDeletingModel(client *github.Client, repos []*forkcleaner.RepositoryWithDetails, previous ListModel) DeletingModel {
 	var s = spinner.NewModel()
 	s.Spinner = spinner.MiniDot
 
 	return DeletingModel{
-		client: client,
-		repos:  repos,
-		spinner: s,
+		client:   client,
+		repos:    repos,
+		spinner:  s,
+		previous: previous,
 	}
 }
 
 type DeletingModel struct {
-	err    error
-	client *github.Client
-	repos  []*forkcleaner.RepositoryWithDetails
-	cursor int
-	deleted int
-	spinner spinner.Model
-	loading bool
+	client   *github.Client
+	repos    []*forkcleaner.RepositoryWithDetails
+	cursor   int
+	spinner  spinner.Model
+	loading  bool
+	previous ListModel
 }
 
 func (m DeletingModel) Init() tea.Cmd {
@@ -41,14 +39,16 @@ func (m DeletingModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case reposDeletedMsg:
 		m.loading = false
-		m.deleted = msg.total
+		return NewDeleteEndModel(msg.total, nil), nil
 	case errMsg:
 		m.loading = false
-		m.err = msg.error
+		return NewDeleteEndModel(0, msg.error), nil
 	case tea.KeyMsg:
 		switch msg.String() {
-		case "ctrl+c", "q", "esc", "n":
+		case "ctrl+c":
 			return m, tea.Quit
+		case "q", "esc", "n":
+			return m.previous, m.previous.Init()
 		case "up", "k":
 			if m.cursor > 0 {
 				m.cursor--
@@ -71,24 +71,22 @@ func (m DeletingModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (m DeletingModel) View() string {
 	if m.loading {
-		return redFaintForeground(m.spinner.View()) + redForeground("Deleting repositories...")
-	}
-	if m.deleted > 0 {
-		return redFaintForeground("Successfully deleted ") + redForeground(strconv.Itoa(m.deleted)) + redFaintForeground(" forks.")
-	}
-	if m.err != nil {
-		return redForeground(fmt.Sprintf("Error getting the repository list: %s", m.err.Error()))
+		return redFaintForeground(m.spinner.View()) + redForeground(" Deleting repositories...")
 	}
 
 	var s = redForeground("Are you sure you want to delete the selected repositories? (y/N)\n\n")
 	for i, repo := range m.repos {
 		var line = termenv.String(iconSelected+" "+repo.Name).Faint().String() + "\n"
 		if m.cursor == i {
-			line = boldPrimaryForeground(line) + viewRepositoryDetails(repo)
+			line = "\n" + boldPrimaryForeground(line) + viewRepositoryDetails(repo)
 		}
 		s += line
 	}
-	return s + helpView()
+	return s + helpView([]helpOption{
+		{"q/esc/n", "abort", true},
+		{"up/down", "navigate", false},
+		{"y", "delete items", false},
+	})
 }
 
 type reposDeletedMsg struct {

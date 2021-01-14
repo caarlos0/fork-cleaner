@@ -64,7 +64,7 @@ func (m ListModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			for k := range m.selected {
 				deleteable = append(deleteable, m.repos[k])
 			}
-			var dm = NewDeletingModel(m.client, deleteable)
+			var dm = NewDeletingModel(m.client, deleteable, m)
 			return dm, dm.Init()
 		}
 	}
@@ -84,13 +84,20 @@ func (m ListModel) View() string {
 		}
 
 		if m.cursor == i {
-			line = boldPrimaryForeground(line) + viewRepositoryDetails(repo)
+			line = "\n" + boldPrimaryForeground(line) + viewRepositoryDetails(repo)
 		}
 
 		s += line
 	}
 
-	return s + helpView()
+	return s + helpView([]helpOption{
+		{"q/esc", "quit", false},
+		{"up/down", "navigate", false},
+		{"space", "toggle selection on current item", false},
+		{"a", "select all items", false},
+		{"n", "deselect all items", false},
+		{"d", "delete selected items", true},
+	})
 }
 
 func viewRepositoryDetails(repo *forkcleaner.RepositoryWithDetails) string {

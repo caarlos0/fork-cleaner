@@ -1,6 +1,10 @@
 package ui
 
-import "github.com/muesli/termenv"
+import (
+	"fmt"
+
+	"github.com/muesli/termenv"
+)
 
 var (
 	primary   = termenv.ColorProfile().Color("205")
@@ -50,3 +54,7 @@ func faint(s string) string {
 type errMsg struct{ error }
 
 func (e errMsg) Error() string { return e.Error() }
+
+func errorView(action string, err error) string {
+	return redForeground(fmt.Sprintf(action+": %s.\nCheck the log file for more details.", err.Error())) + singleOptionHelp("q", "quit")
+}

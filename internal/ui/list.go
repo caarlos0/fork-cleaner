@@ -86,7 +86,11 @@ func (m ListModel) View() string {
 		line += "\n"
 
 		if m.cursor == i {
-			line = "\n" + boldPrimaryForeground(line) + viewRepositoryDetails(repo)
+			nl := ""
+			if i > 0 {
+				nl = "\n"
+			}
+			line = nl + boldPrimaryForeground(line) + viewRepositoryDetails(repo)
 		}
 
 		s += line

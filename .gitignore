@@ -1,6 +1,6 @@
 vendor
 .env
-fork-cleaner
+./fork-cleaner
 dist
 bin
 coverage.out

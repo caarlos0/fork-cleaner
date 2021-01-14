@@ -15,13 +15,6 @@ import (
 var version = "master"
 
 func main() {
-	log.SetFlags(0)
-	f, err := tea.LogToFile("fork-cleaner.log", "")
-	if err != nil {
-		log.Fatalln(err)
-	}
-	defer func() { _ = f.Close() }()
-
 	app := cli.NewApp()
 	app.Name = "fork-cleaner"
 	app.Version = version
@@ -46,6 +39,13 @@ func main() {
 	}
 
 	app.Action = func(c *cli.Context) error {
+		log.SetFlags(0)
+		f, err := tea.LogToFile("fork-cleaner.log", "")
+		if err != nil {
+			return cli.NewExitError(err.Error(), 1)
+		}
+		defer func() { _ = f.Close() }()
+
 		token := c.String("token")
 		ghurl := c.String("github-url")
 

@@ -74,7 +74,7 @@ func (m ListModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m ListModel) View() string {
-	var s = boldSecondaryForeground("Which of these forks you want to delete?\n\n")
+	var s = boldSecondaryForeground("Which of these forks do you want to delete?\n\n")
 
 	for i, repo := range m.repos {
 		var line = repo.Name

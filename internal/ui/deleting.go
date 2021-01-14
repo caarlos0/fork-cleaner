@@ -10,6 +10,7 @@ import (
 	"github.com/muesli/termenv"
 )
 
+// NewDeletingModel creates a DeletingModel with required fields.
 func NewDeletingModel(client *github.Client, repos []*forkcleaner.RepositoryWithDetails, previous ListModel) DeletingModel {
 	var s = spinner.NewModel()
 	s.Spinner = spinner.MiniDot
@@ -22,6 +23,8 @@ func NewDeletingModel(client *github.Client, repos []*forkcleaner.RepositoryWith
 	}
 }
 
+// DeletingModel is the UI in which the user can review the repos they
+// selected to be deleted and either finally delete them or cancel.
 type DeletingModel struct {
 	client   *github.Client
 	repos    []*forkcleaner.RepositoryWithDetails
@@ -39,10 +42,10 @@ func (m DeletingModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case reposDeletedMsg:
 		m.loading = false
-		return NewDeleteEndModel(msg.total, nil), nil
+		return NewDeleteEndModelSucceed(msg.total), nil
 	case errMsg:
 		m.loading = false
-		return NewDeleteEndModel(0, msg.error), nil
+		return NewDeleteEndModelFailed(msg.error), nil
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "ctrl+c":

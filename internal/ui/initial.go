@@ -9,6 +9,7 @@ import (
 	"github.com/google/go-github/v33/github"
 )
 
+// NewInitialModel creates a new InitialModel with required fields.
 func NewInitialModel(client *github.Client) InitialModel {
 	var s = spinner.NewModel()
 	s.Spinner = spinner.MiniDot
@@ -20,6 +21,7 @@ func NewInitialModel(client *github.Client) InitialModel {
 	}
 }
 
+// InitialModel is the UI when the CLI starts, basically loading the repos.
 type InitialModel struct {
 	err     error
 	client  *github.Client

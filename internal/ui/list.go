@@ -10,6 +10,7 @@ import (
 	"github.com/muesli/termenv"
 )
 
+// NewListModel creates a new ListModel with the required fields.
 func NewListModel(client *github.Client, repos []*forkcleaner.RepositoryWithDetails) ListModel {
 	return ListModel{
 		client:   client,
@@ -18,6 +19,8 @@ func NewListModel(client *github.Client, repos []*forkcleaner.RepositoryWithDeta
 	}
 }
 
+// ListModel is the UI in which the user can select which forks should be
+// deleted if any, and see details on each of them.
 type ListModel struct {
 	err      error
 	client   *github.Client

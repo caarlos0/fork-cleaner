@@ -6,13 +6,22 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
-func NewDeleteEndModel(deleted int, err error) DeleteEndModel {
+// NewDeleteEndModelSucceed creates a DeleteEndModel with a success result.
+func NewDeleteEndModelSucceed(deleted int) DeleteEndModel {
 	return DeleteEndModel{
-		err:     err,
 		deleted: deleted,
 	}
 }
 
+// NewDeleteEndModelFailed creates a DeleteEndModel with a failed result.
+func NewDeleteEndModelFailed(err error) DeleteEndModel {
+	return DeleteEndModel{
+		err: err,
+	}
+}
+
+// DeleteEndModel is the UI for when the forks were either deleted or failed
+// to do so.
 type DeleteEndModel struct {
 	err     error
 	deleted int

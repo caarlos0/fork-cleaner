@@ -32,10 +32,6 @@ func main() {
 			Usage:  "Base GitHub URL",
 			Value:  "https://api.github.com/",
 		},
-		cli.BoolFlag{
-			Name:  "force, f",
-			Usage: "Don't ask to remove the forks",
-		},
 	}
 
 	app.Action = func(c *cli.Context) error {

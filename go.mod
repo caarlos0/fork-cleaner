@@ -3,14 +3,11 @@ module github.com/caarlos0/fork-cleaner
 go 1.14
 
 require (
-	github.com/Songmu/prompter v0.4.0
-	github.com/caarlos0/spin v1.1.0
 	github.com/charmbracelet/bubbles v0.7.6
 	github.com/charmbracelet/bubbletea v0.12.2
 	github.com/cpuguy83/go-md2man/v2 v2.0.0 // indirect
 	github.com/golang/protobuf v1.3.5 // indirect
 	github.com/google/go-github/v33 v33.0.0
-	github.com/mattn/go-isatty v0.0.12 // indirect
 	github.com/muesli/termenv v0.7.4
 	github.com/urfave/cli v1.22.5
 	golang.org/x/net v0.0.0-20200301022130-244492dfa37a // indirect

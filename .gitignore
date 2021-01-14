@@ -1,7 +1,8 @@
 vendor
 .env
-fork-cleaner
+./fork-cleaner
 dist
 bin
 coverage.out
 snap.login
+fork-cleaner.log

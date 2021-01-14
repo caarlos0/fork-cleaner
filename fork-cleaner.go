@@ -4,7 +4,9 @@ package forkcleaner
 import (
 	"context"
 	"fmt"
+	"log"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/google/go-github/v33/github"
@@ -12,135 +14,135 @@ import (
 
 const pageSize = 100
 
-// Filter applied to the repositories list.
-type Filter struct {
-	Blacklist           []string
-	Since               time.Duration
-	IncludePrivate      bool
-	IncludeStarred      bool
-	IncludeForked       bool
-	ExcludeCommitsAhead bool
+type RepositoryWithDetails struct {
+	Name               string
+	RepoURL            string
+	Private            bool
+	ParentDeleted      bool
+	ParentDMCATakeDown bool
+	Forks              int
+	Stars              int
+	OpenPRs            int
+	CommitsAhead       int
+	LastUpdate         time.Time
+}
+
+// FindAllForks lists all the forks for the current user.
+func FindAllForks(
+	ctx context.Context,
+	client *github.Client,
+) ([]*RepositoryWithDetails, error) {
+	var forks []*RepositoryWithDetails
+	repos, err := getAllRepos(ctx, client)
+	if err != nil {
+		return forks, nil
+	}
+	for _, r := range repos {
+		if !r.GetFork() {
+			continue
+		}
+
+		var login = r.GetOwner().GetLogin()
+		var name = r.GetName()
+
+		// Get repository as List omits parent information.
+		repo, _, err := client.Repositories.Get(ctx, login, name)
+		if err != nil {
+			return forks, fmt.Errorf("failed to get repository: %s: %w", repo.GetFullName(), err)
+		}
+
+		var parent = repo.GetParent()
+
+		// get fork's Issues
+		issues, _, err := client.Issues.ListByRepo(
+			ctx,
+			parent.GetOwner().GetLogin(),
+			parent.GetName(),
+			&github.IssueListByRepoOptions{
+				ListOptions: github.ListOptions{
+					PerPage: pageSize,
+				},
+				Creator: login,
+			},
+		)
+		if err != nil {
+			return forks, fmt.Errorf("failed to get repository's issues: %s: %w", repo.GetFullName(), err)
+		}
+
+		// compare Commits with upstream
+		commits, resp, err := client.Repositories.CompareCommits(
+			ctx,
+			parent.GetOwner().GetLogin(),
+			parent.GetName(),
+			parent.GetDefaultBranch(),
+			fmt.Sprintf("%s:%s", login, repo.GetDefaultBranch()),
+		)
+		if err != nil {
+			return forks, fmt.Errorf("failed to compare repository with upstream: %s: %w", repo.GetFullName(), err)
+		}
+
+		forks = append(forks, buildDetails(repo, issues, commits, resp.StatusCode))
+	}
+	return forks, nil
+}
+
+func buildDetails(repo *github.Repository, issues []*github.Issue, commits *github.CommitsComparison, code int) *RepositoryWithDetails {
+	var openPrs int
+	for _, issue := range issues {
+		if issue.IsPullRequest() {
+			openPrs++
+		}
+	}
+	return &RepositoryWithDetails{
+		Name:               repo.GetFullName(),
+		RepoURL:            repo.GetURL(),
+		Private:            repo.GetPrivate(),
+		ParentDeleted:      code == http.StatusNotFound,
+		ParentDMCATakeDown: code == http.StatusUnavailableForLegalReasons,
+		Forks:              repo.GetForksCount(),
+		Stars:              repo.GetStargazersCount(),
+		OpenPRs:            openPrs,
+		CommitsAhead:       commits.GetAheadBy(),
+		LastUpdate:         repo.GetUpdatedAt().Time,
+	}
+}
+
+func getAllRepos(
+	ctx context.Context,
+	client *github.Client,
+) ([]*github.Repository, error) {
+	var allRepos []*github.Repository
+	var opts = &github.RepositoryListOptions{
+		ListOptions: github.ListOptions{PerPage: pageSize},
+		Affiliation: "owner",
+	}
+	for {
+		repos, resp, err := client.Repositories.List(ctx, "", opts)
+		if err != nil {
+			return allRepos, err
+		}
+		allRepos = append(allRepos, repos...)
+		if resp.NextPage == 0 {
+			break
+		}
+		opts.ListOptions.Page = resp.NextPage
+	}
+	return allRepos, nil
 }
 
 // Delete delete the given list of forks.
 func Delete(
 	ctx context.Context,
 	client *github.Client,
-	deletions []*github.Repository,
+	deletions []*RepositoryWithDetails,
 ) error {
 	for _, repo := range deletions {
-		_, err := client.Repositories.Delete(ctx, *repo.Owner.Login, *repo.Name)
+		var parts = strings.Split(repo.Name, "/")
+		log.Println("deleting repository:", repo.Name)
+		_, err := client.Repositories.Delete(ctx, parts[0], parts[1])
 		if err != nil {
-			return err
+			return fmt.Errorf("couldn't delete repository: %s: %w", repo.Name, err)
 		}
 	}
 	return nil
-}
-
-// Find list the forks from a given owner that could be deleted.
-func Find(
-	ctx context.Context,
-	client *github.Client,
-	filter Filter,
-) ([]*github.Repository, []string, error) {
-	lopt := github.ListOptions{PerPage: pageSize}
-	ropt := &github.RepositoryListOptions{
-		ListOptions: lopt,
-		Affiliation: "owner",
-	}
-	iopt := &github.IssueListByRepoOptions{
-		ListOptions: lopt,
-	}
-	var deletions []*github.Repository
-	var login string
-	exclusionReasons := make([]string, 0)
-	for {
-		repos, resp, err := client.Repositories.List(ctx, "", ropt)
-		if err != nil {
-			return deletions, exclusionReasons, err
-		}
-		for _, repo := range repos {
-			if login == "" {
-				login = repo.GetOwner().GetLogin()
-				iopt.Creator = login
-			}
-			if !repo.GetFork() {
-				continue
-			}
-			rn := repo.GetName()
-			// Get repository as List omits parent information.
-			repo, _, err = client.Repositories.Get(ctx, login, rn)
-			if err != nil {
-				return deletions, exclusionReasons, err
-			}
-			parent := repo.GetParent()
-			po := parent.GetOwner().GetLogin()
-			pn := parent.GetName()
-			issues, _, err := client.Issues.ListByRepo(ctx, po, pn, iopt)
-			if err != nil {
-				return deletions, exclusionReasons, err
-			}
-			commits, resp, compareErr := client.Repositories.CompareCommits(ctx, po, pn, *parent.DefaultBranch, fmt.Sprintf("%s:%s", login, *repo.DefaultBranch))
-			if resp.StatusCode == http.StatusNotFound {
-				exclusionReasons = append(exclusionReasons, fmt.Sprintf("%s excluded because: parent repo doesn't exist anymore\n", *repo.HTMLURL))
-				continue
-			}
-			if resp.StatusCode == http.StatusUnavailableForLegalReasons {
-				exclusionReasons = append(exclusionReasons, fmt.Sprintf("%s excluded because: DMCA take down\n", *repo.HTMLURL))
-				continue
-			}
-			if compareErr != nil {
-				return deletions, exclusionReasons, compareErr
-			}
-
-			ok, reason := shouldDelete(repo, filter, issues, commits)
-			if ok {
-				deletions = append(deletions, repo)
-			} else {
-				exclusionReasons = append(exclusionReasons, reason)
-			}
-		}
-		if resp.NextPage == 0 {
-			break
-		}
-		ropt.ListOptions.Page = resp.NextPage
-	}
-	return deletions, exclusionReasons, nil
-}
-
-func shouldDelete(
-	repo *github.Repository,
-	filter Filter,
-	issues []*github.Issue,
-	commitComparison *github.CommitsComparison,
-) (bool, string) {
-	for _, r := range filter.Blacklist {
-		if r == repo.GetName() {
-			return false, fmt.Sprintf("%s excluded because: repo is blacklisted\n", *repo.HTMLURL)
-		}
-	}
-	if !filter.IncludePrivate && repo.GetPrivate() {
-		return false, fmt.Sprintf("%s excluded because: repo is private\n", *repo.HTMLURL)
-	}
-	if !filter.IncludeForked && repo.GetForksCount() > 0 {
-		return false, fmt.Sprintf("%s excluded because: repo has %d forks\n", *repo.HTMLURL, *repo.ForksCount)
-	}
-	if !filter.IncludeStarred && repo.GetStargazersCount() > 0 {
-		return false, fmt.Sprintf("%s excluded because: repo has %d stars\n", *repo.HTMLURL, *repo.StargazersCount)
-	}
-	if !time.Now().Add(-filter.Since).After((repo.GetUpdatedAt()).Time) {
-		return false, fmt.Sprintf("%s excluded because: repo has recent activity (last update on %s)\n", *repo.HTMLURL, repo.GetUpdatedAt().Format("1/2/2006"))
-	}
-	for _, issue := range issues {
-		if issue.IsPullRequest() {
-			return false, fmt.Sprintf("%s excluded because: repo has a pull request\n", *repo.HTMLURL)
-		}
-	}
-
-	// check if the fork has commits ahead of the parent repo
-	if filter.ExcludeCommitsAhead && *commitComparison.AheadBy > 0 {
-		return false, fmt.Sprintf("%s excluded because: repo is %d commits ahead of parent\n", *repo.HTMLURL, *commitComparison.AheadBy)
-	}
-
-	return true, ""
 }

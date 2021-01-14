@@ -5,9 +5,7 @@
 [![Travis](https://img.shields.io/travis/caarlos0/fork-cleaner.svg?style=flat-square)](https://travis-ci.org/caarlos0/fork-cleaner)
 [![Go Report Card](https://goreportcard.com/badge/github.com/caarlos0/fork-cleaner?style=flat-square)](https://goreportcard.com/report/github.com/caarlos0/fork-cleaner)
 [![Godoc](https://godoc.org/github.com/caarlos0/fork-cleaner?status.svg&style=flat-square)](http://godoc.org/github.com/caarlos0/fork-cleaner)
-[![SayThanks.io](https://img.shields.io/badge/SayThanks.io-%E2%98%BC-1EAEDB.svg?style=flat-square)](https://saythanks.io/to/caarlos0)
 [![Powered By: GoReleaser](https://img.shields.io/badge/powered%20by-goreleaser-green.svg?style=flat-square)](https://github.com/goreleaser)
-
 
 Cleans up old and inactive forks on your GitHub account.
 
@@ -21,18 +19,10 @@ and execute the binary as in:
 ./fork-cleaner --token "my github token"
 ```
 
-Fork-Cleaner will show you repos that:
+Fork-Cleaner will show you all your forks, you can then check which you want
+to delete or not on a TUI:
 
-- are forks;
-- have no forks (customizable via `--include-forked`);
-- have no stars (customizable via `--include-starred`);
-- have no open pull requests to upstream;
-- had no activity in the last 1 month (customizable via `--since`);
-- are not private (customizable via `--include-private,`);
-- are not blacklisted (customizable via `--blacklist`).
-- are even with or behind the upstream repo (customizable via `--exclude-commits-ahead`).
-
-fork-cleaner will list them and ask if you want to remove them! Simple as that.
+<img width="1486" alt="image" src="https://user-images.githubusercontent.com/245435/104636064-8958cc00-5681-11eb-999b-dcde7d3eb300.png">
 
 ## Install
 

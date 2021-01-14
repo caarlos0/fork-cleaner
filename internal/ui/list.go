@@ -94,16 +94,19 @@ func (m ListModel) View() string {
 
 	return s + helpView([]helpOption{
 		{"up/down", "navigate", false},
-		{"space", "toggle selection on current item", false},
-		{"d", "delete selected items", true},
-		{"a", "select all items", false},
-		{"n", "deselect all items", false},
+		{"space", "toggle selection", false},
+		{"d", "delete selected", true},
+		{"a", "select all", false},
+		{"n", "deselect all", false},
 		{"q/esc", "quit", false},
 	})
 }
 
 func viewRepositoryDetails(repo *forkcleaner.RepositoryWithDetails) string {
 	var details []string
+	if repo.ParentName != "" {
+		details = append(details, fmt.Sprintf("Forked from %s", repo.ParentName))
+	}
 	if repo.ParentDeleted {
 		details = append(details, "Parent repository was deleted")
 	}

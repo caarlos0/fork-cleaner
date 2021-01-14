@@ -16,6 +16,7 @@ const pageSize = 100
 
 type RepositoryWithDetails struct {
 	Name               string
+	ParentName         string
 	RepoURL            string
 	Private            bool
 	ParentDeleted      bool
@@ -95,6 +96,7 @@ func buildDetails(repo *github.Repository, issues []*github.Issue, commits *gith
 	}
 	return &RepositoryWithDetails{
 		Name:               repo.GetFullName(),
+		ParentName:         repo.GetParent().GetFullName(),
 		RepoURL:            repo.GetURL(),
 		Private:            repo.GetPrivate(),
 		ParentDeleted:      code == http.StatusNotFound,

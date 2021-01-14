@@ -16,12 +16,11 @@ var version = "master"
 
 func main() {
 	log.SetFlags(0)
-	f, err := os.OpenFile("fork-cleaner.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0677)
+	f, err := tea.LogToFile("fork-cleaner.log", "")
 	if err != nil {
 		log.Fatalln(err)
 	}
 	defer func() { _ = f.Close() }()
-	log.SetOutput(f)
 
 	app := cli.NewApp()
 	app.Name = "fork-cleaner"

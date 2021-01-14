@@ -117,16 +117,16 @@ func viewRepositoryDetails(repo *forkcleaner.RepositoryWithDetails) string {
 		details = append(details, "Is private")
 	}
 	if repo.CommitsAhead > 0 {
-		details = append(details, fmt.Sprintf("Has %d commits ahead of upstream", repo.CommitsAhead))
+		details = append(details, fmt.Sprintf("Has %d commit%s ahead of upstream", repo.CommitsAhead, maybePlural(repo.CommitsAhead)))
 	}
 	if repo.Forks > 0 {
-		details = append(details, fmt.Sprintf("Has %d forks", repo.Forks))
+		details = append(details, fmt.Sprintf("Has %d fork%s", repo.Forks, maybePlural(repo.Forks)))
 	}
 	if repo.Stars > 0 {
-		details = append(details, fmt.Sprintf("Has %d stars", repo.Stars))
+		details = append(details, fmt.Sprintf("Has %d star%s", repo.Stars, maybePlural(repo.Stars)))
 	}
 	if repo.OpenPRs > 0 {
-		details = append(details, fmt.Sprintf("Has %d open PRs to upstream", repo.OpenPRs))
+		details = append(details, fmt.Sprintf("Has %d open PR%s to upstream", repo.OpenPRs, maybePlural(repo.OpenPRs)))
 	}
 	if time.Now().Add(-30 * 24 * time.Hour).Before(repo.LastUpdate) {
 		details = append(details, fmt.Sprintf("Was updated recently (%s)", repo.LastUpdate))
@@ -142,4 +142,11 @@ func viewRepositoryDetails(repo *forkcleaner.RepositoryWithDetails) string {
 	}
 	s += "\n"
 	return termenv.String(s).Faint().Italic().String()
+}
+
+func maybePlural(n int) string {
+	if n == 1 {
+		return ""
+	}
+	return "s"
 }

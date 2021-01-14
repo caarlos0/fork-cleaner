@@ -77,13 +77,13 @@ func (m ListModel) View() string {
 	var s = boldSecondaryForeground("Which of these forks you want to delete?\n\n")
 
 	for i, repo := range m.repos {
-		var line = repo.Name + "\n"
-
+		var line = repo.Name
 		if _, ok := m.selected[i]; ok {
-			line = faint(iconSelected + " " + line)
+			line = iconSelected + " " + line
 		} else {
-			line = iconNotSelected + " " + line
+			line = faint(iconNotSelected + " " + line)
 		}
+		line += "\n"
 
 		if m.cursor == i {
 			line = "\n" + boldPrimaryForeground(line) + viewRepositoryDetails(repo)

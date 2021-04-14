@@ -3,6 +3,7 @@ github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03
 github.com/atotto/clipboard v0.1.2/go.mod h1:ZY9tmq7sm5xIbd9bOK4onWV4S6X0u6GY7Vn0Yu86PYI=
 github.com/charmbracelet/bubbles v0.7.6 h1:SCAp4ZEUf2tBNEsufo+Xxxu2dvbFhYSDPrX45toQZrM=
 github.com/charmbracelet/bubbles v0.7.6/go.mod h1:0D4XRYK0tjo8JMvflz1obpVcOikNZSG46SFauoZj22s=
+github.com/charmbracelet/bubbles v0.7.7/go.mod h1:5WX1sSSjNCgCrzvRMN/z23HxvWaa+AI16Ch0KPZPeDs=
 github.com/charmbracelet/bubbletea v0.12.2 h1:y9Yo2Pv8tcm3mAJsWONGsmHhzrbNxJVxpVtemikxE9A=
 github.com/charmbracelet/bubbletea v0.12.2/go.mod h1:3gZkYELUOiEUOp0bTInkxguucy/xRbGSOcbMs1geLxg=
 github.com/charmbracelet/bubbletea v0.12.3/go.mod h1:tp9tr9Dadh0PLhgiwchE5zZJXm5543JYjHG9oY+5qSg=
@@ -10,6 +11,7 @@ github.com/charmbracelet/bubbletea v0.12.4/go.mod h1:tp9tr9Dadh0PLhgiwchE5zZJXm5
 github.com/charmbracelet/bubbletea v0.12.5/go.mod h1:tp9tr9Dadh0PLhgiwchE5zZJXm5543JYjHG9oY+5qSg=
 github.com/charmbracelet/bubbletea v0.13.1/go.mod h1:tp9tr9Dadh0PLhgiwchE5zZJXm5543JYjHG9oY+5qSg=
 github.com/charmbracelet/bubbletea v0.13.2/go.mod h1:okqaA5VF0aSpEZ2HB+L/cxVw2HthIDZ1dmWoRZs8/4g=
+github.com/charmbracelet/lipgloss v0.1.2/go.mod h1:5D8zradw52m7QmxRF6QgwbwJi9je84g8MkWiGN07uKg=
 github.com/containerd/console v1.0.1 h1:u7SFAJyRqWcG6ogaMAx3KjSTy1e3hT9QxqX7Jco7dRc=
 github.com/containerd/console v1.0.1/go.mod h1:XUsP6YE/mKtz6bxc+I8UiKKTP04qjQL4qcS3XoQ5xkw=
 github.com/cpuguy83/go-md2man/v2 v2.0.0-20190314233015-f79a8a8ca69d h1:U+s90UTSYgptZMwQh2aRr3LuazLJIa+Pg3Kc1ylSYVY=
@@ -34,6 +36,7 @@ github.com/mattn/go-isatty v0.0.12/go.mod h1:cbi8OIDigv2wuxKPP5vlRcQ1OAZbq2CE4Ky
 github.com/mattn/go-runewidth v0.0.9 h1:Lm995f3rfxdpd6TSmuVCHVb/QhupuXlYr8sCI/QdE+0=
 github.com/mattn/go-runewidth v0.0.9/go.mod h1:H031xJmbD/WCDINGzjvQ9THkh0rPKHF+m2gUSrubnMI=
 github.com/mattn/go-runewidth v0.0.10/go.mod h1:RAqKPSqVFrSLVXbA8x7dzmKdmGzieGRCM46jaSJTDAk=
+github.com/mattn/go-runewidth v0.0.12/go.mod h1:RAqKPSqVFrSLVXbA8x7dzmKdmGzieGRCM46jaSJTDAk=
 github.com/muesli/reflow v0.2.0 h1:2o0UBJPHHH4fa2GCXU4Rg4DwOtWPMekCeyc5EWbAQp0=
 github.com/muesli/reflow v0.2.0/go.mod h1:qT22vjVmM9MIUeLgsVYe/Ye7eZlbv9dZjL3dVhUqLX8=
 github.com/muesli/reflow v0.2.1-0.20210115123740-9e1d0d53df68/go.mod h1:Xk+z4oIWdQqJzsxyjgl3P22oYZnHdZ8FFTHAQQt5BMQ=
@@ -79,6 +82,7 @@ golang.org/x/sys v0.0.0-20201009025420-dfb3f7c4e634 h1:bNEHhJCnrwMKNMmOx3yAynp5v
 golang.org/x/sys v0.0.0-20201009025420-dfb3f7c4e634/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
 golang.org/x/sys v0.0.0-20201020230747-6e5568b54d1a h1:e3IU37lwO4aq3uoRKINC7JikojFmE5gO7xhfxs8VC34=
 golang.org/x/sys v0.0.0-20201020230747-6e5568b54d1a/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
+golang.org/x/sys v0.0.0-20210119212857-b64e53b001e4/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
 golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
 golang.org/x/text v0.3.2/go.mod h1:bEr9sfX3Q8Zfm5fL9x+3itogRgK3+ptLWKqgva+5dAk=
 golang.org/x/tools v0.0.0-20180917221912-90fa682c2a6e/go.mod h1:n7NCudcB/nEzxVGmLbDWY5pfWTLqBcC2KZ6jyYvM4mQ=

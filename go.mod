@@ -3,7 +3,7 @@ module github.com/caarlos0/fork-cleaner/v2
 go 1.15
 
 require (
-	github.com/charmbracelet/bubbles v0.7.7
+	github.com/charmbracelet/bubbles v0.7.8
 	github.com/charmbracelet/bubbletea v0.13.2
 	github.com/cpuguy83/go-md2man/v2 v2.0.0 // indirect
 	github.com/golang/protobuf v1.3.5 // indirect

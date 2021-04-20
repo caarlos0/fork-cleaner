@@ -1,5 +1,7 @@
+gomod:
+  proxy: true
 builds:
-- main: ./cmd/fork-cleaner/main.go
+- main: ./cmd/fork-cleaner
   goarch:
   - amd64
   - arm64

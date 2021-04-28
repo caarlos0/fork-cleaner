@@ -4,6 +4,7 @@ github.com/atotto/clipboard v0.1.2/go.mod h1:ZY9tmq7sm5xIbd9bOK4onWV4S6X0u6GY7Vn
 github.com/charmbracelet/bubbles v0.7.7 h1:eVsAYiAJskifXaqHpPzbOZS1srMaTnuiTazC6uukBbA=
 github.com/charmbracelet/bubbles v0.7.7/go.mod h1:5WX1sSSjNCgCrzvRMN/z23HxvWaa+AI16Ch0KPZPeDs=
 github.com/charmbracelet/bubbles v0.7.8/go.mod h1:5WX1sSSjNCgCrzvRMN/z23HxvWaa+AI16Ch0KPZPeDs=
+github.com/charmbracelet/bubbles v0.7.9/go.mod h1:5WX1sSSjNCgCrzvRMN/z23HxvWaa+AI16Ch0KPZPeDs=
 github.com/charmbracelet/bubbletea v0.13.1/go.mod h1:tp9tr9Dadh0PLhgiwchE5zZJXm5543JYjHG9oY+5qSg=
 github.com/charmbracelet/bubbletea v0.13.2 h1:fSOx3q0/VbA3ChWeiNcUsNeNysD9FFWD1tZypShBuCQ=
 github.com/charmbracelet/bubbletea v0.13.2/go.mod h1:okqaA5VF0aSpEZ2HB+L/cxVw2HthIDZ1dmWoRZs8/4g=

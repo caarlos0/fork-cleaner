@@ -1,33 +1,28 @@
-gomod:
-  proxy: true
-builds:
-- main: ./cmd/fork-cleaner
-  goarch:
-  - amd64
-  - arm64
-brews:
-- tap:
-    owner: caarlos0
-    name: homebrew-tap
+variables:
   homepage:  https://github.com/caarlos0/fork-cleaner
   description: Cleans up old and inactive forks on your github account.
-  folder: Formula
+
+includes:
+- from_url:
+    url: https://raw.githubusercontent.com/caarlos0/goreleaserfiles/main/build.yml
+- from_url:
+    url: https://raw.githubusercontent.com/caarlos0/goreleaserfiles/main/release.yml
+- from_url:
+    url: https://raw.githubusercontent.com/caarlos0/goreleaserfiles/main/package.yml
+
+before:
+  hooks:
+    - go mod tidy
+
+furies:
+  - account: caarlos0
+
 snapcrafts:
 - publish: true
-  summary: Cleans up old and inactive forks on your github account.
-  description: |
-    Cleans up old and inactive forks on your GitHub account.
+  summary: '{{ .description }}'
+  description: '{{ .description }}'
   grade: stable
   apps:
     fork-cleaner:
       plugs: ["network"]
       command: fork-cleaner
-nfpms:
-- maintainer: Carlos A Becker <pkg@carlosbecker.com>
-  description: Cleans up old and inactive forks on your GitHub account.
-  license: MIT
-  formats:
-  - deb
-  - rpm
-  - apk
-

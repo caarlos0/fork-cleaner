@@ -12,40 +12,33 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      -
-        name: Checkout
+      - name: Checkout
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
-      -
-        name: Set up Go
+      - name: Set up Go
         uses: actions/setup-go@v2
         with:
           go-version: 1.15
-      -
-        name: Cache Go modules
+      - name: Cache Go modules
         uses: actions/cache@v1
         with:
           path: ~/go/pkg/mod
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-go-
-      -
-        name: Make Setup
+      - name: Make Setup
         run: |
           make setup
-      -
-        name: Make CI
+      - name: Make CI
         run: |
           make ci
-      -
-        name: Upload coverage
+      - name: Upload coverage
         uses: codecov/codecov-action@v1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           file: ./coverage.txt
-      -
-        name: Set up Snapcraft
+      - name: Set up Snapcraft
         if: success() && startsWith(github.ref, 'refs/tags/')
         env:
           SNAPCRAFT_LOGIN: ${{ secrets.SNAPCRAFT_LOGIN }}
@@ -53,12 +46,18 @@ jobs:
           sudo apt-get update
           sudo apt-get -yq --no-install-suggests --no-install-recommends install snapcraft
           snapcraft login --with <(echo "$SNAPCRAFT_LOGIN")
-      -
-        name: Run GoReleaser
+      - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v2
         if: success() && startsWith(github.ref, 'refs/tags/')
         with:
+          distribution: goreleaser-pro
           version: latest
           args: release --rm-dist
         env:
           GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+          FURY_TOKEN: ${{ secrets.FURY_TOKEN }}
+          GORELEASER_KEY: ${{ secrets.GORELEASER_KEY }}
+          TWITTER_CONSUMER_KEY: ${{ secrets.TWITTER_CONSUMER_KEY }}
+          TWITTER_CONSUMER_SECRET: ${{ secrets.TWITTER_CONSUMER_SECRET }}
+          TWITTER_ACCESS_TOKEN: ${{ secrets.TWITTER_ACCESS_TOKEN }}
+          TWITTER_ACCESS_TOKEN_SECRET: ${{ secrets.TWITTER_ACCESS_TOKEN_SECRET }}

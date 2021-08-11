@@ -66,7 +66,7 @@ func (m ListModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			for k := range m.selected {
 				deleteable = append(deleteable, m.repos[k])
 			}
-			var dm = NewDeletingModel(m.client, deleteable, m)
+			dm := NewDeletingModel(m.client, deleteable, m)
 			return dm, dm.Init()
 		}
 	}
@@ -74,10 +74,10 @@ func (m ListModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m ListModel) View() string {
-	var s = boldSecondaryForeground("Which of these forks do you want to delete?\n\n")
+	s := boldSecondaryForeground("Which of these forks do you want to delete?\n\n")
 
 	for i, repo := range m.repos {
-		var line = repo.Name
+		line := repo.Name
 		if _, ok := m.selected[i]; ok {
 			line = iconSelected + " " + line
 		} else {

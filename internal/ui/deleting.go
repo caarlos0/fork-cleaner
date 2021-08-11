@@ -11,7 +11,7 @@ import (
 
 // NewDeletingModel creates a DeletingModel with required fields.
 func NewDeletingModel(client *github.Client, repos []*forkcleaner.RepositoryWithDetails, previous ListModel) DeletingModel {
-	var s = spinner.NewModel()
+	s := spinner.NewModel()
 	s.Spinner = spinner.MiniDot
 
 	return DeletingModel{
@@ -76,9 +76,9 @@ func (m DeletingModel) View() string {
 		return redFaintForeground(m.spinner.View()) + redForeground(" Deleting repositories...")
 	}
 
-	var s = redForeground("Are you sure you want to delete the selected repositories? (y/N)\n\n")
+	s := redForeground("Are you sure you want to delete the selected repositories? (y/N)\n\n")
 	for i, repo := range m.repos {
-		var line = faint(iconSelected+" "+repo.Name) + "\n"
+		line := faint(iconSelected+" "+repo.Name) + "\n"
 		if m.cursor == i {
 			line = "\n" + boldRedForeground(line) + viewRepositoryDetails(repo)
 		}

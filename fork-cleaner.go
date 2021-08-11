@@ -44,8 +44,8 @@ func FindAllForks(
 			continue
 		}
 
-		var login = r.GetOwner().GetLogin()
-		var name = r.GetName()
+		login := r.GetOwner().GetLogin()
+		name := r.GetName()
 
 		// Get repository as List omits parent information.
 		repo, _, err := client.Repositories.Get(ctx, login, name)
@@ -53,7 +53,7 @@ func FindAllForks(
 			return forks, fmt.Errorf("failed to get repository: %s: %w", repo.GetFullName(), err)
 		}
 
-		var parent = repo.GetParent()
+		parent := repo.GetParent()
 
 		// get fork's Issues
 		issues, _, err := client.Issues.ListByRepo(
@@ -116,7 +116,7 @@ func getAllRepos(
 	login string,
 ) ([]*github.Repository, error) {
 	var allRepos []*github.Repository
-	var opts = &github.RepositoryListOptions{
+	opts := &github.RepositoryListOptions{
 		ListOptions: github.ListOptions{PerPage: pageSize},
 		Affiliation: "owner",
 	}
@@ -141,7 +141,7 @@ func Delete(
 	deletions []*RepositoryWithDetails,
 ) error {
 	for _, repo := range deletions {
-		var parts = strings.Split(repo.Name, "/")
+		parts := strings.Split(repo.Name, "/")
 		log.Println("deleting repository:", repo.Name)
 		_, err := client.Repositories.Delete(ctx, parts[0], parts[1])
 		if err != nil {

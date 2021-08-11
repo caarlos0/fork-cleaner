@@ -11,7 +11,7 @@ import (
 
 // NewInitialModel creates a new InitialModel with required fields.
 func NewInitialModel(client *github.Client, login string) InitialModel {
-	var s = spinner.NewModel()
+	s := spinner.NewModel()
 	s.Spinner = spinner.MiniDot
 
 	return InitialModel{
@@ -42,7 +42,7 @@ func (m InitialModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.err = msg.error
 		return m, nil
 	case gotRepoListMsg:
-		var list = NewListModel(m.client, msg.repos)
+		list := NewListModel(m.client, msg.repos)
 		return list, list.Init()
 	case tea.KeyMsg:
 		switch msg.String() {

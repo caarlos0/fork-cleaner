@@ -18,6 +18,9 @@ before:
 furies:
   - account: caarlos0
 
+builds:
+- main: ./cmd/fork-cleaner
+
 snapcrafts:
 - publish: true
   summary: '{{ .description }}'

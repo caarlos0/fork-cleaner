@@ -40,10 +40,8 @@ func (m DeletingModel) Init() tea.Cmd {
 func (m DeletingModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case reposDeletedMsg:
-		m.loading = false
 		return NewDeleteEndModelSucceed(msg.total), nil
 	case errMsg:
-		m.loading = false
 		return NewDeleteEndModelFailed(msg.error), nil
 	case tea.KeyMsg:
 		switch msg.String() {

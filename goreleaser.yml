@@ -1,5 +1,6 @@
 variables:
   homepage:  https://github.com/caarlos0/fork-cleaner
+  repository:  https://github.com/caarlos0/fork-cleaner
   description: Cleans up old and inactive forks on your github account.
 
 includes:

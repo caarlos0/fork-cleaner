@@ -1,6 +1,6 @@
 module github.com/caarlos0/fork-cleaner/v2
 
-go 1.15
+go 1.16
 
 require (
 	github.com/charmbracelet/bubbles v0.8.0

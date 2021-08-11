@@ -10,12 +10,13 @@ import (
 )
 
 // NewInitialModel creates a new InitialModel with required fields.
-func NewInitialModel(client *github.Client) InitialModel {
+func NewInitialModel(client *github.Client, login string) InitialModel {
 	var s = spinner.NewModel()
 	s.Spinner = spinner.MiniDot
 
 	return InitialModel{
 		client:  client,
+		login:   login,
 		spinner: s,
 		loading: true,
 	}
@@ -24,13 +25,14 @@ func NewInitialModel(client *github.Client) InitialModel {
 // InitialModel is the UI when the CLI starts, basically loading the repos.
 type InitialModel struct {
 	err     error
+	login   string
 	client  *github.Client
 	spinner spinner.Model
 	loading bool
 }
 
 func (m InitialModel) Init() tea.Cmd {
-	return tea.Batch(getRepos(m.client), spinner.Tick)
+	return tea.Batch(getRepos(m.client, m.login), spinner.Tick)
 }
 
 func (m InitialModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
@@ -69,9 +71,9 @@ type gotRepoListMsg struct {
 	repos []*forkcleaner.RepositoryWithDetails
 }
 
-func getRepos(client *github.Client) tea.Cmd {
+func getRepos(client *github.Client, login string) tea.Cmd {
 	return func() tea.Msg {
-		repos, err := forkcleaner.FindAllForks(context.Background(), client)
+		repos, err := forkcleaner.FindAllForks(context.Background(), client, login)
 		if err != nil {
 			return errMsg{err}
 		}

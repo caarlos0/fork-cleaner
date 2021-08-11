@@ -32,9 +32,10 @@ type RepositoryWithDetails struct {
 func FindAllForks(
 	ctx context.Context,
 	client *github.Client,
+	login string,
 ) ([]*RepositoryWithDetails, error) {
 	var forks []*RepositoryWithDetails
-	repos, err := getAllRepos(ctx, client)
+	repos, err := getAllRepos(ctx, client, login)
 	if err != nil {
 		return forks, nil
 	}
@@ -112,6 +113,7 @@ func buildDetails(repo *github.Repository, issues []*github.Issue, commits *gith
 func getAllRepos(
 	ctx context.Context,
 	client *github.Client,
+	login string,
 ) ([]*github.Repository, error) {
 	var allRepos []*github.Repository
 	var opts = &github.RepositoryListOptions{
@@ -119,7 +121,7 @@ func getAllRepos(
 		Affiliation: "owner",
 	}
 	for {
-		repos, resp, err := client.Repositories.List(ctx, "", opts)
+		repos, resp, err := client.Repositories.List(ctx, login, opts)
 		if err != nil {
 			return allRepos, err
 		}

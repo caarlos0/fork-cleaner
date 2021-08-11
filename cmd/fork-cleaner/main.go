@@ -32,6 +32,10 @@ func main() {
 			Usage:  "Base GitHub URL",
 			Value:  "https://api.github.com/",
 		},
+		cli.StringFlag{
+			Name:  "user, u",
+			Usage: "GitHub username or organization name. Defaults to current user.",
+		},
 	}
 
 	app.Action = func(c *cli.Context) error {
@@ -44,6 +48,7 @@ func main() {
 
 		token := c.String("token")
 		ghurl := c.String("github-url")
+		login := c.String("user")
 
 		ctx := context.Background()
 		ts := oauth2.StaticTokenSource(&oauth2.Token{AccessToken: token})
@@ -57,7 +62,7 @@ func main() {
 			return cli.NewExitError("missing github token", 1)
 		}
 
-		var p = tea.NewProgram(ui.NewInitialModel(client))
+		var p = tea.NewProgram(ui.NewInitialModel(client, login))
 		p.EnterAltScreen()
 		defer p.ExitAltScreen()
 		if err = p.Start(); err != nil {

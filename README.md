@@ -57,14 +57,12 @@ gpgcheck=0' | sudo tee /etc/yum.repos.d/caarlos0.repo
 sudo yum install fork-cleaner
 ```
 
-**deb/rpm**:
+**deb/rpm/apk**:
 
-Download the `.deb` or `.rpm` from the [releases page][releases] and
-install with `dpkg -i` and `rpm -i` respectively.
+Download the `.apk`, `.deb` or `.rpm` from the [releases page][releases] and install with the appropriate commands.
 
 **manually**:
 
-Download the pre-compiled binaries from the [releases page][releases] or
-clone the repo build from source.
+Download the pre-compiled binaries from the [releases page][releases] or clone the repo build from source.
 
 [releases]: https://github.com/caarlos0/fork-cleaner/releases

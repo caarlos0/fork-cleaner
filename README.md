@@ -29,7 +29,7 @@ to delete or not on a TUI:
 **homebrew**:
 
 ```sh
-brew install caarlos0/tap/fork-cleaner
+brew install fork-cleaner
 ```
 
 **snap**:

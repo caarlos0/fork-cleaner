@@ -1,60 +1,33 @@
 package ui
 
 import (
-	"fmt"
-
-	"github.com/muesli/termenv"
+	"github.com/charmbracelet/bubbles/list"
+	"github.com/charmbracelet/lipgloss"
 )
 
 var (
-	primary   = termenv.ColorProfile().Color("205")
-	secondary = termenv.ColorProfile().Color("#89F0CB")
-	gray      = termenv.ColorProfile().Color("#626262")
-	midGray   = termenv.ColorProfile().Color("#4A4A4A")
-	red       = termenv.ColorProfile().Color("#ED567A")
+	defaultStyles = list.NewDefaultItemStyles()
+
+	primaryColor   = defaultStyles.SelectedTitle.GetForeground()
+	secondaryColor = defaultStyles.NormalTitle.GetForeground()
+	errorColor     = lipgloss.AdaptiveColor{
+		Light: "#e94560",
+		Dark:  "#f05945",
+	}
+	listStyle    = lipgloss.NewStyle().Margin(2)
+	detailsStyle = lipgloss.NewStyle().PaddingLeft(2)
+
+	boldPrimaryForeground   = lipgloss.NewStyle().Foreground(primaryColor).Bold(true)
+	boldSecondaryForeground = lipgloss.NewStyle().Foreground(secondaryColor).Bold(true)
+	errorStyle              = lipgloss.NewStyle().Foreground(errorColor)
 )
 
 const (
 	iconSelected    = "●"
 	iconNotSelected = "○"
+	separator       = " • "
 )
-
-func boldPrimaryForeground(s string) string {
-	return termenv.String(s).Foreground(primary).Bold().String()
-}
-
-func boldSecondaryForeground(s string) string {
-	return termenv.String(s).Foreground(secondary).Bold().String()
-}
-
-func boldRedForeground(s string) string {
-	return termenv.String(s).Foreground(red).Bold().String()
-}
-
-func redForeground(s string) string {
-	return termenv.String(s).Foreground(red).String()
-}
-
-func redFaintForeground(s string) string {
-	return termenv.String(s).Foreground(red).Faint().String()
-}
-
-func grayForeground(s string) string {
-	return termenv.String(s).Foreground(gray).String()
-}
-
-func midGrayForeground(s string) string {
-	return termenv.String(s).Foreground(midGray).String()
-}
-
-func faint(s string) string {
-	return termenv.String(s).Faint().String()
-}
 
 type errMsg struct{ error }
 
 func (e errMsg) Error() string { return e.error.Error() }
-
-func errorView(action string, err error) string {
-	return redForeground(fmt.Sprintf(action+": %s.\nCheck the log file for more details.", err.Error())) + singleOptionHelp("q", "quit")
-}

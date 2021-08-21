@@ -1,8 +1,6 @@
 package ui
 
-import (
-	"github.com/charmbracelet/lipgloss"
-)
+import "github.com/charmbracelet/lipgloss"
 
 var (
 	errorColor = lipgloss.AdaptiveColor{

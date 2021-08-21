@@ -62,7 +62,7 @@ func main() {
 			return cli.NewExitError("missing github token", 1)
 		}
 
-		p := tea.NewProgram(ui.NewInitialModel(client, login))
+		p := tea.NewProgram(ui.NewAppModel(client, login))
 		p.EnterAltScreen()
 		defer p.ExitAltScreen()
 		if err = p.Start(); err != nil {

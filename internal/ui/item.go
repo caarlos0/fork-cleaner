@@ -66,15 +66,17 @@ func maybePlural(n int) string {
 
 func (i item) FilterValue() string { return "  " + i.repo.Name }
 
-func selectedRepos(items []list.Item) []*forkcleaner.RepositoryWithDetails {
-	var result []*forkcleaner.RepositoryWithDetails
+func splitBySelection(items []list.Item) ([]*forkcleaner.RepositoryWithDetails, []*forkcleaner.RepositoryWithDetails) {
+	var selected, unselected []*forkcleaner.RepositoryWithDetails
 	for _, it := range items {
 		item := it.(item)
 		if item.selected {
-			result = append(result, item.repo)
+			selected = append(selected, item.repo)
+		} else {
+			unselected = append(unselected, item.repo)
 		}
 	}
-	return result
+	return selected, unselected
 }
 
 func reposToItems(repos []*forkcleaner.RepositoryWithDetails) []list.Item {

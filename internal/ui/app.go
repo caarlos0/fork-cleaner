@@ -71,7 +71,12 @@ func (m AppModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		cmds = append(cmds, m.list.StartSpinner(), enqueueGetReposCmd)
 	case requestDeleteSelectedReposMsg:
 		log.Println("requestDeleteSelectedReposMsg")
-		cmds = append(cmds, deleteReposCmd(m.client, selectedRepos(m.list.Items())))
+		selected, unselected := splitBySelection(m.list.Items())
+		cmds = append(
+			cmds,
+			m.list.SetItems(reposToItems(unselected)),
+			deleteReposCmd(m.client, selected),
+		)
 
 	case tea.KeyMsg:
 		if m.list.SettingFilter() {
@@ -118,7 +123,7 @@ func (m AppModel) toggleSelection() tea.Cmd {
 	item := m.list.SelectedItem().(item)
 	item.selected = !item.selected
 	m.list.RemoveItem(idx)
-	return m.list.InsertItem(item, idx)
+	return m.list.InsertItem(idx, item)
 }
 
 func (m AppModel) changeSelect(selected bool) []tea.Cmd {
@@ -127,7 +132,7 @@ func (m AppModel) changeSelect(selected bool) []tea.Cmd {
 		item := i.(item)
 		item.selected = selected
 		m.list.RemoveItem(idx)
-		cmds = append(cmds, m.list.InsertItem(item, idx))
+		cmds = append(cmds, m.list.InsertItem(idx, item))
 	}
 	return cmds
 }

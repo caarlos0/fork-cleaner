@@ -4,7 +4,7 @@ go 1.16
 
 require (
 	github.com/charmbracelet/bubbles v0.9.0
-	github.com/charmbracelet/bubbletea v0.15.0
+	github.com/charmbracelet/bubbletea v0.17.0
 	github.com/cpuguy83/go-md2man/v2 v2.0.1 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/go-github/v33 v33.0.0

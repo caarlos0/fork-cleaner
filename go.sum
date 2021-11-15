@@ -38,10 +38,11 @@ github.com/atotto/clipboard v0.1.2/go.mod h1:ZY9tmq7sm5xIbd9bOK4onWV4S6X0u6GY7Vn
 github.com/caarlos0/timea.go v1.0.2 h1:TTwrLOvn71SnLSq613h9Q9pdujOzrXXxMinNEqmpNso=
 github.com/caarlos0/timea.go v1.0.2/go.mod h1:MyDHBpPAvgjxyCJDk1B/LWhBVCWoTrVhyZZ+rjAcxWA=
 github.com/census-instrumentation/opencensus-proto v0.2.1/go.mod h1:f6KPmirojxKA12rnyqOA5BBL4O983OfeGPqjHWSTneU=
-github.com/charmbracelet/bubbles v0.8.1-0.20210823213054-d987ef84f266 h1:uE0NRa15pVNdnF0EUIwK48ARdRdZkEZ4wLnP/GuoHkI=
-github.com/charmbracelet/bubbles v0.8.1-0.20210823213054-d987ef84f266/go.mod h1:NWT/c+0rYEnYChz5qCyX4Lj6fDw9gGToh9EFJPajghU=
-github.com/charmbracelet/bubbletea v0.14.1 h1:pD/bM5LBEH/nDo7nKcgNUgi4uRHQhpWTIHZbG5vuSlc=
+github.com/charmbracelet/bubbles v0.9.0 h1:lqJ8FXwoLceQF2J0A+dWo1Cuu1dNyjbW4Opgdi2vkhw=
+github.com/charmbracelet/bubbles v0.9.0/go.mod h1:NWT/c+0rYEnYChz5qCyX4Lj6fDw9gGToh9EFJPajghU=
 github.com/charmbracelet/bubbletea v0.14.1/go.mod h1:b5lOf5mLjMg1tRn1HVla54guZB+jvsyV0yYAQja95zE=
+github.com/charmbracelet/bubbletea v0.15.0 h1:7++QPke7CsjBs+tZl49x7KXTHsof+NUMhreAtwBXygE=
+github.com/charmbracelet/bubbletea v0.15.0/go.mod h1:YTZSs2p3odhwYZdhqJheYHVUjU37c9OLgS85kw6NGQY=
 github.com/charmbracelet/harmonica v0.1.0/go.mod h1:KSri/1RMQOZLbw7AHqgcBycp8pgJnQMYYT8QZRqZ1Ao=
 github.com/charmbracelet/lipgloss v0.3.0 h1:5MysOD6sHr4RP4jkZNWGVIul5GKoOsP12NgbgXPvAlA=
 github.com/charmbracelet/lipgloss v0.3.0/go.mod h1:VkhdBS2eNAmRkTwRKLJCFhCOVkjntMusBDxv7TXahuk=
@@ -50,8 +51,9 @@ github.com/chzyer/readline v0.0.0-20180603132655-2972be24d48e/go.mod h1:nSuG5e5P
 github.com/chzyer/test v0.0.0-20180213035817-a1ea475d72b1/go.mod h1:Q3SI9o4m/ZMnBNeIyt5eFwwo7qiLfzFZmjNmxjkiQlU=
 github.com/client9/misspell v0.3.4/go.mod h1:qj6jICC3Q7zFZvVWo7KLAzC3yx5G7kyvSDkc90ppPyw=
 github.com/cncf/udpa/go v0.0.0-20191209042840-269d4d468f6f/go.mod h1:M8M6+tZqaGXZJjfX53e64911xZQV5JYwmTeXPW+k8Sc=
-github.com/containerd/console v1.0.1 h1:u7SFAJyRqWcG6ogaMAx3KjSTy1e3hT9QxqX7Jco7dRc=
 github.com/containerd/console v1.0.1/go.mod h1:XUsP6YE/mKtz6bxc+I8UiKKTP04qjQL4qcS3XoQ5xkw=
+github.com/containerd/console v1.0.2 h1:Pi6D+aZXM+oUw1czuKgH5IJ+y0jhYcwBJfx5/Ghn9dE=
+github.com/containerd/console v1.0.2/go.mod h1:ytZPjGgY2oeTkAONYafi2kSj0aYggsf8acV1PGKCbzQ=
 github.com/cpuguy83/go-md2man/v2 v2.0.0-20190314233015-f79a8a8ca69d/go.mod h1:maD7wRr/U5Z6m/iR4s+kqSMx2CaBsrgA7czyZG/E6dU=
 github.com/cpuguy83/go-md2man/v2 v2.0.1 h1:r/myEWzV9lfsM1tFLgDyu0atFtJ1fXn261LKYj/3DxU=
 github.com/cpuguy83/go-md2man/v2 v2.0.1/go.mod h1:tgQtvFlXSQOSOSIRvRPT7W67SCa46tRHOmNcaadrF8o=
@@ -280,6 +282,7 @@ golang.org/x/sys v0.0.0-20200803210538-64077c9b5642/go.mod h1:h1NjWce9XRLGQEsW7w
 golang.org/x/sys v0.0.0-20200916030750-2334cc1a136f/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
 golang.org/x/sys v0.0.0-20201119102817-f84b799fce68/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
 golang.org/x/sys v0.0.0-20210119212857-b64e53b001e4/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
+golang.org/x/sys v0.0.0-20210124154548-22da62e12c0c/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
 golang.org/x/sys v0.0.0-20210423082822-04245dca01da h1:b3NXsE2LusjYGGjL5bxEVZZORm/YEFFrWFjR8eFrw/c=
 golang.org/x/sys v0.0.0-20210423082822-04245dca01da/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
 golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1/go.mod h1:bj7SfCRtBDWHUb9snDiAeCFNEtKQo2Wmx5Cou7ajbmo=

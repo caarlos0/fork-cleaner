@@ -4,7 +4,6 @@ import (
 	"context"
 	"log"
 	"strings"
-	"time"
 
 	forkcleaner "github.com/caarlos0/fork-cleaner/v2"
 	tea "github.com/charmbracelet/bubbletea"
@@ -22,10 +21,9 @@ func deleteReposCmd(client *github.Client, repos []*forkcleaner.RepositoryWithDe
 			names = append(names, r.Name)
 		}
 		log.Println("deleteReposCmd", strings.Join(names, ", "))
-		time.Sleep(time.Second)
-		// if err := forkcleaner.Delete(context.Background(), client, repos); err != nil {
-		// 	return errMsg{err}
-		// }
+		if err := forkcleaner.Delete(context.Background(), client, repos); err != nil {
+			return errMsg{err}
+		}
 		return reposDeletedMsg{}
 	}
 }

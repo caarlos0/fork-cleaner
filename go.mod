@@ -9,7 +9,7 @@ require (
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/go-github/v33 v33.0.0
 	github.com/muesli/termenv v0.11.1-0.20220212125758-44cd13922739
-	github.com/urfave/cli v1.22.8
+	github.com/urfave/cli v1.22.9
 	golang.org/x/crypto v0.0.0-20201016220609-9e8e0b390897 // indirect
 	golang.org/x/net v0.0.0-20210805182204-aaa1db679c0d // indirect
 	golang.org/x/oauth2 v0.0.0-20210810183815-faf39c7919d5

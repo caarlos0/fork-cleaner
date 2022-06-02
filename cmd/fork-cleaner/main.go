@@ -12,7 +12,7 @@ import (
 	"golang.org/x/oauth2"
 )
 
-var version = "master"
+var version = "main"
 
 func main() {
 	app := cli.NewApp()

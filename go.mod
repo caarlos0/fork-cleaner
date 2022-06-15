@@ -1,6 +1,6 @@
 module github.com/caarlos0/fork-cleaner/v2
 
-go 1.17
+go 1.18
 
 require (
 	github.com/caarlos0/timea.go v1.0.2

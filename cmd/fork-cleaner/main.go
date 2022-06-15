@@ -7,8 +7,8 @@ import (
 
 	"github.com/caarlos0/fork-cleaner/v2/internal/ui"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/google/go-github/v33/github"
-	"github.com/urfave/cli"
+	"github.com/google/go-github/v45/github"
+	"github.com/urfave/cli/v2"
 	"golang.org/x/oauth2"
 )
 
@@ -18,23 +18,29 @@ func main() {
 	app := cli.NewApp()
 	app.Name = "fork-cleaner"
 	app.Version = version
-	app.Author = "Carlos Alexandro Becker (caarlos0@gmail.com)"
+	app.Authors = []*cli.Author{{
+		Name:  "Carlos Alexandro Becker",
+		Email: "carlos@becker.software",
+	}}
 	app.Usage = "Delete old, unused forks"
 	app.Flags = []cli.Flag{
-		cli.StringFlag{
-			EnvVar: "GITHUB_TOKEN",
-			Name:   "token, t",
-			Usage:  "Your GitHub token",
+		&cli.StringFlag{
+			EnvVars: []string{"GITHUB_TOKEN"},
+			Name:    "token",
+			Usage:   "Your GitHub token",
+			Aliases: []string{"t"},
 		},
-		cli.StringFlag{
-			EnvVar: "GITHUB_URL",
-			Name:   "github-url, g",
-			Usage:  "Base GitHub URL",
-			Value:  "https://api.github.com/",
+		&cli.StringFlag{
+			EnvVars: []string{"GITHUB_URL"},
+			Name:    "github-url",
+			Usage:   "Base GitHub URL",
+			Value:   "https://api.github.com/",
+			Aliases: []string{"g"},
 		},
-		cli.StringFlag{
-			Name:  "user, u",
-			Usage: "GitHub username or organization name. Defaults to current user.",
+		&cli.StringFlag{
+			Name:    "user",
+			Usage:   "GitHub username or organization name. Defaults to current user.",
+			Aliases: []string{"u"},
 		},
 	}
 
@@ -42,7 +48,7 @@ func main() {
 		log.SetFlags(0)
 		f, err := tea.LogToFile("fork-cleaner.log", "")
 		if err != nil {
-			return cli.NewExitError(err.Error(), 1)
+			return cli.Exit(err.Error(), 1)
 		}
 		defer func() { _ = f.Close() }()
 
@@ -55,18 +61,18 @@ func main() {
 		tc := oauth2.NewClient(ctx, ts)
 		client, err := github.NewEnterpriseClient(ghurl, ghurl, tc)
 		if err != nil {
-			return cli.NewExitError(err.Error(), 1)
+			return cli.Exit(err.Error(), 1)
 		}
 
 		if token == "" {
-			return cli.NewExitError("missing github token", 1)
+			return cli.Exit("missing github token", 1)
 		}
 
 		p := tea.NewProgram(ui.NewInitialModel(client, login))
 		p.EnterAltScreen()
 		defer p.ExitAltScreen()
 		if err = p.Start(); err != nil {
-			return cli.NewExitError(err.Error(), 1)
+			return cli.Exit(err.Error(), 1)
 		}
 		return nil
 	}

@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/google/go-github/v33/github"
+	"github.com/google/go-github/v45/github"
 )
 
 const pageSize = 100
@@ -78,6 +78,7 @@ func FindAllForks(
 			parent.GetName(),
 			parent.GetDefaultBranch(),
 			fmt.Sprintf("%s:%s", login, repo.GetDefaultBranch()),
+			&github.ListOptions{},
 		)
 		if err != nil {
 			return forks, fmt.Errorf("failed to compare repository with upstream: %s: %w", repo.GetFullName(), err)

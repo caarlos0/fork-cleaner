@@ -5,7 +5,7 @@ go 1.18
 require (
 	github.com/charmbracelet/bubbles v0.11.0
 	github.com/charmbracelet/bubbletea v0.21.0
-	github.com/google/go-github/v45 v45.1.0
+	github.com/google/go-github/v45 v45.2.0
 	github.com/muesli/termenv v0.11.1-0.20220212125758-44cd13922739
 	github.com/urfave/cli/v2 v2.10.2
 	golang.org/x/oauth2 v0.0.0-20210810183815-faf39c7919d5

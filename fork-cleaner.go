@@ -80,7 +80,7 @@ func FindAllForks(
 			fmt.Sprintf("%s:%s", login, repo.GetDefaultBranch()),
 			&github.ListOptions{},
 		)
-		if err != nil {
+		if err != nil && resp.StatusCode != 404 {
 			return forks, fmt.Errorf("failed to compare repository with upstream: %s: %w", repo.GetFullName(), err)
 		}
 

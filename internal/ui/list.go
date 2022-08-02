@@ -112,7 +112,7 @@ func viewRepositoryDetails(repo *forkcleaner.RepositoryWithDetails) string {
 		details = append(details, fmt.Sprintf("Forked from %s", repo.ParentName))
 	}
 	if repo.ParentDeleted {
-		details = append(details, "Parent repository was deleted")
+		details = append(details, "Parent repository was deleted or there are no common ancestors")
 	}
 	if repo.ParentDMCATakeDown {
 		details = append(details, "Parent repository was taken down by DMCA")

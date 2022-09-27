@@ -6,7 +6,7 @@ import (
 	forkcleaner "github.com/caarlos0/fork-cleaner/v2"
 	"github.com/charmbracelet/bubbles/spinner"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/google/go-github/v45/github"
+	"github.com/google/go-github/v47/github"
 )
 
 // NewInitialModel creates a new InitialModel with required fields.

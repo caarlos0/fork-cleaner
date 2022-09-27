@@ -8,7 +8,7 @@ import (
 
 	"github.com/caarlos0/fork-cleaner/v2/internal/ui"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/google/go-github/v45/github"
+	"github.com/google/go-github/v47/github"
 	"github.com/urfave/cli/v2"
 	"golang.org/x/oauth2"
 )

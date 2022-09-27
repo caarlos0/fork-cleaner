@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 	"os"
+	"path/filepath"
 
 	"github.com/caarlos0/fork-cleaner/v2/internal/ui"
 	tea "github.com/charmbracelet/bubbletea"
@@ -46,7 +47,7 @@ func main() {
 
 	app.Action = func(c *cli.Context) error {
 		log.SetFlags(0)
-		f, err := tea.LogToFile("fork-cleaner.log", "")
+		f, err := tea.LogToFile(filepath.Join(os.TempDir(), "fork-cleaner.log"), "")
 		if err != nil {
 			return cli.Exit(err.Error(), 1)
 		}

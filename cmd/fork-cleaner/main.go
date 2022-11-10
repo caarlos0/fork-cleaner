@@ -70,7 +70,7 @@ func main() {
 		}
 
 		p := tea.NewProgram(ui.NewInitialModel(client, login), tea.WithAltScreen())
-		if err = p.Start(); err != nil {
+		if _, err = p.Run(); err != nil {
 			return cli.Exit(err.Error(), 1)
 		}
 		return nil

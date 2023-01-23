@@ -7,7 +7,7 @@ require (
 	github.com/charmbracelet/bubbletea v0.23.1
 	github.com/google/go-github/v47 v47.1.0
 	github.com/muesli/termenv v0.13.0
-	github.com/urfave/cli/v2 v2.23.7
+	github.com/urfave/cli/v2 v2.24.1
 	golang.org/x/oauth2 v0.0.0-20210810183815-faf39c7919d5
 )
 

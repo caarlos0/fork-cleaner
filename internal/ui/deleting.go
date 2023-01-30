@@ -59,7 +59,7 @@ func (m DeletingModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 		case "y":
 			m.loading = true
-			return m, tea.Batch(deleteRepos(m.client, m.repos), spinner.Tick)
+			return m, tea.Batch(deleteRepos(m.client, m.repos), m.spinner.Tick)
 		}
 	default:
 		var cmd tea.Cmd

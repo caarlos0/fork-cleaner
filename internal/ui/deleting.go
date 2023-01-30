@@ -11,7 +11,7 @@ import (
 
 // NewDeletingModel creates a DeletingModel with required fields.
 func NewDeletingModel(client *github.Client, repos []*forkcleaner.RepositoryWithDetails, previous ListModel) DeletingModel {
-	s := spinner.NewModel()
+	s := spinner.New()
 	s.Spinner = spinner.MiniDot
 
 	return DeletingModel{

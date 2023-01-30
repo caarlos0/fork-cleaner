@@ -11,7 +11,7 @@ import (
 
 // NewInitialModel creates a new InitialModel with required fields.
 func NewInitialModel(client *github.Client, login string) InitialModel {
-	s := spinner.NewModel()
+	s := spinner.New()
 	s.Spinner = spinner.MiniDot
 
 	return InitialModel{
@@ -32,7 +32,7 @@ type InitialModel struct {
 }
 
 func (m InitialModel) Init() tea.Cmd {
-	return tea.Batch(getRepos(m.client, m.login), spinner.Tick)
+	return tea.Batch(getRepos(m.client, m.login), m.spinner.Tick)
 }
 
 func (m InitialModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {

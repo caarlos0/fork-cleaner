@@ -6,13 +6,13 @@ require (
 	github.com/charmbracelet/bubbles v0.15.0
 	github.com/charmbracelet/bubbletea v0.23.2
 	github.com/google/go-github/v47 v47.1.0
-	github.com/muesli/termenv v0.14.0
+	github.com/muesli/termenv v0.15.0
 	github.com/urfave/cli/v2 v2.25.0
 	golang.org/x/oauth2 v0.6.0
 )
 
 require (
-	github.com/aymanbagabas/go-osc52 v1.2.1 // indirect
+	github.com/aymanbagabas/go-osc52/v2 v2.0.1 // indirect
 	github.com/charmbracelet/lipgloss v0.6.0 // indirect
 	github.com/containerd/console v1.0.3 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.2 // indirect

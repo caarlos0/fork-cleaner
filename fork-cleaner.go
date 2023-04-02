@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/google/go-github/v45/github"
+	"github.com/google/go-github/v50/github"
 )
 
 const pageSize = 100
@@ -48,39 +48,34 @@ func FindAllForks(
 		name := r.GetName()
 
 		// Get repository as List omits parent information.
-		repo, _, err := client.Repositories.Get(ctx, login, name)
+		repo, resp, err := client.Repositories.Get(ctx, login, name)
+		if resp.StatusCode == 403 {
+			// no access, ignore
+			continue
+		}
 		if err != nil {
 			return forks, fmt.Errorf("failed to get repository: %s: %w", repo.GetFullName(), err)
 		}
 
 		parent := repo.GetParent()
 
-		// get fork's Issues
-		issues, _, err := client.Issues.ListByRepo(
-			ctx,
-			parent.GetOwner().GetLogin(),
-			parent.GetName(),
-			&github.IssueListByRepoOptions{
-				ListOptions: github.ListOptions{
-					PerPage: pageSize,
-				},
-				Creator: login,
-			},
-		)
+		// get parent's Issues
+		issues, err := getIssues(ctx, client, login, parent)
 		if err != nil {
-			return forks, fmt.Errorf("failed to get repository's issues: %s: %w", repo.GetFullName(), err)
+			return forks, fmt.Errorf("failed to get repository's issues: %s: %w", parent.GetFullName(), err)
 		}
 
-		// compare Commits with upstream
+		// compare Commits with parent
 		commits, resp, err := client.Repositories.CompareCommits(
 			ctx,
 			parent.GetOwner().GetLogin(),
 			parent.GetName(),
 			parent.GetDefaultBranch(),
 			fmt.Sprintf("%s:%s", login, repo.GetDefaultBranch()),
+			&github.ListOptions{},
 		)
-		if err != nil {
-			return forks, fmt.Errorf("failed to compare repository with upstream: %s: %w", repo.GetFullName(), err)
+		if err != nil && resp.StatusCode != 404 {
+			return forks, fmt.Errorf("failed to compare repository with parent: %s: %w", repo.GetFullName(), err)
 		}
 
 		forks = append(forks, buildDetails(repo, issues, commits, resp.StatusCode))
@@ -132,6 +127,38 @@ func getAllRepos(
 		opts.ListOptions.Page = resp.NextPage
 	}
 	return allRepos, nil
+}
+
+func getIssues(
+	ctx context.Context,
+	client *github.Client,
+	login string,
+	repo *github.Repository,
+) ([]*github.Issue, error) {
+	var allIssues []*github.Issue
+	opts := &github.IssueListByRepoOptions{
+		ListOptions: github.ListOptions{
+			PerPage: pageSize,
+		},
+		Creator: login,
+	}
+	for {
+		issues, resp, err := client.Issues.ListByRepo(
+			ctx,
+			repo.GetOwner().GetLogin(),
+			repo.GetName(),
+			opts,
+		)
+		if err != nil {
+			return allIssues, err
+		}
+		allIssues = append(allIssues, issues...)
+		if resp.NextPage == 0 {
+			break
+		}
+		opts.ListOptions.Page = resp.NextPage
+	}
+	return allIssues, nil
 }
 
 // Delete delete the given list of forks.

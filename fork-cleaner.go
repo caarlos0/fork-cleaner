@@ -75,7 +75,7 @@ func FindAllForks(
 			return forks, fmt.Errorf("failed to get repository's issues: %s: %w", repo.GetFullName(), err)
 		}
 
-		// compare Commits with upstream
+		// compare Commits with parent
 		commits, resp, err := client.Repositories.CompareCommits(
 			ctx,
 			parent.GetOwner().GetLogin(),
@@ -85,7 +85,7 @@ func FindAllForks(
 			&github.ListOptions{},
 		)
 		if err != nil && resp.StatusCode != 404 {
-			return forks, fmt.Errorf("failed to compare repository with upstream: %s: %w", repo.GetFullName(), err)
+			return forks, fmt.Errorf("failed to compare repository with parent: %s: %w", repo.GetFullName(), err)
 		}
 
 		forks = append(forks, buildDetails(repo, issues, commits, resp.StatusCode))

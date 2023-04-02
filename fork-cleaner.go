@@ -59,7 +59,7 @@ func FindAllForks(
 
 		parent := repo.GetParent()
 
-		// get fork's Issues
+		// get parent's Issues
 		issues, _, err := client.Issues.ListByRepo(
 			ctx,
 			parent.GetOwner().GetLogin(),
@@ -72,7 +72,7 @@ func FindAllForks(
 			},
 		)
 		if err != nil {
-			return forks, fmt.Errorf("failed to get repository's issues: %s: %w", repo.GetFullName(), err)
+			return forks, fmt.Errorf("failed to get repository's issues: %s: %w", parent.GetFullName(), err)
 		}
 
 		// compare Commits with parent

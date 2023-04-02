@@ -7,7 +7,7 @@ import (
 
 	forkcleaner "github.com/caarlos0/fork-cleaner/v2"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/google/go-github/v45/github"
+	"github.com/google/go-github/v50/github"
 )
 
 func requestDeleteReposCmd() tea.Msg {

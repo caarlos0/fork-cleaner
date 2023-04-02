@@ -7,7 +7,7 @@ import (
 	"github.com/charmbracelet/bubbles/list"
 	"github.com/charmbracelet/bubbles/spinner"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/google/go-github/v45/github"
+	"github.com/google/go-github/v50/github"
 )
 
 // AppModel is the UI when the CLI starts, basically loading the repos.

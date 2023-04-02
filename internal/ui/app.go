@@ -20,7 +20,7 @@ type AppModel struct {
 
 // NewAppModel creates a new AppModel with required fields.
 func NewAppModel(client *github.Client, login string) AppModel {
-	list := list.NewModel([]list.Item{}, list.NewDefaultDelegate(), 0, 0)
+	list := list.New([]list.Item{}, list.NewDefaultDelegate(), 0, 0)
 	list.Title = "Fork Cleaner"
 	list.SetSpinner(spinner.MiniDot)
 	list.AdditionalShortHelpKeys = func() []key.Binding {

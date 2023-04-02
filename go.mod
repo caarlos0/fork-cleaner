@@ -5,15 +5,17 @@ go 1.20
 require (
 	github.com/charmbracelet/bubbles v0.15.0
 	github.com/charmbracelet/bubbletea v0.23.2
-	github.com/google/go-github/v47 v47.1.0
+	github.com/google/go-github/v50 v50.2.0
 	github.com/muesli/termenv v0.15.1
 	github.com/urfave/cli/v2 v2.25.1
 	golang.org/x/oauth2 v0.6.0
 )
 
 require (
+	github.com/ProtonMail/go-crypto v0.0.0-20230217124315-7d5c6f04bbb8 // indirect
 	github.com/aymanbagabas/go-osc52/v2 v2.0.1 // indirect
 	github.com/charmbracelet/lipgloss v0.7.1 // indirect
+	github.com/cloudflare/circl v1.1.0 // indirect
 	github.com/containerd/console v1.0.3 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.2 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect

@@ -6,7 +6,7 @@ import (
 
 	forkcleaner "github.com/caarlos0/fork-cleaner/v2"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/google/go-github/v47/github"
+	"github.com/google/go-github/v50/github"
 	"github.com/muesli/termenv"
 )
 

@@ -60,17 +60,7 @@ func FindAllForks(
 		parent := repo.GetParent()
 
 		// get parent's Issues
-		issues, _, err := client.Issues.ListByRepo(
-			ctx,
-			parent.GetOwner().GetLogin(),
-			parent.GetName(),
-			&github.IssueListByRepoOptions{
-				ListOptions: github.ListOptions{
-					PerPage: pageSize,
-				},
-				Creator: login,
-			},
-		)
+		issues, err := getIssues(ctx, client, login, parent)
 		if err != nil {
 			return forks, fmt.Errorf("failed to get repository's issues: %s: %w", parent.GetFullName(), err)
 		}
@@ -137,6 +127,38 @@ func getAllRepos(
 		opts.ListOptions.Page = resp.NextPage
 	}
 	return allRepos, nil
+}
+
+func getIssues(
+	ctx context.Context,
+	client *github.Client,
+	login string,
+	repo *github.Repository,
+) ([]*github.Issue, error) {
+	var allIssues []*github.Issue
+	opts := &github.IssueListByRepoOptions{
+		ListOptions: github.ListOptions{
+			PerPage: pageSize,
+		},
+		Creator: login,
+	}
+	for {
+		issues, resp, err := client.Issues.ListByRepo(
+			ctx,
+			repo.GetOwner().GetLogin(),
+			repo.GetName(),
+			opts,
+		)
+		if err != nil {
+			return allIssues, err
+		}
+		allIssues = append(allIssues, issues...)
+		if resp.NextPage == 0 {
+			break
+		}
+		opts.ListOptions.Page = resp.NextPage
+	}
+	return allIssues, nil
 }
 
 // Delete delete the given list of forks.

@@ -49,10 +49,17 @@ func FindAllForks(
 
 		// Get repository as List omits parent information.
 		repo, resp, err := client.Repositories.Get(ctx, login, name)
-		if resp.StatusCode == 403 {
+		if resp.StatusCode == http.StatusForbidden {
 			// no access, ignore
 			continue
 		}
+
+		switch resp.StatusCode {
+		case http.StatusNotFound, http.StatusUnavailableForLegalReasons:
+			forks = append(forks, buildDetails(r, nil, nil, resp.StatusCode))
+			continue
+		}
+
 		if err != nil {
 			return forks, fmt.Errorf("failed to get repository: %s: %w", repo.GetFullName(), err)
 		}

@@ -53,7 +53,8 @@ func FindAllForks(
 		case http.StatusForbidden:
 			// no access, ignore
 			continue
-		case http.StatusNotFound, http.StatusUnavailableForLegalReasons:
+		case http.StatusUnavailableForLegalReasons:
+			// fork DCMA taken down, so will the parent
 			forks = append(forks, buildDetails(r, nil, nil, resp.StatusCode))
 			continue
 		}

@@ -91,11 +91,14 @@ func FindAllForks(
 }
 
 func buildDetails(repo *github.Repository, issues []*github.Issue, commits *github.CommitsComparison, code int) *RepositoryWithDetails {
-	var openPrs int
+	var openPrs, aheadBy int
 	for _, issue := range issues {
 		if issue.IsPullRequest() {
 			openPrs++
 		}
+	}
+	if commits != nil {
+		aheadBy = commits.GetAheadBy()
 	}
 	return &RepositoryWithDetails{
 		Name:               repo.GetFullName(),
@@ -107,7 +110,7 @@ func buildDetails(repo *github.Repository, issues []*github.Issue, commits *gith
 		Forks:              repo.GetForksCount(),
 		Stars:              repo.GetStargazersCount(),
 		OpenPRs:            openPrs,
-		CommitsAhead:       commits.GetAheadBy(),
+		CommitsAhead:       aheadBy,
 		LastUpdate:         repo.GetUpdatedAt().Time,
 	}
 }

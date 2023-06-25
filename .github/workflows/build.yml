@@ -3,9 +3,9 @@ name: build
 on:
   push:
     branches:
-      - 'main'
+      - "main"
     tags:
-      - 'v*'
+      - "v*"
   pull_request:
 
 jobs:
@@ -34,7 +34,7 @@ jobs:
         if: success() && startsWith(github.ref, 'refs/tags/')
         with:
           distribution: goreleaser-pro
-          version: latest
+          version: nightly
           args: release --rm-dist
         env:
           GITHUB_TOKEN: ${{ secrets.GH_PAT }}

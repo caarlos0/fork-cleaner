@@ -8,8 +8,6 @@ variables:
 
 includes:
   - from_url:
-      url: https://raw.githubusercontent.com/caarlos0/goreleaserfiles/main/build.yml
-  - from_url:
       url: https://raw.githubusercontent.com/caarlos0/goreleaserfiles/main/release.yml
   - from_url:
       url: https://raw.githubusercontent.com/caarlos0/goreleaserfiles/main/package.yml
@@ -21,15 +19,68 @@ before:
 furies:
   - account: caarlos0
 
+gomod:
+  proxy: true
+
 builds:
-  - main: ./cmd/fork-cleaner
+  - env:
+      - CGO_ENABLED=0
+    main: ./cmd/fork-cleaner/
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+    mod_timestamp: "{{ .CommitTimestamp }}"
+    flags:
+      - -trimpath
+    ldflags:
+      - -s -w -X main.version={{ .Version }} -X main.commit={{ .Commit }} -X main.date={{ .CommitDate }} -X main.builtBy=goreleaser
+
+universal_binaries:
+  - replace: true
+
+archives:
+  - format: tar.gz
+    format_overrides:
+      - format: zip
+        goos: windows
 
 snapcrafts:
   - publish: true
-    summary: "{{ .description }}"
-    description: "{{ .description }}"
+    summary: "{{ .Var.description }}"
+    description: "{{ .Var.description }}"
     grade: stable
     apps:
       fork-cleaner:
         plugs: ["network"]
         command: fork-cleaner
+
+nix:
+  - name: fork-cleaner
+    description: "{{ .Var.description }}"
+    homepage: "{{ .Var.homepage }}"
+    license: mit
+    repository:
+      owner: caarlos0
+      name: nur
+
+winget:
+  - name: fork-cleaner
+    short_description: "{{ .Var.description }}"
+    homepage: "{{ .Var.homepage }}"
+    license: MIT
+    publisher: caarlos0
+    repository:
+      owner: caarlos0
+      name: winget-pkgs
+      branch: "{{.ProjectName}}-{{.Version}}"
+      pull_request:
+        enabled: true
+        draft: true
+        base:
+          owner: microsoft
+          name: winget-pkgs
+          branch: master

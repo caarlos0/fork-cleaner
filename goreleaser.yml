@@ -1,15 +1,18 @@
+# yaml-language-server: $schema=https://goreleaser.com/static/schema-pro.json
+# vim: set ts=2 sw=2 tw=0 fo=jcroql
+
 variables:
-  homepage:  https://github.com/caarlos0/fork-cleaner
-  repository:  https://github.com/caarlos0/fork-cleaner
+  homepage: https://github.com/caarlos0/fork-cleaner
+  repository: https://github.com/caarlos0/fork-cleaner
   description: Cleans up old and inactive forks on your github account.
 
 includes:
-- from_url:
-    url: https://raw.githubusercontent.com/caarlos0/goreleaserfiles/main/build.yml
-- from_url:
-    url: https://raw.githubusercontent.com/caarlos0/goreleaserfiles/main/release.yml
-- from_url:
-    url: https://raw.githubusercontent.com/caarlos0/goreleaserfiles/main/package.yml
+  - from_url:
+      url: https://raw.githubusercontent.com/caarlos0/goreleaserfiles/main/build.yml
+  - from_url:
+      url: https://raw.githubusercontent.com/caarlos0/goreleaserfiles/main/release.yml
+  - from_url:
+      url: https://raw.githubusercontent.com/caarlos0/goreleaserfiles/main/package.yml
 
 before:
   hooks:
@@ -19,17 +22,14 @@ furies:
   - account: caarlos0
 
 builds:
-- main: ./cmd/fork-cleaner
+  - main: ./cmd/fork-cleaner
 
 snapcrafts:
-- publish: true
-  summary: '{{ .description }}'
-  description: '{{ .description }}'
-  grade: stable
-  apps:
-    fork-cleaner:
-      plugs: ["network"]
-      command: fork-cleaner
-
-# yaml-language-server: $schema=https://goreleaser.com/static/schema-pro.json
-# vim: set ts=2 sw=2 tw=0 fo=jcroql
+  - publish: true
+    summary: "{{ .description }}"
+    description: "{{ .description }}"
+    grade: stable
+    apps:
+      fork-cleaner:
+        plugs: ["network"]
+        command: fork-cleaner

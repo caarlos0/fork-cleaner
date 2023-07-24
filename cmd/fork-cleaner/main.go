@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 
+	forkcleaner "github.com/caarlos0/fork-cleaner/v2"
 	"github.com/caarlos0/fork-cleaner/v2/internal/ui"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/google/go-github/v50/github"
@@ -43,6 +44,16 @@ func main() {
 			Usage:   "GitHub username or organization name. Defaults to current user.",
 			Aliases: []string{"u"},
 		},
+		&cli.StringFlag{
+			Name:    "path",
+			// future options here:
+			// 1. support for many paths explicitly provided, each path being 1 git repo (working copy checkout)
+			// 2. iterate all subdirs that hold a git repository, in a given path
+			// 3. like 2, but allow specifying multiple paths.
+			// probably option 2 and later 3 is best
+			Usage:   "FOR NOW: dir to git repo for testing",
+			Aliases: []string{"p"},
+		},
 	}
 
 	app.Action = func(c *cli.Context) error {
@@ -67,6 +78,25 @@ func main() {
 
 		if token == "" {
 			return cli.Exit("missing github token", 1)
+		}
+
+		path := c.String("path")
+		if path == "" {
+			return cli.Exit("missing path", 1)
+		}
+
+		clean, err := forkcleaner.IsClean(ctx, path, client)
+		if err != nil {
+			return cli.Exit(err, 1)
+		}
+		// for now, just print the result. in the future, use the terminal menu to navigate
+		if !clean {
+			log.Println("not clean")
+			return cli.Exit("not clean", 1)
+		}
+		if clean {
+			log.Println("clean")
+			return cli.Exit("clean", 1)
 		}
 
 		p := tea.NewProgram(ui.NewAppModel(client, login), tea.WithAltScreen())

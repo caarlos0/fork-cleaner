@@ -29,21 +29,13 @@ type RepositoryWithDetails struct {
 }
 
 // FindAllForks lists all the forks for the current user.
-func FindAllForks(
-	ctx context.Context,
-	client *github.Client,
-	login string,
-) ([]*RepositoryWithDetails, error) {
+func FindAllForks(ctx context.Context, client *github.Client, login string, skipUpstream bool) ([]*RepositoryWithDetails, error) {
 	var forks []*RepositoryWithDetails
 	repos, err := getAllRepos(ctx, client, login)
 	if err != nil {
 		return forks, nil
 	}
 	for _, r := range repos {
-		if !r.GetFork() {
-			continue
-		}
-
 		login := r.GetOwner().GetLogin()
 		name := r.GetName()
 
@@ -63,29 +55,34 @@ func FindAllForks(
 			return forks, fmt.Errorf("failed to get repository: %s: %w", repo.GetFullName(), err)
 		}
 
-		parent := repo.GetParent()
+		if !skipUpstream {
+			parent := repo.GetParent()
 
-		// get parent's Issues
-		issues, err := getIssues(ctx, client, login, parent)
-		if err != nil {
-			return forks, fmt.Errorf("failed to get repository's issues: %s: %w", parent.GetFullName(), err)
+			// get parent's Issues
+			issues, err := getIssues(ctx, client, login, parent)
+			if err != nil {
+				return forks, fmt.Errorf("failed to get repository's issues: %s: %w", parent.GetFullName(), err)
+			}
+
+			// compare Commits with parent
+			commits, resp, err := client.Repositories.CompareCommits(
+				ctx,
+				parent.GetOwner().GetLogin(),
+				parent.GetName(),
+				parent.GetDefaultBranch(),
+				fmt.Sprintf("%s:%s", login, repo.GetDefaultBranch()),
+				&github.ListOptions{},
+			)
+			if err != nil && resp.StatusCode != 404 {
+				return forks, fmt.Errorf("failed to compare repository with parent: %s: %w", repo.GetFullName(), err)
+			}
+			forks = append(forks, buildDetails(repo, issues, commits, resp.StatusCode))
+		} else {
+			forks = append(forks, buildDetails(repo, nil, nil, resp.StatusCode))
 		}
 
-		// compare Commits with parent
-		commits, resp, err := client.Repositories.CompareCommits(
-			ctx,
-			parent.GetOwner().GetLogin(),
-			parent.GetName(),
-			parent.GetDefaultBranch(),
-			fmt.Sprintf("%s:%s", login, repo.GetDefaultBranch()),
-			&github.ListOptions{},
-		)
-		if err != nil && resp.StatusCode != 404 {
-			return forks, fmt.Errorf("failed to compare repository with parent: %s: %w", repo.GetFullName(), err)
-		}
-
-		forks = append(forks, buildDetails(repo, issues, commits, resp.StatusCode))
 	}
+
 	return forks, nil
 }
 
@@ -99,6 +96,7 @@ func buildDetails(repo *github.Repository, issues []*github.Issue, commits *gith
 	if commits != nil {
 		aheadBy = commits.GetAheadBy()
 	}
+
 	return &RepositoryWithDetails{
 		Name:               repo.GetFullName(),
 		ParentName:         repo.GetParent().GetFullName(),
@@ -120,21 +118,27 @@ func getAllRepos(
 	login string,
 ) ([]*github.Repository, error) {
 	var allRepos []*github.Repository
-	opts := &github.RepositoryListOptions{
-		ListOptions: github.ListOptions{PerPage: pageSize},
-		Affiliation: "owner",
+
+	opts := &github.SearchOptions{
+		Sort:      "created",
+		Order:     "asc",
+		TextMatch: false,
+		ListOptions: github.ListOptions{
+			PerPage: pageSize,
+		},
 	}
 	for {
-		repos, resp, err := client.Repositories.List(ctx, login, opts)
+		repos, resp, err := client.Search.Repositories(ctx, "owner:"+login+" fork:only", opts)
 		if err != nil {
 			return allRepos, err
 		}
-		allRepos = append(allRepos, repos...)
+		allRepos = append(allRepos, repos.Repositories...)
 		if resp.NextPage == 0 {
 			break
 		}
 		opts.ListOptions.Page = resp.NextPage
 	}
+
 	return allRepos, nil
 }
 

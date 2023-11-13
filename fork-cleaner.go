@@ -55,31 +55,32 @@ func FindAllForks(ctx context.Context, client *github.Client, login string, skip
 			return forks, fmt.Errorf("failed to get repository: %s: %w", repo.GetFullName(), err)
 		}
 
-		if !skipUpstream {
-			parent := repo.GetParent()
-
-			// get parent's Issues
-			issues, err := getIssues(ctx, client, login, parent)
-			if err != nil {
-				return forks, fmt.Errorf("failed to get repository's issues: %s: %w", parent.GetFullName(), err)
-			}
-
-			// compare Commits with parent
-			commits, resp, err := client.Repositories.CompareCommits(
-				ctx,
-				parent.GetOwner().GetLogin(),
-				parent.GetName(),
-				parent.GetDefaultBranch(),
-				fmt.Sprintf("%s:%s", login, repo.GetDefaultBranch()),
-				&github.ListOptions{},
-			)
-			if err != nil && resp.StatusCode != 404 {
-				return forks, fmt.Errorf("failed to compare repository with parent: %s: %w", repo.GetFullName(), err)
-			}
-			forks = append(forks, buildDetails(repo, issues, commits, resp.StatusCode))
-		} else {
+		if skipUpstream {
 			forks = append(forks, buildDetails(repo, nil, nil, resp.StatusCode))
+			continue
 		}
+
+		parent := repo.GetParent()
+
+		// get parent's Issues
+		issues, err := getIssues(ctx, client, login, parent)
+		if err != nil {
+			return forks, fmt.Errorf("failed to get repository's issues: %s: %w", parent.GetFullName(), err)
+		}
+
+		// compare Commits with parent
+		commits, resp, err := client.Repositories.CompareCommits(
+			ctx,
+			parent.GetOwner().GetLogin(),
+			parent.GetName(),
+			parent.GetDefaultBranch(),
+			fmt.Sprintf("%s:%s", login, repo.GetDefaultBranch()),
+			&github.ListOptions{},
+		)
+		if err != nil && resp.StatusCode != 404 {
+			return forks, fmt.Errorf("failed to compare repository with parent: %s: %w", repo.GetFullName(), err)
+		}
+		forks = append(forks, buildDetails(repo, issues, commits, resp.StatusCode))
 
 	}
 

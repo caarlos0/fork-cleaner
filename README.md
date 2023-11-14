@@ -16,13 +16,19 @@ Then, [download the latest release](https://github.com/caarlos0/fork-cleaner/rel
 and execute the binary as in:
 
 ```sh
-./fork-cleaner --token "my github token"
+./fork-cleaner --token "my github token" -u "my github username"
 ```
+
+Fork-Cleaner will load your forked repositories ordered by the oldest first.
+This can take a little while as Fork-Cleaner will iterate over the page of forks and check the upstream repository status / any prs etc.
 
 Fork-Cleaner will show you all your forks, you can then check which you want
 to delete or not on a TUI:
 
 ![Screen Recording](https://user-images.githubusercontent.com/245435/104655305-4a843f80-569c-11eb-8cd5-7f55b8104375.gif)
+
+Setting `-skip-upstream=true` will skip checking each repositories upstream (useful if you have a lot of forks to avoid hitting the rate-limit).
+This won't compare upstream commits, fetch upstream issues/prs, etc.
 
 ## Install
 
@@ -67,6 +73,18 @@ Download the pre-compiled binaries from the [releases page][releases] or clone t
 
 [releases]: https://github.com/caarlos0/fork-cleaner/releases
 
+## Troubleshooting
+
+* The loading takes a while - The app hits various endpoints in order to collect information on the upstream repository, this can take a while if you have a lot of forks.
+* I've hit the rate limit - You can check your current limits by calling the api like so:
+
+```sh
+curl -L \
+  -H "Accept: application/vnd.github+json" \
+  -H "Authorization: Bearer <YOUR-TOKEN>" \
+  -H "X-GitHub-Api-Version: 2022-11-28" \
+  https://api.github.com/rate_limit
+```
 
 ## Stargazers over time
 

@@ -2,8 +2,11 @@ package ui
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"log"
 	"strings"
+	"time"
 
 	forkcleaner "github.com/caarlos0/fork-cleaner/v2"
 	tea "github.com/charmbracelet/bubbletea"
@@ -32,10 +35,23 @@ func enqueueGetReposCmd() tea.Msg {
 	return getRepoListMsg{}
 }
 
-func getReposCmd(client *github.Client, login string) tea.Cmd {
+func getReposCmd(client *github.Client, login string, skipUpstream bool) tea.Cmd {
+	limits, _, _ := client.RateLimits(context.Background())
+	log.Println("RateLimits: ", limits)
+	if limits.Core.Remaining < 1 {
+		return func() tea.Msg {
+			return errMsg{
+				errors.New(
+					fmt.Sprintf("Rate limit exceeded. Remaining: %d, Time till reset: %v",
+						limits.Core.Remaining, limits.Core.Reset.Sub(time.Now())),
+				),
+			}
+		}
+	}
+
 	return func() tea.Msg {
 		log.Println("getReposCmd")
-		repos, err := forkcleaner.FindAllForks(context.Background(), client, login)
+		repos, err := forkcleaner.FindAllForks(context.Background(), client, login, skipUpstream)
 		if err != nil {
 			return errMsg{err}
 		}

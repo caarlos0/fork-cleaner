@@ -43,6 +43,12 @@ func main() {
 			Usage:   "GitHub username or organization name. Defaults to current user.",
 			Aliases: []string{"u"},
 		},
+		&cli.BoolFlag{
+			Name:    "skip-upstream-check",
+			Usage:   "Skip checking and pulling details from the parent/upstream repository",
+			Aliases: []string{"skip-upstream"},
+			Value:   false,
+		},
 	}
 
 	app.Action = func(c *cli.Context) error {
@@ -56,6 +62,7 @@ func main() {
 		token := c.String("token")
 		ghurl := c.String("github-url")
 		login := c.String("user")
+		skipUpstream := c.Bool("skip-upstream-check")
 
 		ctx := context.Background()
 		ts := oauth2.StaticTokenSource(&oauth2.Token{AccessToken: token})
@@ -69,7 +76,7 @@ func main() {
 			return cli.Exit("missing github token", 1)
 		}
 
-		p := tea.NewProgram(ui.NewAppModel(client, login), tea.WithAltScreen())
+		p := tea.NewProgram(ui.NewAppModel(client, login, skipUpstream), tea.WithAltScreen())
 		if _, err = p.Run(); err != nil {
 			return cli.Exit(err.Error(), 1)
 		}

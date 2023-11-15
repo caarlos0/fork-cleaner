@@ -4,7 +4,7 @@
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=for-the-badge)](LICENSE.md)
 [![Build Status](https://img.shields.io/github/actions/workflow/status/caarlos0/fork-cleaner/build.yml?style=for-the-badge)](https://github.com/caarlos0/fork-cleaner/actions?workflow=build)
 [![Go Report Card](https://goreportcard.com/badge/github.com/caarlos0/fork-cleaner?style=for-the-badge)](https://goreportcard.com/report/github.com/caarlos0/fork-cleaner)
-[![Godoc](https://godoc.org/github.com/caarlos0/fork-cleaner?status.svg&style=for-the-badge)](http://godoc.org/github.com/caarlos0/fork-cleaner)
+[![Godoc](http://img.shields.io/badge/godoc-reference-5272B4.svg?style=for-the-badge)](https://pkg.go.dev/github.com/caarlos0/fork-cleaner)
 [![Powered By: GoReleaser](https://img.shields.io/badge/powered%20by-goreleaser-green.svg?style=for-the-badge)](https://github.com/goreleaser)
 
 Cleans up old and inactive forks on your GitHub account.

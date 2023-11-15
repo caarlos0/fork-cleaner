@@ -2,7 +2,6 @@ package ui
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"log"
 	"strings"
@@ -41,10 +40,8 @@ func getReposCmd(client *github.Client, login string, skipUpstream bool) tea.Cmd
 	if limits.Core.Remaining < 1 {
 		return func() tea.Msg {
 			return errMsg{
-				errors.New(
-					fmt.Sprintf("Rate limit exceeded. Remaining: %d, Time till reset: %v",
-						limits.Core.Remaining, limits.Core.Reset.Sub(time.Now())),
-				),
+				fmt.Errorf("Rate limit exceeded. Remaining: %d, Time till reset: %v",
+					limits.Core.Remaining, time.Since(limits.Core.Reset.Time)),
 			}
 		}
 	}

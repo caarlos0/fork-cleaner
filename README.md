@@ -1,11 +1,11 @@
 # fork-cleaner
 
-[![Release](https://img.shields.io/github/release/caarlos0/fork-cleaner.svg?style=flat-square)](https://github.com/caarlos0/fork-cleaner/releases/latest)
-[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
-[![Travis](https://img.shields.io/travis/caarlos0/fork-cleaner.svg?style=flat-square)](https://travis-ci.org/caarlos0/fork-cleaner)
-[![Go Report Card](https://goreportcard.com/badge/github.com/caarlos0/fork-cleaner?style=flat-square)](https://goreportcard.com/report/github.com/caarlos0/fork-cleaner)
-[![Godoc](https://godoc.org/github.com/caarlos0/fork-cleaner?status.svg&style=flat-square)](http://godoc.org/github.com/caarlos0/fork-cleaner)
-[![Powered By: GoReleaser](https://img.shields.io/badge/powered%20by-goreleaser-green.svg?style=flat-square)](https://github.com/goreleaser)
+[![Release](https://img.shields.io/github/release/caarlos0/fork-cleaner.svg?style=for-the-badge)](https://github.com/caarlos0/fork-cleaner/releases/latest)
+[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=for-the-badge)](LICENSE.md)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/caarlos0/fork-cleaner/build.yml?style=for-the-badge)](https://github.com/caarlos0/fork-cleaner/actions?workflow=build)
+[![Go Report Card](https://goreportcard.com/badge/github.com/caarlos0/fork-cleaner?style=for-the-badge)](https://goreportcard.com/report/github.com/caarlos0/fork-cleaner)
+[![Godoc](https://godoc.org/github.com/caarlos0/fork-cleaner?status.svg&style=for-the-badge)](http://godoc.org/github.com/caarlos0/fork-cleaner)
+[![Powered By: GoReleaser](https://img.shields.io/badge/powered%20by-goreleaser-green.svg?style=for-the-badge)](https://github.com/goreleaser)
 
 Cleans up old and inactive forks on your GitHub account.
 
@@ -75,8 +75,8 @@ Download the pre-compiled binaries from the [releases page][releases] or clone t
 
 ## Troubleshooting
 
-* The loading takes a while - The app hits various endpoints in order to collect information on the upstream repository, this can take a while if you have a lot of forks.
-* I've hit the rate limit - You can check your current limits by calling the api like so:
+- The loading takes a while - The app hits various endpoints in order to collect information on the upstream repository, this can take a while if you have a lot of forks.
+- I've hit the rate limit - You can check your current limits by calling the api like so:
 
 ```sh
 curl -L \

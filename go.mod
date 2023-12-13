@@ -5,7 +5,7 @@ go 1.20
 require (
 	github.com/caarlos0/timea.go v1.2.0
 	github.com/charmbracelet/bubbles v0.16.1
-	github.com/charmbracelet/bubbletea v0.24.2
+	github.com/charmbracelet/bubbletea v0.25.0
 	github.com/charmbracelet/lipgloss v0.9.1
 	github.com/google/go-github/v50 v50.2.0
 	github.com/urfave/cli/v2 v2.26.0

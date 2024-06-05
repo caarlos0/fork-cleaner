@@ -9,7 +9,7 @@ require (
 	github.com/charmbracelet/lipgloss v0.11.0
 	github.com/google/go-github/v50 v50.2.0
 	github.com/urfave/cli/v2 v2.27.2
-	golang.org/x/oauth2 v0.20.0
+	golang.org/x/oauth2 v0.21.0
 )
 
 require (

@@ -6,7 +6,7 @@ require (
 	github.com/caarlos0/timea.go v1.2.0
 	github.com/charmbracelet/bubbles v0.18.0
 	github.com/charmbracelet/bubbletea v0.27.0
-	github.com/charmbracelet/lipgloss v0.12.1
+	github.com/charmbracelet/lipgloss v0.13.0
 	github.com/google/go-github/v50 v50.2.0
 	github.com/urfave/cli/v2 v2.27.4
 	golang.org/x/oauth2 v0.22.0

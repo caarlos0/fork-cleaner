@@ -35,7 +35,12 @@ func enqueueGetReposCmd() tea.Msg {
 }
 
 func getReposCmd(client *github.Client, login string, skipUpstream bool) tea.Cmd {
-	limits, _, _ := client.RateLimits(context.Background())
+	limits, _, err := client.RateLimits(context.Background())
+	if err != nil {
+		return func() tea.Msg {
+			return errMsg{err}
+		}
+	}
 	log.Println("RateLimits: ", limits)
 	if limits.Core.Remaining < 1 {
 		return func() tea.Msg {

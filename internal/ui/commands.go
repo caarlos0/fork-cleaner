@@ -41,13 +41,12 @@ func deleteReposCmd(client *github.Client, repos []*forkcleaner.RepositoryWithDe
 func deleteLocalReposCmd(repos []*forkcleaner.LocalRepoState) tea.Cmd {
 	return func() tea.Msg {
 		for _, r := range repos {
-			log.Println("deleteLocalReposCmd", r.Path)
-			//		if err := os.RemoveAll(r.Path); err != nil {
-			//		return errMsg{err}
-			//}
+			log.Println("deleteLocalReposCmd: DELETING", r.Path)
+			if err := os.RemoveAll(r.Path); err != nil {
+				return errMsg{err}
+			}
 		}
-		return errMsg{
-			errors.New("TODO delete ")}
+		return localReposDeletedMsg{}
 	}
 }
 

@@ -16,13 +16,14 @@ import (
 // LocalRepoState tracks the git status cleanliness, git stash cleanliness, and
 // for each branch, to which remote branch it has been merged, if any.
 type LocalRepoState struct {
-	Path         string
-	repo         *git.Repository
-	StatusClean  bool
-	StashClean   bool
-	MergedOrigin map[string]string
-	MergedPR     map[string]*github.PullRequest
-	Unmerged     map[string]struct{}
+	Path           string
+	repo           *git.Repository
+	StatusClean    bool
+	StashClean     bool
+	MergedOrigin   map[string]string
+	MergedPR       map[string]*github.PullRequest
+	Unmerged       map[string]struct{}
+	RemotesChecked []string
 }
 
 func NewLocalRepoState(path string, client *github.Client, ctx context.Context) (*LocalRepoState, error) {
@@ -120,6 +121,8 @@ func (lr *LocalRepoState) checkLocalBranches(client *github.Client, ctx context.
 				return err
 			}
 			remotesFound++
+			lr.RemotesChecked = append(lr.RemotesChecked, rem.Config().URLs[0])
+
 			found, pr, err := isCommitInRemote(ctx, client, rem, b.Hash())
 			if err != nil {
 				// if it's http 404, just continue

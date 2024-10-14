@@ -27,16 +27,25 @@ func (i localItem) Title() string {
 func (i localItem) Description() string {
 	var details []string
 	if i.repo.StatusClean {
-		details = append(details, "git status: clean")
+		details = append(details, "status clean")
 	} else {
-		details = append(details, "git status: dirty")
+		details = append(details, "status dirty")
 	}
 	if i.repo.StashClean {
-		details = append(details, "git stash: clean")
+		details = append(details, "stash clean")
 	} else {
-		details = append(details, "git stash: dirty")
+		details = append(details, "stash dirty")
 	}
-	details = append(details, fmt.Sprintf("%d unmerged branches", len(i.repo.Unmerged)))
+	if len(i.repo.Unmerged) > 2 || len(i.repo.Unmerged) == 0 {
+		details = append(details, fmt.Sprintf("%d unmerged branches", len(i.repo.Unmerged)))
+	} else {
+		var keys []string
+		for k := range i.repo.Unmerged {
+			keys = append(keys, k)
+		}
+		details = append(details, fmt.Sprintf("unmerged: %s", strings.Join(keys, ", ")))
+	}
+	details = append(details, i.repo.RemotesChecked...)
 
 	return detailsStyle.Render(strings.Join(details, separator))
 }

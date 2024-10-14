@@ -57,6 +57,26 @@ Download the binaries from the [latest release](https://github.com/caarlos0/fork
 You'll need to [create a personal access token](https://github.com/settings/tokens/new?scopes=repo,delete_repo&description=fork-cleaner) with `repo` and `delete_repo`
 permissions. You'll need to pass this token to `fork-cleaner` with the `--token` flag.
 
+### Local mode
+
+This is a recently added mode, which scans git repositories that you have checked out (cloned) locally.
+It marks each repository, as either "clean" (safe to delete), or "dirty" (not safe to delete).
+
+For a repository to be marked clean, it needs to meet all of the following conditions:
+
+* the are no uncommitted changes.
+* all branches are found in a remote named "upstream" or "origin".
+* there is nothing in the stash.
+
+Note:
+
+* if your local branches are found in remote that goes by another name, the local repository is still marked "dirty". This could perhaps
+  be considered as "clean" in the future. (with an optional flag)
+
+### Remote mode
+
+This is the original fork-cleaner mode.
+
 ```sh
 fork-cleaner --token "<token>"
 ```

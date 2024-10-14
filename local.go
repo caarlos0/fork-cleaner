@@ -21,21 +21,20 @@ func IsClean(ctx context.Context, path string, client *github.Client) (bool, err
 	}
 
 	// 1) check status
-	//if !isLocalStatusClean(r) {
-	//	return false, nil
-	//}
+	if !isLocalStatusClean(r) {
+		return false, nil
+	}
 
 	// 2) check stash
-	//if !isLocalStashClean(path) {
-	//	return false, nil
-	//}
+	if !isLocalStashClean(path) {
+		return false, nil
+	}
 
 	// 3) check branches
 	ok, bms, err := isLocalBranchesClean(ctx, r, client)
 	if err != nil {
 		return false, err
 	}
-	fmt.Println("isclean?")
 	bms.Dump()
 
 	return ok, nil
@@ -55,13 +54,15 @@ func isLocalStatusClean(r *git.Repository) bool {
 }
 
 func isLocalStashClean(path string) bool {
+	// stash is not supported yet in the go library, so we run the git command
+	// https://github.com/go-git/go-git/issues/606
+
 	cmd := exec.Command("git", "stash", "list")
 	var out bytes.Buffer
 	cmd.Dir = path
 	cmd.Stdout = &out
 	cmd.Stderr = os.Stderr
 	cmd.Run()
-	fmt.Println("git stashempty :", out.String() == "") // WORKS
 	return out.String() == ""
 }
 
@@ -120,12 +121,11 @@ func (b *BranchMergeState) Dump() {
 
 // does the git repository have any commits that are not pushed to the remote?
 func isLocalBranchesClean(ctx context.Context, r *git.Repository, client *github.Client) (bool, *BranchMergeState, error) {
-	// first get the branches
+	// first get the local branches. they have a name like refs/heads/<branch name> or use b.Name().Short()
 	branches, err := r.Branches()
 	if err != nil {
 		panic(err)
 	}
-	// all local branches, with a name like refs/heads/<branch name> or use b.Name().Short()
 
 	bms := NewBranchMergeState()
 
@@ -136,8 +136,6 @@ func isLocalBranchesClean(ctx context.Context, r *git.Repository, client *github
 
 		var remotesFound int
 
-		// Note: we pay no mind to other remotes you may have.
-		// only "official" upstream/origin remotes count toward having the commit be "safe"
 		for _, remName := range []string{"origin", "upstream"} {
 			rem, err := r.Remote(remName)
 			if err == git.ErrRemoteNotFound {
@@ -161,47 +159,6 @@ func isLocalBranchesClean(ctx context.Context, r *git.Repository, client *github
 		}
 		bms.AddUnmerged(b.Name().Short())
 		return nil
-
-		// is the commit in the remote?
-		// https://docs.github.com/en/rest/commits/commits?apiVersion=2022-11-28#list-commits
-		// https://docs.github.com/en/rest/commits/commits?apiVersion=2022-11-28#list-branches-for-head-commit <- only if commit is the head of a branch
-		// https://docs.github.com/en/rest/commits/commits?apiVersion=2022-11-28#list-pull-requests-associated-with-a-commit // merged PR or open PR. seems good
-		// https://docs.github.com/en/rest/commits/commits?apiVersion=2022-11-28#get-a-commit <-- but does it say anything about merged or not?
-		// https://docs.github.com/en/rest/commits/commits?apiVersion=2022-11-28#compare-two-commits <- maybe this works? i think it needs branch names, not commits
-
-		//commit, err := b.Commit()
-		//if err != nil {
-		//	panic(err)
-		//}
-		// get the remote for the branch
-		/*
-			remote, err := r.Remote(b.Name().String())
-			if err != nil {
-				panic(err)
-			}
-			if remote != nil {
-				// get the remote url
-				remoteUrl := remote.Config().URLs[0]
-				// get the remote branch
-				remoteBranch := remote.Config().Fetch[0].Src
-				// get the remote commits
-				remoteCommits, err := r.Log(&git.LogOptions{From: commit.Hash, Order: git.LogOrderCommitterTime})
-				if err != nil {
-					panic(err)
-				}
-				// check if the commit is in the remote
-				commitInRemote := false
-				remoteCommits.ForEach(func(c *object.Commit) error {
-					if c.Hash == commit.Hash {
-						commitInRemote = true
-						return storer.ErrStop
-					}
-					return nil
-				})
-				fmt.Printf("branch %s, remote: %s, remote branch: %s, commit in remote: %t\n", b.Name(), remoteUrl, remoteBranch, commitInRemote)
-			}
-			return nil
-		*/
 	})
 
 	if err != nil {
@@ -223,6 +180,10 @@ func isCommitInRemote(ctx context.Context, client *github.Client, rem *git.Remot
 	}
 	prs, _, err := client.PullRequests.ListPullRequestsWithCommit(ctx, owner, name, commit.String(), &opts)
 	if err != nil {
+		if strings.Contains(err.Error(), "No commit found for SHA") {
+			fmt.Println("commit", commit.String(), "is NOT in remote", rem.Config().Name)
+			return nil, nil
+		}
 		return nil, err
 	}
 

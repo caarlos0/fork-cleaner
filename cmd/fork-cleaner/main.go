@@ -45,7 +45,7 @@ func main() {
 			Aliases: []string{"u"},
 		},
 		&cli.StringFlag{
-			Name:    "path",
+			Name: "path",
 			// future options here:
 			// 1. support for many paths explicitly provided, each path being 1 git repo (working copy checkout)
 			// 2. iterate all subdirs that hold a git repository, in a given path
@@ -98,11 +98,9 @@ func main() {
 		}
 		// for now, just print the result. in the future, use the terminal menu to navigate
 		if !clean {
-			log.Println("not clean")
 			return cli.Exit("not clean", 1)
 		}
 		if clean {
-			log.Println("clean")
 			return cli.Exit("clean", 1)
 		}
 

@@ -183,9 +183,10 @@ func extractOwnerAndNameFromRemoteUrl(remoteUrl string) (string, string, error) 
 	str := strings.TrimSuffix(remoteUrl, ".git")
 	str = strings.TrimPrefix(str, "git@github.com:")
 	str = strings.TrimPrefix(str, "https://github.com/")
+	str = strings.TrimPrefix(str, "git://github.com/")
 	split := strings.Split(str, "/")
 	if len(split) != 2 {
-		return "", "", fmt.Errorf("invalid remote url: %s", remoteUrl)
+		return "", "", fmt.Errorf("unsupported remote url: %s", remoteUrl)
 	}
 	return split[0], split[1], nil
 }

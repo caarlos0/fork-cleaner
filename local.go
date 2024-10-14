@@ -122,15 +122,21 @@ func (lr *LocalRepoState) checkLocalBranches(client *github.Client, ctx context.
 			remotesFound++
 			pr, err := isCommitInRemote(ctx, client, rem, b.Hash())
 			if err != nil {
+				// if it's http 404, just continue
+				if strings.Contains(err.Error(), "404 Not Found") {
+					continue
+				}
+				// can't use an invalid URL..
+				if strings.Contains(err.Error(), "invalid remote url:") {
+					continue
+				}
+
 				return err
 			}
 			if pr != nil {
 				lr.AddMerged(b.Name().Short(), remName, pr)
 				return nil
 			}
-		}
-		if remotesFound == 0 {
-			return fmt.Errorf("no suitable upstream/origin remote found")
 		}
 		lr.AddUnmerged(b.Name().Short())
 		return nil

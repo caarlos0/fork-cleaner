@@ -32,16 +32,22 @@ func (i localItem) Description() string {
 		details = append(details, "git status: dirty")
 	}
 	if i.repo.StashClean {
-		details = append(details, "git stash:  clean")
+		details = append(details, "git stash: clean")
 	} else {
-		details = append(details, "git stash:  dirty")
+		details = append(details, "git stash: dirty")
 	}
 	details = append(details, fmt.Sprintf("%d unmerged branches", len(i.repo.Unmerged)))
 
 	return detailsStyle.Render(strings.Join(details, separator))
 }
 
-func (i localItem) FilterValue() string { return "  " + i.repo.Path }
+func (i localItem) FilterValue() string {
+	clean := "dirty"
+	if i.repo.Clean() {
+		clean = "clean"
+	}
+	return "  " + i.repo.Path + " " + clean
+}
 
 func splitLocalBySelection(localItems []list.Item) ([]*forkcleaner.LocalRepoState, []*forkcleaner.LocalRepoState) {
 	var selected, unselected []*forkcleaner.LocalRepoState

@@ -120,7 +120,7 @@ func (lr *LocalRepoState) checkLocalBranches(client *github.Client, ctx context.
 				return err
 			}
 			remotesFound++
-			pr, err := isCommitInRemote(ctx, client, rem, b.Hash())
+			found, pr, err := isCommitInRemote(ctx, client, rem, b.Hash())
 			if err != nil {
 				// if it's http 404, just continue
 				if strings.Contains(err.Error(), "404 Not Found") {
@@ -133,7 +133,7 @@ func (lr *LocalRepoState) checkLocalBranches(client *github.Client, ctx context.
 
 				return err
 			}
-			if pr != nil {
+			if found { // note: pr might be nil if it was committed without a PR
 				lr.AddMerged(b.Name().Short(), remName, pr)
 				return nil
 			}
@@ -149,12 +149,12 @@ func (lr *LocalRepoState) checkLocalBranches(client *github.Client, ctx context.
 	return nil
 }
 
-func isCommitInRemote(ctx context.Context, client *github.Client, rem *git.Remote, commit plumbing.Hash) (*github.PullRequest, error) {
+func isCommitInRemote(ctx context.Context, client *github.Client, rem *git.Remote, commit plumbing.Hash) (bool, *github.PullRequest, error) {
 	remoteUrl := rem.Config().URLs[0]
 
 	owner, name, err := extractOwnerAndNameFromRemoteUrl(remoteUrl)
 	if err != nil {
-		return nil, err
+		return false, nil, err
 	}
 	opts := github.PullRequestListOptions{
 		State: "closed",
@@ -162,15 +162,16 @@ func isCommitInRemote(ctx context.Context, client *github.Client, rem *git.Remot
 	prs, _, err := client.PullRequests.ListPullRequestsWithCommit(ctx, owner, name, commit.String(), &opts)
 	if err != nil {
 		if strings.Contains(err.Error(), "No commit found for SHA") {
-			return nil, nil
+			return false, nil, nil
 		}
-		return nil, err
+		return false, nil, err
 	}
 
 	if len(prs) > 0 {
-		return prs[0], nil
+		return true, prs[0], nil
 	}
-	return nil, nil
+	// important! we are here because a commit was committed directly (without a PR)
+	return true, nil, nil
 }
 
 // extractOwnerAndNameFromRemoteUrl extracts the owner and name from a remote URL

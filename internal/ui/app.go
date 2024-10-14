@@ -12,14 +12,15 @@ import (
 
 // AppModel is the UI when the CLI starts, basically loading the repos.
 type AppModel struct {
-	err    error
-	login  string
-	client *github.Client
-	list   list.Model
+	err          error
+	login        string
+	client       *github.Client
+	skipUpstream bool
+	list         list.Model
 }
 
 // NewAppModel creates a new AppModel with required fields.
-func NewAppModel(client *github.Client, login string) AppModel {
+func NewAppModel(client *github.Client, login string, skipUpstream bool) AppModel {
 	list := list.New([]list.Item{}, list.NewDefaultDelegate(), 0, 0)
 	list.Title = "Fork Cleaner"
 	list.SetSpinner(spinner.MiniDot)
@@ -37,9 +38,10 @@ func NewAppModel(client *github.Client, login string) AppModel {
 	}
 
 	return AppModel{
-		client: client,
-		login:  login,
-		list:   list,
+		client:       client,
+		login:        login,
+		skipUpstream: skipUpstream,
+		list:         list,
 	}
 }
 
@@ -61,7 +63,7 @@ func (m AppModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.err = msg.error
 	case getRepoListMsg:
 		log.Println("getRepoListMsg")
-		cmds = append(cmds, m.list.StartSpinner(), getReposCmd(m.client, m.login))
+		cmds = append(cmds, m.list.StartSpinner(), getReposCmd(m.client, m.login, m.skipUpstream))
 	case gotRepoListMsg:
 		log.Println("gotRepoListMsg")
 		m.list.StopSpinner()

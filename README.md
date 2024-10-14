@@ -59,7 +59,7 @@ permissions. You'll need to pass this token to `fork-cleaner` with the `--token`
 
 ### Local mode
 
-This is a recently added mode, which scans git repositories that you have checked out (cloned) locally.
+This is a newly added mode, which scans one or more git repositories that you have checked out (cloned) locally.
 It marks each repository, as either "clean" (safe to delete), or "dirty" (not safe to delete).
 
 For a repository to be marked clean, it needs to meet all of the following conditions:

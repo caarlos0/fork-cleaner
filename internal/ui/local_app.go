@@ -11,18 +11,18 @@ import (
 )
 
 // AppModel is the UI when the CLI starts, basically loading the repos.
-type AppModel struct {
-	err          error
-	login        string
-	client       *github.Client
-	skipUpstream bool
-	list         list.Model
+type LocalAppModel struct {
+	err    error
+	login  string
+	client *github.Client
+	path   string
+	list   list.Model
 }
 
 // NewAppModel creates a new AppModel with required fields.
-func NewAppModel(client *github.Client, login string, skipUpstream bool) AppModel {
+func NewLocalAppModel(client *github.Client, login, path string) LocalAppModel {
 	list := list.New([]list.Item{}, list.NewDefaultDelegate(), 0, 0)
-	list.Title = "Fork Cleaner - remote mode"
+	list.Title = "Fork Cleaner - local mode"
 	list.SetSpinner(spinner.MiniDot)
 	list.AdditionalShortHelpKeys = func() []key.Binding {
 		return []key.Binding{
@@ -37,19 +37,19 @@ func NewAppModel(client *github.Client, login string, skipUpstream bool) AppMode
 		}
 	}
 
-	return AppModel{
-		client:       client,
-		login:        login,
-		skipUpstream: skipUpstream,
-		list:         list,
+	return LocalAppModel{
+		client: client,
+		login:  login,
+		path:   path,
+		list:   list,
 	}
 }
 
-func (m AppModel) Init() tea.Cmd {
-	return tea.Batch(enqueueGetReposCmd, m.list.StartSpinner())
+func (m LocalAppModel) Init() tea.Cmd {
+	return tea.Batch(enqueueGetLocalReposCmd, m.list.StartSpinner())
 }
 
-func (m AppModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (m LocalAppModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var cmds []tea.Cmd
 	var cmd tea.Cmd
 
@@ -61,23 +61,23 @@ func (m AppModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case errMsg:
 		log.Println("errMsg")
 		m.err = msg.error
-	case getRepoListMsg:
-		log.Println("getRepoListMsg")
-		cmds = append(cmds, m.list.StartSpinner(), getReposCmd(m.client, m.login, m.skipUpstream))
-	case gotRepoListMsg:
-		log.Println("gotRepoListMsg")
+	case getLocalRepoListMsg:
+		log.Println("getLocalRepoListMsg")
+		cmds = append(cmds, m.list.StartSpinner(), getLocalReposCmd(m.client, m.path))
+	case gotLocalRepoListMsg:
+		log.Println("gotLocalRepoListMsg")
 		m.list.StopSpinner()
-		cmds = append(cmds, m.list.SetItems(reposToItems(msg.repos)))
-	case reposDeletedMsg:
-		log.Println("reposDeletedMsg")
-		cmds = append(cmds, m.list.StartSpinner(), enqueueGetReposCmd)
-	case requestDeleteSelectedReposMsg:
-		log.Println("requestDeleteSelectedReposMsg")
-		selected, unselected := splitBySelection(m.list.Items())
+		cmds = append(cmds, m.list.SetItems(localReposToItems(msg.repos)))
+	case localReposDeletedMsg:
+		log.Println("localReposDeletedMsg")
+		cmds = append(cmds, m.list.StartSpinner(), enqueueGetLocalReposCmd)
+	case requestDeleteSelectedLocalReposMsg:
+		log.Println("requestDeleteSelectedLocalReposMsg")
+		selected, unselected := splitLocalBySelection(m.list.Items())
 		cmds = append(
 			cmds,
-			m.list.SetItems(reposToItems(unselected)),
-			deleteReposCmd(m.client, selected),
+			m.list.SetItems(localReposToItems(unselected)),
+			deleteLocalReposCmd(selected),
 		)
 
 	case tea.KeyMsg:
@@ -102,7 +102,7 @@ func (m AppModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		if key.Matches(msg, keyDeletedSelected) {
 			log.Println("tea.KeyMsg -> deleteSelected")
-			cmds = append(cmds, m.list.StartSpinner(), requestDeleteReposCmd)
+			cmds = append(cmds, m.list.StartSpinner(), requestDeleteLocalReposCmd)
 		}
 	}
 
@@ -111,7 +111,7 @@ func (m AppModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, tea.Batch(cmds...)
 }
 
-func (m AppModel) View() string {
+func (m LocalAppModel) View() string {
 	if m.err != nil {
 		return errorStyle.Bold(true).Render("Error gathering the repository list") +
 			"\n" +
@@ -120,18 +120,18 @@ func (m AppModel) View() string {
 	return m.list.View()
 }
 
-func (m AppModel) toggleSelection() tea.Cmd {
+func (m LocalAppModel) toggleSelection() tea.Cmd {
 	idx := m.list.Index()
-	item := m.list.SelectedItem().(item)
+	item := m.list.SelectedItem().(localItem)
 	item.selected = !item.selected
 	m.list.RemoveItem(idx)
 	return m.list.InsertItem(idx, item)
 }
 
-func (m AppModel) changeSelect(selected bool) []tea.Cmd {
+func (m LocalAppModel) changeSelect(selected bool) []tea.Cmd {
 	var cmds []tea.Cmd
 	for idx, i := range m.list.Items() {
-		item := i.(item)
+		item := i.(localItem)
 		item.selected = selected
 		m.list.RemoveItem(idx)
 		cmds = append(cmds, m.list.InsertItem(idx, item))

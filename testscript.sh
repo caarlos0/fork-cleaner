@@ -84,6 +84,21 @@ git commit README.md -m 'extra line'
 git checkout main
 cd ..
 
+
+## note, it's irrelevant to do this. any checked out commit is always part of any of the branches we're checking
+# mk repo-clean-old-checkout
+# cd repo-clean-old-checkout
+# git checkout 1891e364bedf834fdafeac95c678a2bd725f5e62 # a commit on main
+# cd ..
+
+# the code is not merged but it's available online, so we can delete our local copy
+# for now, doesn't work yet, so just be safe and mark it dirty
+# mk repo-clean-unmerged-pr
+# cd repo-clean-unmerged-pr
+# git checkout 8e13183 # <-- this doesn't work yet. a branch from unmerged PR https://github.com/caarlos0/fork-cleaner/pull/154 
+# cd ..
+
+
 # special cases we don't need to do anything special for:
 # have a local branch that:
 # does/does not exist in any remote (we don't have to differentiate between upstream and our git fork, because fork-cleaner in classic 'github mode' will figure out whether our fork contains anything special or not)

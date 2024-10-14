@@ -6,7 +6,6 @@ import (
 	"os"
 	"path/filepath"
 
-	forkcleaner "github.com/caarlos0/fork-cleaner/v2"
 	"github.com/caarlos0/fork-cleaner/v2/internal/ui"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/google/go-github/v50/github"
@@ -45,13 +44,8 @@ func main() {
 			Aliases: []string{"u"},
 		},
 		&cli.StringFlag{
-			Name: "path",
-			// future options here:
-			// 1. support for many paths explicitly provided, each path being 1 git repo (working copy checkout)
-			// 2. iterate all subdirs that hold a git repository, in a given path
-			// 3. like 2, but allow specifying multiple paths.
-			// probably option 2 and later 3 is best
-			Usage:   "FOR NOW: dir to git repo for testing",
+			Name:    "path",
+			Usage:   "directory that is a git repo, or contains git repos, all of which will be scanned",
 			Aliases: []string{"p"},
 		},
 		&cli.BoolFlag{
@@ -88,22 +82,20 @@ func main() {
 		}
 
 		path := c.String("path")
-		if path == "" {
-			return cli.Exit("missing path", 1)
+		if path != "" {
+			fi, err := os.Stat(path)
+			if err != nil {
+				return cli.Exit(err.Error(), 1)
+			}
+			if !fi.IsDir() {
+				return cli.Exit("path must be a directory", 1)
+			}
+			p := tea.NewProgram(ui.NewLocalAppModel(client, login, path), tea.WithAltScreen())
+			if _, err = p.Run(); err != nil {
+				return cli.Exit(err.Error(), 1)
+			}
+			return nil
 		}
-
-		clean, err := forkcleaner.IsClean(ctx, path, client)
-		if err != nil {
-			return cli.Exit(err, 1)
-		}
-		// for now, just print the result. in the future, use the terminal menu to navigate
-		if !clean {
-			return cli.Exit("not clean", 1)
-		}
-		if clean {
-			return cli.Exit("clean", 1)
-		}
-
 		p := tea.NewProgram(ui.NewAppModel(client, login, skipUpstream), tea.WithAltScreen())
 		if _, err = p.Run(); err != nil {
 			return cli.Exit(err.Error(), 1)

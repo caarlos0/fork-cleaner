@@ -64,18 +64,18 @@ It marks each repository, as either "clean" (safe to delete), or "dirty" (not sa
 
 For a repository to be marked clean, it needs to meet all of the following conditions:
 
-* the are no uncommitted changes.
-* all branches are found in a remote named "upstream" or "origin".
+* there are no uncommitted changes: `git status` is clean.
+* all branches (technically, their HEAD commit) are found in a remote named "upstream" or "origin". 
 * there is nothing in the stash.
 
-Note:
+Limitations:
 
-* if your local branches are found in remote that goes by another name, the local repository is still marked "dirty". This could perhaps
-  be considered as "clean" in the future. (with an optional flag)
-* we can only check for the prescensce of commits (branches) hosted on GitHub. Other hosts/remotes are ignored for now, which may lead
-  to such repositories be marked as "dirty" because we could not prove they are clean.
+* if your local branches are found in a remote that goes by another name, they are not considered "safely merged" ("clean")
+  (could add an optional flag to support this)
+* we can only check for the presence of commits hosted on GitHub. Other hosts/remotes are ignored for now.
+* branches that were integrated in the upstream/origin via a history-altering operation (e.g. squash-merged, rebase-merged) can't be detected.
 
-  In both cases, it seems more prudent to bias towards "dirty", because "clean" means you can safely delete it.
+In all these cases, since we can't prove "cleanliness", we mark affected repos as "dirty" out of caution.
 
 ### Remote mode
 

@@ -9,6 +9,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"sync"
 	"time"
 
 	forkcleaner "github.com/caarlos0/fork-cleaner/v2"
@@ -105,25 +106,69 @@ func getLocalReposCmd(client *github.Client, path string) tea.Cmd {
 			return gotLocalRepoListMsg{[]*forkcleaner.LocalRepoState{lr}}
 
 		}
-		// we had an error but it was ErrNotExist for .git, so we assume it's a directory that contains code repos (checkouts)
 
-		var repos []*forkcleaner.LocalRepoState
+		// we had an error but it was ErrNotExist for .git, so we assume it's a directory that contains code repos (checkouts)
 
 		entries, err := os.ReadDir(path)
 		if err != nil {
 			return errMsg{err}
 		}
 
+		var repos []*forkcleaner.LocalRepoState
+		repoCh := make(chan *forkcleaner.LocalRepoState)
+		errorCh := make(chan error)
+		var wg sync.WaitGroup
+		sem := make(chan bool, 10)
+		ctx, cancel := context.WithCancel(context.Background())
+
 		for _, entry := range entries {
 			if entry.IsDir() {
 				gitpath := filepath.Join(path, entry.Name(), ".git")
 				if _, err := os.Stat(gitpath); err == nil {
-					lr, err := forkcleaner.NewLocalRepoState(filepath.Join(path, entry.Name()), client, context.Background())
-					if err != nil {
-						return errMsg{err}
-					}
-					repos = append(repos, lr)
+					wg.Add(1)
+					go func(repoPath string) {
+						defer wg.Done()
+						sem <- true              // acquire semaphore
+						defer func() { <-sem }() // release semaphore
+						// check the context to see if we should still do this work
+						select {
+						case <-ctx.Done():
+							return
+						default:
+						}
+						lr, err := forkcleaner.NewLocalRepoState(repoPath, client, context.Background())
+						if err != nil {
+							errorCh <- err
+							return
+						}
+						repoCh <- lr
+					}(filepath.Join(path, entry.Name()))
 				}
+			}
+		}
+		go func() {
+			wg.Wait()
+			close(repoCh)
+			close(errorCh)
+			cancel()
+		}()
+
+	loop:
+		for {
+			select {
+			case repo, ok := <-repoCh:
+				if !ok {
+					break loop
+				}
+				repos = append(repos, repo)
+
+			case err, ok := <-errorCh:
+				if !ok {
+					break
+				}
+				cancel()
+				return errMsg{err}
+
 			}
 		}
 

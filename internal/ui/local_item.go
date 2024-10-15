@@ -55,7 +55,8 @@ func (i localItem) FilterValue() string {
 	if i.repo.Clean() {
 		clean = "clean"
 	}
-	return "  " + i.repo.Path + " " + clean
+
+	return "  " + i.repo.Path + " " + clean + " " + strings.Join(i.repo.RemotesChecked, " ")
 }
 
 func splitLocalBySelection(localItems []list.Item) ([]*forkcleaner.LocalRepoState, []*forkcleaner.LocalRepoState) {

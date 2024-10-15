@@ -135,7 +135,15 @@ func (lr *LocalRepoState) checkLocalBranches(client *github.Client, ctx context.
 				return err
 			}
 			remotesFound++
-			lr.RemotesChecked = append(lr.RemotesChecked, rem.Config().URLs[0])
+			var found bool
+			for _, existing := range lr.RemotesChecked {
+				if existing == rem.Config().URLs[0] {
+					found = true
+				}
+			}
+			if !found {
+				lr.RemotesChecked = append(lr.RemotesChecked, rem.Config().URLs[0])
+			}
 
 			found, pr, err := isCommitInRemote(ctx, client, rem, b.Hash())
 			if err != nil {

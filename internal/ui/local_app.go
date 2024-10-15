@@ -70,7 +70,6 @@ func (m LocalAppModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		cmds = append(cmds, m.list.SetItems(localReposToItems(msg.repos)))
 	case localReposDeletedMsg:
 		log.Println("localReposDeletedMsg")
-		cmds = append(cmds, m.list.StartSpinner(), enqueueGetLocalReposCmd)
 	case requestDeleteSelectedLocalReposMsg:
 		log.Println("requestDeleteSelectedLocalReposMsg")
 		selected, unselected := splitLocalBySelection(m.list.Items())

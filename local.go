@@ -129,8 +129,9 @@ func (lr *LocalRepoState) checkLocalBranches(client *github.Client, ctx context.
 				if strings.Contains(err.Error(), "404 Not Found") {
 					continue
 				}
-				// can't use an invalid URL..
-				if strings.Contains(err.Error(), "invalid remote url:") {
+				// can't use an invalid or unsupported URL.
+				// this usually means you use a host other than GitHub. these are not supported yet
+				if strings.Contains(err.Error(), "unsupported remote URL") {
 					continue
 				}
 
@@ -183,10 +184,11 @@ func extractOwnerAndNameFromRemoteUrl(remoteUrl string) (string, string, error) 
 	str := strings.TrimSuffix(remoteUrl, ".git")
 	str = strings.TrimPrefix(str, "git@github.com:")
 	str = strings.TrimPrefix(str, "https://github.com/")
+	str = strings.TrimPrefix(str, "http://github.com/")
 	str = strings.TrimPrefix(str, "git://github.com/")
 	split := strings.Split(str, "/")
 	if len(split) != 2 {
-		return "", "", fmt.Errorf("unsupported remote url: %s", remoteUrl)
+		return "", "", fmt.Errorf("unsupported remote URL: %s", remoteUrl)
 	}
 	return split[0], split[1], nil
 }

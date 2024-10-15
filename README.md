@@ -72,6 +72,10 @@ Note:
 
 * if your local branches are found in remote that goes by another name, the local repository is still marked "dirty". This could perhaps
   be considered as "clean" in the future. (with an optional flag)
+* we can only check for the prescensce of commits (branches) hosted on GitHub. Other hosts/remotes are ignored for now, which may lead
+  to such repositories be marked as "dirty" because we could not prove they are clean.
+
+  In both cases, it seems more prudent to bias towards "dirty", because "clean" means you can safely delete it.
 
 ### Remote mode
 

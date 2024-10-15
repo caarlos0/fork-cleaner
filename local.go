@@ -60,15 +60,29 @@ func NewLocalRepoState(path string, client *github.Client, ctx context.Context) 
 }
 
 func (lr *LocalRepoState) checkLocalStatus() error {
-	w, err := lr.repo.Worktree()
-	if err != nil {
-		return err
-	}
-	status, err := w.Status()
-	if err != nil {
-		return err
-	}
-	lr.StatusClean = status.IsClean()
+	// git-go's status sometimes reports dirty when it should be clean. e.g.:
+	// https://github.com/go-git/go-git/issues/691
+	// https://github.com/go-git/go-git/issues/736
+	/*
+		w, err := lr.repo.Worktree()
+		if err != nil {
+			return err
+		}
+		status, err := w.Status()
+		if err != nil {
+			return err
+		}
+		log.Println("Status for ", lr.Path, status)
+		lr.StatusClean = status.IsClean()
+	*/
+
+	cmd := exec.Command("git", "status", "--porcelain")
+	var out bytes.Buffer
+	cmd.Dir = lr.Path
+	cmd.Stdout = &out
+	cmd.Stderr = os.Stderr
+	cmd.Run()
+	lr.StatusClean = out.String() == ""
 	return nil
 }
 

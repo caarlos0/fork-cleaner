@@ -43,6 +43,11 @@ func main() {
 			Usage:   "GitHub username or organization name. Defaults to current user.",
 			Aliases: []string{"u"},
 		},
+		&cli.StringFlag{
+			Name:    "path",
+			Usage:   "directory that is a git repo, or contains git repos, all of which will be scanned",
+			Aliases: []string{"p"},
+		},
 		&cli.BoolFlag{
 			Name:    "skip-upstream-check",
 			Usage:   "Skip checking and pulling details from the parent/upstream repository",
@@ -76,6 +81,21 @@ func main() {
 			return cli.Exit("missing github token", 1)
 		}
 
+		path := c.String("path")
+		if path != "" {
+			fi, err := os.Stat(path)
+			if err != nil {
+				return cli.Exit(err.Error(), 1)
+			}
+			if !fi.IsDir() {
+				return cli.Exit("path must be a directory", 1)
+			}
+			p := tea.NewProgram(ui.NewLocalAppModel(client, login, path), tea.WithAltScreen())
+			if _, err = p.Run(); err != nil {
+				return cli.Exit(err.Error(), 1)
+			}
+			return nil
+		}
 		p := tea.NewProgram(ui.NewAppModel(client, login, skipUpstream), tea.WithAltScreen())
 		if _, err = p.Run(); err != nil {
 			return cli.Exit(err.Error(), 1)

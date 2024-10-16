@@ -57,13 +57,6 @@ func (i item) Description() string {
 	return detailsStyle.Render(strings.Join(details, separator))
 }
 
-func maybePlural(n int) string {
-	if n == 1 {
-		return ""
-	}
-	return "s"
-}
-
 func (i item) FilterValue() string { return "  " + i.repo.Name }
 
 func splitBySelection(items []list.Item) ([]*forkcleaner.RepositoryWithDetails, []*forkcleaner.RepositoryWithDetails) {

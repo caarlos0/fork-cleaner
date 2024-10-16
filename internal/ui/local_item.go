@@ -18,10 +18,11 @@ func (i localItem) Title() string {
 	if i.repo.Clean() {
 		clean = " (clean)"
 	}
+
 	if i.selected {
-		return iconSelected + " " + i.repo.Path + clean
+		return iconSelected + " " + ByteCountIEC(i.repo.Size) + " " + i.repo.Path + clean
 	}
-	return iconNotSelected + " " + i.repo.Path + clean
+	return iconNotSelected + " " + ByteCountIEC(i.repo.Size) + " " + i.repo.Path + clean
 }
 
 func (i localItem) Description() string {
@@ -80,4 +81,34 @@ func localReposToItems(repos []*forkcleaner.LocalRepoState) []list.Item {
 		})
 	}
 	return localItems
+}
+
+// support for sorting by size
+type bySizeDesc []list.Item
+
+func (s bySizeDesc) Less(i, j int) bool {
+	return s[i].(localItem).repo.Size > s[j].(localItem).repo.Size
+}
+func (s bySizeDesc) Len() int      { return len(s) }
+func (s bySizeDesc) Swap(i, j int) { s[i], s[j] = s[j], s[i] }
+
+type byName []list.Item
+
+func (s byName) Less(i, j int) bool { return s[i].(localItem).repo.Path < s[j].(localItem).repo.Path }
+func (s byName) Len() int           { return len(s) }
+func (s byName) Swap(i, j int)      { s[i], s[j] = s[j], s[i] }
+
+// from https://yourbasic.org/golang/formatting-byte-size-to-human-readable-format/
+func ByteCountIEC(b int64) string {
+	const unit = 1024
+	if b < unit {
+		return fmt.Sprintf("%d B", b)
+	}
+	div, exp := int64(unit), 0
+	for n := b / unit; n >= unit; n /= unit {
+		div *= unit
+		exp++
+	}
+	return fmt.Sprintf("%.1f %ciB",
+		float64(b)/float64(div), "KMGTPE"[exp])
 }

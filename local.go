@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strings"
 
 	"github.com/go-git/go-git/v5"
@@ -18,6 +19,7 @@ import (
 type LocalRepoState struct {
 	Path           string
 	repo           *git.Repository
+	Size           int64
 	StatusClean    bool
 	StashClean     bool
 	MergedOrigin   map[string]string
@@ -33,8 +35,12 @@ func NewLocalRepoState(path string, client *github.Client, ctx context.Context) 
 		MergedPR:     make(map[string]*github.PullRequest),
 		Unmerged:     make(map[string]struct{}),
 	}
-
 	var err error
+
+	lr.Size, err = getDiskSpaceUsed(path)
+	if err != nil {
+		return nil, err
+	}
 	lr.repo, err = git.PlainOpen(path)
 	if err != nil {
 		return nil, err
@@ -213,4 +219,23 @@ func extractOwnerAndNameFromRemoteUrl(remoteUrl string) (string, string, error) 
 		return "", "", fmt.Errorf("unsupported remote URL: %s", remoteUrl)
 	}
 	return split[0], split[1], nil
+}
+
+// getDiskSpaceUsed calculates the amount of disk space used under `path`
+// to achieve this we must fully, recursively walk the directory tree.
+// note: this is not super accurate, we don't account for the size of the directories themselves
+func getDiskSpaceUsed(path string) (int64, error) {
+	var size int64
+	err := filepath.Walk(path, func(base string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		if !info.IsDir() {
+			//log.Println("info.Size():", info.Size(), path, base)
+			size += info.Size()
+		}
+		return nil
+	})
+	//log.Println("total size", size)
+	return size, err
 }

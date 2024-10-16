@@ -2,6 +2,7 @@ package ui
 
 import (
 	"log"
+	"sort"
 
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/list"
@@ -28,12 +29,16 @@ func NewLocalAppModel(client *github.Client, login, path string) LocalAppModel {
 		return []key.Binding{
 			keySelectToggle,
 			keyDeletedSelected,
+			keySortBySize,
+			keySortByName,
 		}
 	}
 	list.AdditionalFullHelpKeys = func() []key.Binding {
 		return []key.Binding{
 			keySelectAll,
 			keySelectNone,
+			keySortBySize,
+			keySortByName,
 		}
 	}
 
@@ -102,6 +107,20 @@ func (m LocalAppModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		if key.Matches(msg, keyDeletedSelected) {
 			log.Println("tea.KeyMsg -> deleteSelected")
 			cmds = append(cmds, m.list.StartSpinner(), requestDeleteLocalReposCmd)
+		}
+
+		if key.Matches(msg, keySortBySize) {
+			log.Println("tea.KeyMsg -> sortBySize")
+			items := m.list.Items()
+			sort.Sort(bySizeDesc(items))
+			cmds = append(cmds, m.list.SetItems(items))
+		}
+
+		if key.Matches(msg, keySortByName) {
+			log.Println("tea.KeyMsg -> sortByName")
+			items := m.list.Items()
+			sort.Sort(byName(items))
+			cmds = append(cmds, m.list.SetItems(items))
 		}
 	}
 

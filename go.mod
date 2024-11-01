@@ -6,7 +6,7 @@ require (
 	github.com/caarlos0/timea.go v1.2.0
 	github.com/charmbracelet/bubbles v0.20.0
 	github.com/charmbracelet/bubbletea v1.1.2
-	github.com/charmbracelet/lipgloss v0.13.1
+	github.com/charmbracelet/lipgloss v1.0.0
 	github.com/google/go-github/v50 v50.2.0
 	github.com/urfave/cli/v2 v2.27.5
 	golang.org/x/oauth2 v0.23.0
@@ -16,7 +16,7 @@ require (
 	github.com/ProtonMail/go-crypto v0.0.0-20230923063757-afb1ddc0824c // indirect
 	github.com/atotto/clipboard v0.1.4 // indirect
 	github.com/aymanbagabas/go-osc52/v2 v2.0.1 // indirect
-	github.com/charmbracelet/x/ansi v0.4.0 // indirect
+	github.com/charmbracelet/x/ansi v0.4.2 // indirect
 	github.com/charmbracelet/x/term v0.2.0 // indirect
 	github.com/cloudflare/circl v1.3.7 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.5 // indirect

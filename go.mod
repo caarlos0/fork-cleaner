@@ -5,7 +5,7 @@ go 1.20
 require (
 	github.com/caarlos0/timea.go v1.2.0
 	github.com/charmbracelet/bubbles v0.20.0
-	github.com/charmbracelet/bubbletea v1.3.0
+	github.com/charmbracelet/bubbletea v1.3.2
 	github.com/charmbracelet/lipgloss v1.0.0
 	github.com/google/go-github/v50 v50.2.0
 	github.com/urfave/cli/v2 v2.27.5
@@ -34,7 +34,7 @@ require (
 	github.com/sahilm/fuzzy v0.1.1 // indirect
 	github.com/xrash/smetrics v0.0.0-20240521201337-686a1a2994c1 // indirect
 	golang.org/x/crypto v0.31.0 // indirect
-	golang.org/x/sync v0.10.0 // indirect
-	golang.org/x/sys v0.29.0 // indirect
+	golang.org/x/sync v0.11.0 // indirect
+	golang.org/x/sys v0.30.0 // indirect
 	golang.org/x/text v0.21.0 // indirect
 )

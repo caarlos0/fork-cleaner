@@ -23,7 +23,7 @@ func main() {
 		Name:  "Carlos Alexandro Becker",
 		Email: "carlos@becker.software",
 	}}
-	app.Usage = "Delete old, unused forks"
+	app.Usage = "Archive or delete old, unused forks"
 	app.Flags = []cli.Flag{
 		&cli.StringFlag{
 			EnvVars: []string{"GITHUB_TOKEN"},

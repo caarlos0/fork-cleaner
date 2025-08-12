@@ -55,6 +55,11 @@ func FindAllForks(ctx context.Context, client *github.Client, login string, skip
 			return forks, fmt.Errorf("failed to get repository: %s: %w", repo.GetFullName(), err)
 		}
 
+		// Skip already archived repositories
+		if repo.GetArchived() {
+			continue
+		}
+
 		if skipUpstream {
 			forks = append(forks, buildDetails(repo, nil, nil, resp.StatusCode))
 			continue
@@ -187,6 +192,30 @@ func Delete(
 		_, err := client.Repositories.Delete(ctx, parts[0], parts[1])
 		if err != nil {
 			return fmt.Errorf("couldn't delete repository: %s: %w", repo.Name, err)
+		}
+	}
+	return nil
+}
+
+// Archive archives the given list of forks by updating their description and making them read-only.
+func Archive(
+	ctx context.Context,
+	client *github.Client,
+	archivals []*RepositoryWithDetails,
+) error {
+	for _, repo := range archivals {
+		parts := strings.Split(repo.Name, "/")
+		log.Println("archiving repository:", repo.Name)
+
+		// Update repository to mark it as archived
+		update := &github.Repository{
+			Description: github.String("🔒 ARCHIVED - This repository has been archived by fork-cleaner"),
+			Archived:    github.Bool(true),
+		}
+
+		_, _, err := client.Repositories.Edit(ctx, parts[0], parts[1], update)
+		if err != nil {
+			return fmt.Errorf("couldn't archive repository: %s: %w", repo.Name, err)
 		}
 	}
 	return nil

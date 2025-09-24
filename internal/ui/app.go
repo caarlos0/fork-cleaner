@@ -28,6 +28,7 @@ func NewAppModel(client *github.Client, login string, skipUpstream bool) AppMode
 		return []key.Binding{
 			keySelectToggle,
 			keyDeletedSelected,
+			keyArchiveSelected,
 		}
 	}
 	list.AdditionalFullHelpKeys = func() []key.Binding {
@@ -79,7 +80,14 @@ func (m AppModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.list.SetItems(reposToItems(unselected)),
 			deleteReposCmd(m.client, selected),
 		)
-
+	case requestArchiveSelectedReposMsg:
+		log.Println("requestArchiveSelectedReposMsg")
+		selected, unselected := splitBySelection(m.list.Items())
+		cmds = append(
+			cmds,
+			m.list.SetItems(reposToItems(unselected)),
+			archiveReposCmd(m.client, selected),
+		)
 	case tea.KeyMsg:
 		if m.list.SettingFilter() {
 			break
@@ -103,6 +111,11 @@ func (m AppModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		if key.Matches(msg, keyDeletedSelected) {
 			log.Println("tea.KeyMsg -> deleteSelected")
 			cmds = append(cmds, m.list.StartSpinner(), requestDeleteReposCmd)
+		}
+
+		if key.Matches(msg, keyArchiveSelected) {
+			log.Println("tea.KeyMsg -> archiveSelected")
+			cmds = append(cmds, m.list.StartSpinner(), requestArchiveReposCmd)
 		}
 	}
 

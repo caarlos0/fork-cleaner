@@ -3,24 +3,30 @@ package ui
 import (
 	"log"
 
-	"github.com/charmbracelet/bubbles/key"
-	"github.com/charmbracelet/bubbles/list"
-	"github.com/charmbracelet/bubbles/spinner"
-	tea "github.com/charmbracelet/bubbletea"
-	"github.com/google/go-github/v50/github"
+	"charm.land/bubbles/v2/key"
+	"charm.land/bubbles/v2/list"
+	"charm.land/bubbles/v2/spinner"
+	tea "charm.land/bubbletea/v2"
+	"charm.land/lipgloss/v2"
+	"github.com/google/go-github/v83/github"
 )
 
 // AppModel is the UI when the CLI starts, basically loading the repos.
 type AppModel struct {
-	err          error
-	login        string
-	client       *github.Client
-	skipUpstream bool
-	list         list.Model
+	err           error
+	login         string
+	client        *github.Client
+	skipUpstream  bool
+	list          list.Model
+	lightdarkFunc lipgloss.LightDarkFunc
 }
 
 // NewAppModel creates a new AppModel with required fields.
-func NewAppModel(client *github.Client, login string, skipUpstream bool) AppModel {
+func NewAppModel(
+	client *github.Client,
+	login string,
+	skipUpstream bool,
+) AppModel {
 	list := list.New([]list.Item{}, list.NewDefaultDelegate(), 0, 0)
 	list.Title = "Fork Cleaner"
 	list.SetSpinner(spinner.MiniDot)
@@ -54,6 +60,9 @@ func (m AppModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var cmd tea.Cmd
 
 	switch msg := msg.(type) {
+	case tea.BackgroundColorMsg:
+		log.Println("tea.BackgroundColorMsg")
+		m.lightdarkFunc = lipgloss.LightDark(msg.IsDark())
 	case tea.WindowSizeMsg:
 		log.Println("tea.WindowSizeMsg")
 		top, right, bottom, left := listStyle.GetMargin()
@@ -111,13 +120,20 @@ func (m AppModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, tea.Batch(cmds...)
 }
 
-func (m AppModel) View() string {
+func (m AppModel) View() tea.View {
+	v := tea.NewView("")
+	v.AltScreen = true
 	if m.err != nil {
-		return errorStyle.Bold(true).Render("Error gathering the repository list") +
-			"\n" +
-			errorStyle.Render(m.err.Error())
+		errStyle := errorStyle(m.lightdarkFunc)
+		v.SetContent(
+			errStyle.Bold(true).Render("Error gathering the repository list") +
+				"\n" +
+				errStyle.Render(m.err.Error()),
+		)
+	} else {
+		v.SetContent(m.list.View())
 	}
-	return m.list.View()
+	return v
 }
 
 func (m AppModel) toggleSelection() tea.Cmd {

@@ -1,6 +1,6 @@
 package ui
 
-import "github.com/charmbracelet/bubbles/key"
+import "charm.land/bubbles/v2/key"
 
 var (
 	keySelectAll       = key.NewBinding(key.WithKeys("a"), key.WithHelp("a", "select all"))

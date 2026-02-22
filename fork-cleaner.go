@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/google/go-github/v50/github"
+	"github.com/google/go-github/v83/github"
 )
 
 const pageSize = 100
@@ -156,7 +156,7 @@ func getAllRepos(
 		if resp.NextPage == 0 {
 			break
 		}
-		opts.ListOptions.Page = resp.NextPage
+		opts.Page = resp.NextPage
 	}
 
 	return allRepos, nil

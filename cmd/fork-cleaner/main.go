@@ -6,9 +6,9 @@ import (
 	"os"
 	"path/filepath"
 
+	tea "charm.land/bubbletea/v2"
 	"github.com/caarlos0/fork-cleaner/v2/internal/ui"
-	tea "github.com/charmbracelet/bubbletea"
-	"github.com/google/go-github/v50/github"
+	"github.com/google/go-github/v83/github"
 	"github.com/urfave/cli/v2"
 	"golang.org/x/oauth2"
 )
@@ -53,7 +53,7 @@ func main() {
 
 	app.Action = func(c *cli.Context) error {
 		log.SetFlags(0)
-		f, err := tea.LogToFile(filepath.Join(os.TempDir(), "fork-cleaner.log"), "")
+		f, err := tea.LogToFile(filepath.Join("/tmp", "fork-cleaner.log"), "")
 		if err != nil {
 			return cli.Exit(err.Error(), 1)
 		}
@@ -76,7 +76,7 @@ func main() {
 			return cli.Exit("missing github token", 1)
 		}
 
-		p := tea.NewProgram(ui.NewAppModel(client, login, skipUpstream), tea.WithAltScreen())
+		p := tea.NewProgram(ui.NewAppModel(client, login, skipUpstream))
 		if _, err = p.Run(); err != nil {
 			return cli.Exit(err.Error(), 1)
 		}

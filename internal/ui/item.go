@@ -5,9 +5,9 @@ import (
 	"strings"
 	"time"
 
+	"charm.land/bubbles/v2/list"
 	forkcleaner "github.com/caarlos0/fork-cleaner/v2"
 	timeago "github.com/caarlos0/timea.go"
-	"github.com/charmbracelet/bubbles/list"
 )
 
 type item struct {
@@ -80,7 +80,7 @@ func splitBySelection(items []list.Item) ([]*forkcleaner.RepositoryWithDetails, 
 }
 
 func reposToItems(repos []*forkcleaner.RepositoryWithDetails) []list.Item {
-	var items = make([]list.Item, 0, len(repos))
+	items := make([]list.Item, 0, len(repos))
 	for _, repo := range repos {
 		items = append(items, item{
 			repo: repo,

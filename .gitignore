@@ -5,5 +5,4 @@ dist
 bin
 coverage.out
 fork-cleaner.log
-
-/.idea/
+codecov*

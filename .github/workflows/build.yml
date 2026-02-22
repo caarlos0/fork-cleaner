@@ -12,16 +12,16 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           fetch-depth: 0
-      - uses: actions/setup-go@v6
+      - uses: actions/setup-go@7a3fe6cf4cb3a834922a1244abfce67bcef6a0c5 # v6.2.0
         with:
           go-version: stable
           cache: true
       - run: go mod tidy
       - run: go test -v -failfast -race -coverpkg=./... -covermode=atomic -coverprofile=coverage.out ./...
-      - uses: codecov/codecov-action@v5
+      - uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           file: ./coverage.txt
@@ -30,7 +30,7 @@ jobs:
           sudo apt-get update
           sudo apt-get -yq --no-install-suggests --no-install-recommends install snapcraft
           snapcraft login --with <(echo "${{ secrets.SNAPCRAFT_LOGIN }}")
-      - uses: goreleaser/goreleaser-action@v6
+      - uses: goreleaser/goreleaser-action@e435ccd777264be153ace6237001ef4d979d3a7a # v6.4.0
         if: success() && startsWith(github.ref, 'refs/tags/')
         with:
           distribution: goreleaser-pro
@@ -49,7 +49,7 @@ jobs:
     if: ${{ github.actor == 'dependabot[bot]' && github.event_name == 'pull_request'}}
     steps:
       - id: metadata
-        uses: dependabot/fetch-metadata@v2
+        uses: dependabot/fetch-metadata@21025c705c08248db411dc16f3619e6b5f9ea21a # v2.5.0
         with:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
       - run: |

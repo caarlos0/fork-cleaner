@@ -26,8 +26,8 @@ before:
 gemfury:
   - account: caarlos0
 
-gomod:
-  proxy: true
+# gomod:
+#   proxy: true
 
 builds:
   - env:

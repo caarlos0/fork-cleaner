@@ -8,6 +8,12 @@ on:
       - "v*"
   pull_request:
 
+permissions:
+  contents: write # needed to write releases
+  id-token: write # needed for keyless signing
+  packages: write # needed for ghcr access
+  attestations: write # needed for provenance
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -25,11 +31,10 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           file: ./coverage.txt
-      - if: success() && startsWith(github.ref, 'refs/tags/')
-        run: |
-          sudo apt-get update
-          sudo apt-get -yq --no-install-suggests --no-install-recommends install snapcraft
-          snapcraft login --with <(echo "${{ secrets.SNAPCRAFT_LOGIN }}")
+      - uses: sigstore/cosign-installer@faadad0cce49287aee09b3a48701e75088a2c6ad # v4.0.0
+        if: success() && startsWith(github.ref, 'refs/tags/')
+      - uses: anchore/sbom-action/download-syft@0b82b0b1a22399a1c542d4d656f70cd903571b5c # v0.21.1
+        if: success() && startsWith(github.ref, 'refs/tags/')
       - uses: goreleaser/goreleaser-action@e435ccd777264be153ace6237001ef4d979d3a7a # v6.4.0
         if: success() && startsWith(github.ref, 'refs/tags/')
         with:
@@ -40,6 +45,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GH_PAT }}
           FURY_TOKEN: ${{ secrets.FURY_TOKEN }}
           GORELEASER_KEY: ${{ secrets.GORELEASER_KEY }}
+      - uses: actions/attest-build-provenance@00014ed6ed5efc5b1ab7f7f34a39eb55d41aa4f8 # v3.1.0
+        with:
+          subject-checksums: ./dist/checksums.txt
   dependabot:
     needs: [build]
     runs-on: ubuntu-latest

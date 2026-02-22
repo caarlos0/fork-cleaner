@@ -41,26 +41,36 @@ func FindAllForks(ctx context.Context, client *github.Client, login string, skip
 
 		// Get repository as List omits parent information.
 		repo, resp, err := client.Repositories.Get(ctx, login, name)
-		switch resp.StatusCode {
-		case http.StatusForbidden:
-			// no access, ignore
-			continue
-		case http.StatusUnavailableForLegalReasons:
-			// fork DCMA taken down, so will the parent
-			forks = append(forks, buildDetails(r, nil, nil, resp.StatusCode))
-			continue
+		if resp != nil {
+			switch resp.StatusCode {
+			case http.StatusForbidden:
+				// no access, ignore
+				continue
+			case http.StatusUnavailableForLegalReasons:
+				// fork DCMA taken down, so will the parent
+				forks = append(forks, buildDetails(r, nil, nil, resp.StatusCode))
+				continue
+			}
 		}
 
 		if err != nil {
-			return forks, fmt.Errorf("failed to get repository: %s: %w", repo.GetFullName(), err)
+			return forks, fmt.Errorf("failed to get repository: %s: %w", r.GetFullName(), err)
 		}
 
 		if skipUpstream {
-			forks = append(forks, buildDetails(repo, nil, nil, resp.StatusCode))
+			code := 0
+			if resp != nil {
+				code = resp.StatusCode
+			}
+			forks = append(forks, buildDetails(repo, nil, nil, code))
 			continue
 		}
 
 		parent := repo.GetParent()
+		if parent == nil {
+			forks = append(forks, buildDetails(repo, nil, nil, resp.StatusCode))
+			continue
+		}
 
 		// get parent's Issues
 		issues, err := getIssues(ctx, client, login, parent)
@@ -77,10 +87,14 @@ func FindAllForks(ctx context.Context, client *github.Client, login string, skip
 			fmt.Sprintf("%s:%s", login, repo.GetDefaultBranch()),
 			&github.ListOptions{},
 		)
-		if err != nil && resp.StatusCode != 404 {
+		code := 0
+		if resp != nil {
+			code = resp.StatusCode
+		}
+		if err != nil && code != 404 {
 			return forks, fmt.Errorf("failed to compare repository with parent: %s: %w", repo.GetFullName(), err)
 		}
-		forks = append(forks, buildDetails(repo, issues, commits, resp.StatusCode))
+		forks = append(forks, buildDetails(repo, issues, commits, code))
 
 	}
 
@@ -98,9 +112,14 @@ func buildDetails(repo *github.Repository, issues []*github.Issue, commits *gith
 		aheadBy = commits.GetAheadBy()
 	}
 
+	parentName := ""
+	if repo.GetParent() != nil {
+		parentName = repo.GetParent().GetFullName()
+	}
+
 	return &RepositoryWithDetails{
 		Name:               repo.GetFullName(),
-		ParentName:         repo.GetParent().GetFullName(),
+		ParentName:         parentName,
 		RepoURL:            repo.GetURL(),
 		Private:            repo.GetPrivate(),
 		ParentDeleted:      code == http.StatusNotFound,

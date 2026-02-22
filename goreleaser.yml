@@ -48,3 +48,9 @@ builds:
 
 universal_binaries:
   - replace: true
+
+archives:
+  - formats: [tar.gz]
+    format_overrides:
+      - formats: [zip]
+        goos: windows

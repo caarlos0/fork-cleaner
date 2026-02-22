@@ -1,3 +1,4 @@
+// Package ui contains the UI components for the app.
 package ui
 
 import (

@@ -95,7 +95,6 @@ func FindAllForks(ctx context.Context, client *github.Client, login string, skip
 			return forks, fmt.Errorf("failed to compare repository with parent: %s: %w", repo.GetFullName(), err)
 		}
 		forks = append(forks, buildDetails(repo, issues, commits, code))
-
 	}
 
 	return forks, nil

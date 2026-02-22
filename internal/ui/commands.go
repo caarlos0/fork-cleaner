@@ -35,7 +35,7 @@ func enqueueGetReposCmd() tea.Msg {
 }
 
 func getReposCmd(client *github.Client, login string, skipUpstream bool) tea.Cmd {
-	limits, _, err := client.RateLimits(context.Background())
+	limits, _, err := client.RateLimit.Get(context.Background())
 	if err != nil {
 		return func() tea.Msg {
 			return errMsg{err}
@@ -45,7 +45,7 @@ func getReposCmd(client *github.Client, login string, skipUpstream bool) tea.Cmd
 	if limits.Core.Remaining < 1 {
 		return func() tea.Msg {
 			return errMsg{
-				fmt.Errorf("Rate limit exceeded. Remaining: %d, Time till reset: %v",
+				fmt.Errorf("rate limit exceeded. Remaining: %d, Time till reset: %v",
 					limits.Core.Remaining, time.Since(limits.Core.Reset.Time)),
 			}
 		}

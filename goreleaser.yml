@@ -48,13 +48,3 @@ builds:
 
 universal_binaries:
   - replace: true
-
-snapcrafts:
-  - publish: true
-    summary: "{{ .Var.description }}"
-    description: "{{ .Var.description }}"
-    grade: stable
-    apps:
-      fork-cleaner:
-        plugs: ["network"]
-        command: fork-cleaner

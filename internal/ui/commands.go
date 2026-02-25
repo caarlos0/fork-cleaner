@@ -12,6 +12,24 @@ import (
 	"github.com/google/go-github/v83/github"
 )
 
+func requestArchiveReposCmd() tea.Msg {
+	return requestArchiveSelectedReposMsg{}
+}
+
+func archiveReposCmd(client *github.Client, repos []*forkcleaner.RepositoryWithDetails) tea.Cmd {
+	return func() tea.Msg {
+		var names []string
+		for _, r := range repos {
+			names = append(names, r.Name)
+		}
+		log.Println("archiveReposCmd", strings.Join(names, ", "))
+		if err := forkcleaner.Archive(context.Background(), client, repos); err != nil {
+			return errMsg{err}
+		}
+		return reposDeletedMsg{}
+	}
+}
+
 func requestDeleteReposCmd() tea.Msg {
 	return requestDeleteSelectedReposMsg{}
 }

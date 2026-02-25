@@ -15,3 +15,5 @@ type gotRepoListMsg struct {
 type reposDeletedMsg struct{}
 
 type requestDeleteSelectedReposMsg struct{}
+
+type requestArchiveSelectedReposMsg struct{}

@@ -28,7 +28,7 @@ type RepositoryWithDetails struct {
 	LastUpdate         time.Time
 }
 
-// FindAllForks lists all the forks for the current user.
+// FindAllForks lists all the forks for the given user login.
 func FindAllForks(ctx context.Context, client *github.Client, login string, skipUpstream bool) ([]*RepositoryWithDetails, error) {
 	var forks []*RepositoryWithDetails
 	repos, err := getAllRepos(ctx, client, login)

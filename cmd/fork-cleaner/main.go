@@ -40,7 +40,7 @@ func main() {
 		},
 		&cli.StringFlag{
 			Name:    "user",
-			Usage:   "GitHub username or organization name. Defaults to current user.",
+			Usage:   "GitHub username or organization name. Defaults to the GITHUB_TOKEN user's login",
 			Aliases: []string{"u"},
 		},
 		&cli.BoolFlag{

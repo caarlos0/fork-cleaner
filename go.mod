@@ -5,7 +5,7 @@ go 1.26
 require (
 	charm.land/bubbles/v2 v2.1.0
 	charm.land/bubbletea/v2 v2.0.7
-	charm.land/lipgloss/v2 v2.0.3
+	charm.land/lipgloss/v2 v2.0.4
 	github.com/caarlos0/timea.go v1.2.0
 	github.com/google/go-github/v83 v83.0.0
 	github.com/urfave/cli/v2 v2.27.7

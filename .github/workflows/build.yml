@@ -18,16 +18,16 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           fetch-depth: 0
-      - uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c # v6.4.0
+      - uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6.5.0
         with:
           go-version: stable
           cache: true
       - run: go mod tidy
       - run: go test -v -failfast -race -coverpkg=./... -covermode=atomic -coverprofile=coverage.out ./...
-      - uses: codecov/codecov-action@e79a6962e0d4c0c17b229090214935d2e33f8354 # v5
+      - uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./coverage.txt
@@ -35,7 +35,7 @@ jobs:
         if: success() && startsWith(github.ref, 'refs/tags/')
       - uses: anchore/sbom-action/download-syft@e22c389904149dbc22b58101806040fa8d37a610 # v0.24.0
         if: success() && startsWith(github.ref, 'refs/tags/')
-      - uses: goreleaser/goreleaser-action@5daf1e915a5f0af01ddbcd89a43b8061ff4f1a89 # v7.2.2
+      - uses: goreleaser/goreleaser-action@f06c13b6b1a9625abc9e6e439d9c05a8f2190e94 # v7.2.3
         if: success() && startsWith(github.ref, 'refs/tags/')
         with:
           distribution: goreleaser-pro
@@ -44,7 +44,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GH_PAT }}
           FURY_TOKEN: ${{ secrets.FURY_TOKEN }}
           GORELEASER_KEY: ${{ secrets.GORELEASER_KEY }}
-      - uses: actions/attest-build-provenance@a2bbfa25375fe432b6a289bc6b6cd05ecd0c4c32 # v4.1.0
+      - uses: actions/attest-build-provenance@0f67c3f4856b2e3261c31976d6725780e5e4c373 # v4.1.1
         if: success() && startsWith(github.ref, 'refs/tags/')
         with:
           subject-checksums: ./dist/checksums.txt

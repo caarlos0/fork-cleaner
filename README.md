@@ -80,7 +80,3 @@ curl -L \
   -H "X-GitHub-Api-Version: 2022-11-28" \
   https://api.github.com/rate_limit
 ```
-
-## Stargazers
-
-[![Stargazers over time](https://starchart.cc/caarlos0/fork-cleaner.svg)](https://starchart.cc/caarlos0/fork-cleaner)

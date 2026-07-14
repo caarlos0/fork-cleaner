@@ -7,7 +7,7 @@
 [![Godoc](http://img.shields.io/badge/godoc-reference-5272B4.svg?style=for-the-badge)](https://pkg.go.dev/github.com/caarlos0/fork-cleaner)
 [![Powered By: GoReleaser](https://img.shields.io/badge/powered%20by-goreleaser-green.svg?style=for-the-badge)](https://github.com/goreleaser)
 
-Quickly clean up old and inactive forks on your GitHub account.
+Quickly archive or delete old and inactive forks on your GitHub account.
 
 ![](https://user-images.githubusercontent.com/245435/104655305-4a843f80-569c-11eb-8cd5-7f55b8104375.gif)
 
@@ -54,14 +54,22 @@ Download the binaries from the [latest release](https://github.com/caarlos0/fork
 
 ## Usage
 
-You'll need to [create a personal access token](https://github.com/settings/tokens/new?scopes=repo,delete_repo&description=fork-cleaner) with `repo` and `delete_repo`
-permissions. You'll need to pass this token to `fork-cleaner` with the `--token` flag.
+You'll need to [create a personal access token](https://github.com/settings/tokens/new?scopes=repo,delete_repo&description=fork-cleaner) with `repo` and `delete_repo` permissions. You'll need to pass this token to `fork-cleaner` with the `--token` flag.
 
 ```sh
 fork-cleaner --token "<token>"
 ```
 
 `fork-cleaner` will load your forked repositories, displaying the oldest first. This can take a little while as `fork-cleaner` will iterate over the page of forks and check the upstream repository's status (e.g. checking for active PRs).
+
+**Note:** Already archived repositories are automatically filtered out and won't appear in the list.
+
+### Actions
+
+- Press `d` to **delete** selected forks (permanent removal)
+- Press `r` to **archive** selected forks (mark as read-only with archived description)
+
+**Warning:** Deletion is permanent and cannot be undone. Archiving is safer as it preserves the repository in a read-only state.
 
 ## Troubleshooting
 
